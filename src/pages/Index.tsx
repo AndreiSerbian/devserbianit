@@ -2,15 +2,34 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 import { 
   Menu, Sun, Moon, MessageCircle, ArrowRight,
   ShoppingCart, Boxes, LayoutDashboard, MessageSquare, Database, FileSearch,
-  CheckCircle2, Mail, Phone
+  CheckCircle2, Mail, Phone, Calculator, Download, Share2
 } from "lucide-react";
 
 const Index = () => {
   const [lang, setLang] = useState("ru");
   const [theme, setTheme] = useState("dark");
+  const { toast } = useToast();
+
+  // Calculator state
+  const [projectType, setProjectType] = useState("ecommerce");
+  const [projectSize, setProjectSize] = useState("medium");
+  const [urgency, setUrgency] = useState(false);
+  const [options, setOptions] = useState({
+    auth: false,
+    payments: false,
+    analytics: false,
+    multilingual: false,
+    supabase: false,
+    telegram: false,
+  });
 
   const translations = {
     ru: {
@@ -18,6 +37,39 @@ const Index = () => {
         title: "Комплексный подход к IT-решениям для бизнеса",
         subtitle: "Не просто «пишем код». Смотрим на продукт и процессы глазами бизнеса.",
         cta: "Рассчитать бюджет"
+      },
+      calculator: {
+        title: "Калькулятор стоимости",
+        projectType: "Тип проекта",
+        projectSize: "Размер проекта",
+        types: {
+          ecommerce: "E-commerce решение",
+          crm: "CRM/ERP система",
+          admin: "Админ-панель",
+          telegram: "Telegram-бот",
+          integration: "Кастомная интеграция"
+        },
+        sizes: {
+          small: "Малый",
+          medium: "Средний",
+          large: "Большой"
+        },
+        options: "Дополнительные опции",
+        optionsList: {
+          auth: "Авторизация и роли (+16ч)",
+          payments: "Платежи (+24ч)",
+          analytics: "Аналитика (+10ч)",
+          multilingual: "Мультиязычность (+18ч)",
+          supabase: "Интеграция Supabase (+20ч)",
+          telegram: "Telegram интеграция (+12ч)"
+        },
+        urgency: "Срочная разработка (+20%)",
+        estimate: "Смета проекта",
+        hours: "ч",
+        rate: "Ставка: €50/ч",
+        total: "Итого",
+        exportPdf: "Экспорт в PDF",
+        sharetelegram: "Отправить в Telegram"
       },
       services: {
         title: "Что мы делаем",
@@ -63,6 +115,39 @@ const Index = () => {
         title: "Comprehensive IT Solutions for Business",
         subtitle: "Beyond coding: business lens from hypothesis to results.",
         cta: "Calculate Budget"
+      },
+      calculator: {
+        title: "Cost Calculator",
+        projectType: "Project Type",
+        projectSize: "Project Size",
+        types: {
+          ecommerce: "E-commerce Solution",
+          crm: "CRM/ERP System",
+          admin: "Admin Panel",
+          telegram: "Telegram Bot",
+          integration: "Custom Integration"
+        },
+        sizes: {
+          small: "Small",
+          medium: "Medium",
+          large: "Large"
+        },
+        options: "Additional Options",
+        optionsList: {
+          auth: "Auth & Roles (+16h)",
+          payments: "Payments (+24h)",
+          analytics: "Analytics (+10h)",
+          multilingual: "Multilingual (+18h)",
+          supabase: "Supabase Integration (+20h)",
+          telegram: "Telegram Integration (+12h)"
+        },
+        urgency: "Urgent Development (+20%)",
+        estimate: "Project Estimate",
+        hours: "h",
+        rate: "Rate: €50/h",
+        total: "Total",
+        exportPdf: "Export PDF",
+        sharetelegram: "Share to Telegram"
       },
       services: {
         title: "What we do",
@@ -113,6 +198,100 @@ const Index = () => {
     setTheme(newTheme);
     document.documentElement.classList.remove("dark", "light");
     document.documentElement.classList.add(newTheme);
+  };
+
+  // Calculator logic
+  const projectHours = {
+    ecommerce: { small: 60, medium: 120, large: 220 },
+    crm: { small: 70, medium: 140, large: 260 },
+    admin: { small: 50, medium: 100, large: 180 },
+    telegram: { small: 30, medium: 60, large: 100 },
+    integration: { small: 40, medium: 90, large: 160 },
+  };
+
+  const optionHours = {
+    auth: 16,
+    payments: 24,
+    analytics: 10,
+    multilingual: 18,
+    supabase: 20,
+    telegram: 12,
+  };
+
+  const hourlyRate = 50;
+
+  const calculateEstimate = () => {
+    const baseHours = projectHours[projectType as keyof typeof projectHours][projectSize as keyof typeof projectHours.ecommerce];
+    const additionalHours = Object.entries(options).reduce((sum, [key, value]) => {
+      return value ? sum + optionHours[key as keyof typeof optionHours] : sum;
+    }, 0);
+    const totalHours = baseHours + additionalHours;
+    const subtotal = totalHours * hourlyRate;
+    const urgencyMultiplier = urgency ? 1.2 : 1;
+    const total = subtotal * urgencyMultiplier;
+    
+    return { baseHours, additionalHours, totalHours, subtotal, total };
+  };
+
+  const estimate = calculateEstimate();
+
+  const handleExportPDF = async () => {
+    const element = document.getElementById('calculator-estimate');
+    if (!element) return;
+
+    try {
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        backgroundColor: theme === 'dark' ? '#1a1d29' : '#ffffff',
+      });
+      
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4',
+      });
+      
+      const imgWidth = 210;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      
+      pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+      pdf.save(`estimate-${projectType}-${projectSize}.pdf`);
+      
+      toast({
+        title: lang === "ru" ? "PDF создан" : "PDF Created",
+        description: lang === "ru" ? "Смета успешно экспортирована" : "Estimate exported successfully",
+      });
+    } catch (error) {
+      toast({
+        title: lang === "ru" ? "Ошибка" : "Error",
+        description: lang === "ru" ? "Не удалось создать PDF" : "Failed to create PDF",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleShareTelegram = () => {
+    const message = `
+🧮 ${t.calculator.estimate}
+
+📋 ${t.calculator.projectType}: ${t.calculator.types[projectType as keyof typeof t.calculator.types]}
+📏 ${t.calculator.projectSize}: ${t.calculator.sizes[projectSize as keyof typeof t.calculator.sizes]}
+
+⏱ ${t.calculator.hours}: ${estimate.totalHours}${t.calculator.hours}
+💰 ${t.calculator.total}: €${estimate.total.toFixed(2)}
+
+${urgency ? '🚀 ' + t.calculator.urgency : ''}
+
+Serbian IT Development
+    `.trim();
+
+    const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent('https://serbian-it.dev')}&text=${encodeURIComponent(message)}`;
+    window.open(telegramUrl, '_blank');
+  };
+
+  const handleOptionChange = (option: string, checked: boolean) => {
+    setOptions(prev => ({ ...prev, [option]: checked }));
   };
 
   return (
@@ -185,6 +364,136 @@ const Index = () => {
                   </Card>
                 );
               })}
+            </div>
+          </div>
+        </section>
+
+        {/* Calculator */}
+        <section className="py-20 bg-secondary/20">
+          <div className="container max-w-5xl">
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 flex items-center justify-center gap-3">
+              <Calculator className="h-8 w-8 text-primary" />
+              {t.calculator.title}
+            </h2>
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Configuration */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t.calculator.projectType}</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="space-y-3">
+                    <Label>{t.calculator.projectType}</Label>
+                    <Select value={projectType} onValueChange={setProjectType}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Object.entries(t.calculator.types).map(([key, label]) => (
+                          <SelectItem key={key} value={key}>{label}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-3">
+                    <Label>{t.calculator.projectSize}</Label>
+                    <Select value={projectSize} onValueChange={setProjectSize}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Object.entries(t.calculator.sizes).map(([key, label]) => (
+                          <SelectItem key={key} value={key}>{label}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-3 pt-2">
+                    <Label className="text-base font-semibold">{t.calculator.options}</Label>
+                    <div className="space-y-3">
+                      {Object.entries(t.calculator.optionsList).map(([key, label]) => (
+                        <div key={key} className="flex items-center space-x-2">
+                          <Checkbox 
+                            id={key} 
+                            checked={options[key as keyof typeof options]}
+                            onCheckedChange={(checked) => handleOptionChange(key, checked as boolean)}
+                          />
+                          <Label htmlFor={key} className="text-sm font-normal cursor-pointer">{label}</Label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-2 pt-2 border-t">
+                    <Checkbox 
+                      id="urgency" 
+                      checked={urgency}
+                      onCheckedChange={(checked) => setUrgency(checked as boolean)}
+                    />
+                    <Label htmlFor="urgency" className="text-sm font-medium cursor-pointer">{t.calculator.urgency}</Label>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Estimate */}
+              <Card id="calculator-estimate" className="bg-primary/5 border-primary/20">
+                <CardHeader>
+                  <CardTitle className="text-2xl">{t.calculator.estimate}</CardTitle>
+                  <CardDescription>{t.calculator.rate}</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-3 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">{t.calculator.types[projectType as keyof typeof t.calculator.types]} ({t.calculator.sizes[projectSize as keyof typeof t.calculator.sizes]})</span>
+                      <span className="font-medium">{estimate.baseHours}{t.calculator.hours}</span>
+                    </div>
+                    
+                    {estimate.additionalHours > 0 && (
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">{t.calculator.options}</span>
+                        <span className="font-medium">+{estimate.additionalHours}{t.calculator.hours}</span>
+                      </div>
+                    )}
+                    
+                    <div className="flex justify-between pt-2 border-t">
+                      <span className="font-medium">{t.calculator.hours}</span>
+                      <span className="font-bold text-lg">{estimate.totalHours}{t.calculator.hours}</span>
+                    </div>
+                    
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Subtotal</span>
+                      <span className="font-medium">€{estimate.subtotal.toFixed(2)}</span>
+                    </div>
+                    
+                    {urgency && (
+                      <div className="flex justify-between text-amber-600 dark:text-amber-400">
+                        <span>{t.calculator.urgency}</span>
+                        <span className="font-medium">+€{(estimate.total - estimate.subtotal).toFixed(2)}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="pt-4 border-t-2 border-primary/30">
+                    <div className="flex justify-between items-center">
+                      <span className="text-xl font-bold">{t.calculator.total}</span>
+                      <span className="text-3xl font-bold text-primary">€{estimate.total.toFixed(2)}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-3 pt-4">
+                    <Button onClick={handleExportPDF} variant="outline" className="flex-1">
+                      <Download className="mr-2 h-4 w-4" />
+                      {t.calculator.exportPdf}
+                    </Button>
+                    <Button onClick={handleShareTelegram} className="flex-1">
+                      <Share2 className="mr-2 h-4 w-4" />
+                      {t.calculator.sharetelegram}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </section>
