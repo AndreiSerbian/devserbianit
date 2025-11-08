@@ -71,27 +71,25 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero с улучшенным контрастом */}
-      <section className="relative py-20 px-8 bg-gradient-to-br from-primary/30 via-secondary/20 to-accent/30 dark:from-primary/20 dark:via-background dark:to-secondary/20 border-b border-border">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiMwMDAiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PHBhdGggZD0iTTM2IDM0djItaDJ2LTJoLTJ6bTAtNHYyaDJ2LTJoLTJ6bTAgMTB2Mmgydi0yaC0yem0wLTR2Mmgydi0yaC0yeiIvPjwvZz48L2c+PC9zdmc+')] opacity-30 dark:opacity-20"></div>
+      <section className="relative py-20 px-8 bg-gradient-to-br from-primary/20 via-background to-secondary/20 border-b border-border">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiMwMDAiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PHBhdGggZD0iTTM2IDM0djItaDJ2LTJoLTJ6bTAtNHYyaDJ2LTJoLTJ6bTAgMTB2Mmgydi0yaC0yem0wLTR2Mmgydi0yaC0yeiIvPjwvZz48L2c+PC9zdmc+')] opacity-50 dark:opacity-20"></div>
         
         <div className="max-w-4xl mx-auto text-center relative z-10">
-          <div className="bg-background/80 dark:bg-background/40 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-border/50">
-            <h1 className="text-5xl md:text-6xl font-bold mb-6 text-foreground drop-shadow-sm">
-              Serbian IT Development
-            </h1>
-            <p className="text-xl md:text-2xl text-foreground mb-8 max-w-2xl mx-auto font-medium">
-              Комплексный подход к IT-решениям для бизнеса
-            </p>
-            <p className="text-lg text-foreground/70 mb-8">
-              Не просто «пишем код». Смотрим на продукт и процессы глазами бизнеса.
-            </p>
-            <button 
-              onClick={() => document.getElementById("calculator")?.scrollIntoView({ behavior: "smooth" })}
-              className="px-8 py-4 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 text-lg font-medium transition-all hover:scale-105 shadow-md"
-            >
-              Рассчитать бюджет →
-            </button>
-          </div>
+          <h1 className="text-5xl md:text-6xl font-bold mb-6 text-foreground">
+            Serbian IT Development
+          </h1>
+          <p className="text-xl md:text-2xl text-foreground/80 mb-8 max-w-2xl mx-auto">
+            Комплексный подход к IT-решениям для бизнеса
+          </p>
+          <p className="text-lg text-muted-foreground mb-8">
+            Не просто «пишем код». Смотрим на продукт и процессы глазами бизнеса.
+          </p>
+          <button 
+            onClick={() => document.getElementById("calculator")?.scrollIntoView({ behavior: "smooth" })}
+            className="px-8 py-4 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 text-lg font-medium transition-all hover:scale-105"
+          >
+            Рассчитать бюджет →
+          </button>
         </div>
       </section>
 
