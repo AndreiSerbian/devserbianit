@@ -142,18 +142,18 @@ const Index = () => {
 
       <main className="flex-1">
         {/* Hero */}
-        <section className="relative min-h-[80vh] flex items-center gradient-hero overflow-hidden">
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDM0djItaDJ2LTJoLTJ6bTAtNHYyaDJ2LTJoLTJ6bTAgMTB2Mmgydi0yaC0yem0wLTR2Mmgydi0yaC0yeiIvPjwvZz48L2c+PC9zdmc+')] opacity-20"></div>
+        <section className="relative min-h-[80vh] flex items-center overflow-hidden bg-gradient-to-br from-primary/5 via-secondary/10 to-accent/5 dark:from-[hsl(var(--gradient-hero-start))] dark:to-[hsl(var(--gradient-hero-end))]">
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDM0djItaDJ2LTJoLTJ6bTAtNHYyaDJ2LTJoLTJ6bTAgMTB2Mmgydi0yaC0yem0wLTR2Mmgydi0yaC0yeiIvPjwvZz48L2c+PC9zdmc+')] opacity-10 dark:opacity-20"></div>
           <div className="container relative z-10">
             <div className="max-w-4xl mx-auto text-center space-y-8 animate-fade-in-up">
-              <h1 className="text-4xl md:text-6xl font-bold tracking-tight">{t.hero.title}</h1>
-              <p className="text-lg md:text-xl text-foreground/80 max-w-2xl mx-auto">{t.hero.subtitle}</p>
+              <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground drop-shadow-sm">{t.hero.title}</h1>
+              <p className="text-lg md:text-xl text-foreground/90 max-w-2xl mx-auto">{t.hero.subtitle}</p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-                <Button size="lg" className="group">
+                <Button size="lg" className="group shadow-lg hover:shadow-xl transition-shadow">
                   {t.hero.cta}
                   <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </Button>
-                <Button size="lg" variant="secondary" asChild>
+                <Button size="lg" variant="secondary" asChild className="shadow-lg hover:shadow-xl transition-shadow">
                   <a href="https://t.me/your_username" target="_blank" rel="noopener noreferrer">
                     <MessageCircle className="mr-2 h-4 w-4" />
                     Telegram
