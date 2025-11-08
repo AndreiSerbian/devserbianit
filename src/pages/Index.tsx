@@ -1,241 +1,255 @@
 import { useState } from "react";
-import { toast } from "sonner";
-import html2canvas from "html2canvas";
-import { jsPDF } from "jspdf";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { 
+  Menu, Sun, Moon, MessageCircle, ArrowRight,
+  ShoppingCart, Boxes, LayoutDashboard, MessageSquare, Database, FileSearch,
+  CheckCircle2, Mail, Phone
+} from "lucide-react";
 
 const Index = () => {
-  const [rate, setRate] = useState(30);
-  const [projectType, setProjectType] = useState("E-commerce");
-  const [size, setSize] = useState("Medium");
-  const [options, setOptions] = useState<string[]>([]);
-  const [urgency, setUrgency] = useState(0);
+  const [lang, setLang] = useState("ru");
+  const [theme, setTheme] = useState("dark");
 
-  // Calculator logic
-  const baseHours: Record<string, Record<string, number>> = {
-    "E-commerce": { Small: 60, Medium: 120, Large: 220 },
-    "CRM/ERP": { Small: 70, Medium: 140, Large: 260 },
-    "Admin panel": { Small: 50, Medium: 100, Large: 180 },
-    "Telegram bot": { Small: 30, Medium: 60, Large: 100 },
-    "Custom integration": { Small: 40, Medium: 90, Large: 160 }
-  };
-
-  const optionHours: Record<string, number> = {
-    "Auth/roles": 16,
-    "Payments": 24,
-    "Analytics": 10,
-    "Multilingual": 18,
-    "Supabase": 20,
-    "Telegram": 12
-  };
-
-  const calculateTotal = () => {
-    const base = baseHours[projectType]?.[size] || 100;
-    const extra = options.reduce((sum, opt) => sum + (optionHours[opt] || 0), 0);
-    let totalHours = base + extra;
-    let total = totalHours * rate;
-    if (urgency === 1) total *= 1.2;
-    return { hours: totalHours, total: Math.round(total) };
-  };
-
-  const result = calculateTotal();
-
-  const toggleOption = (opt: string) => {
-    setOptions(prev => 
-      prev.includes(opt) ? prev.filter(o => o !== opt) : [...prev, opt]
-    );
-  };
-
-  const downloadPDF = async () => {
-    const element = document.getElementById("calculator-card");
-    if (!element) return;
-    
-    try {
-      const canvas = await html2canvas(element);
-      const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF("p", "mm", "a4");
-      const imgWidth = 190;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      pdf.addImage(imgData, "PNG", 10, 10, imgWidth, imgHeight);
-      pdf.save(`estimate-${projectType}-${size}.pdf`);
-      toast.success("PDF скачан успешно!");
-    } catch (error) {
-      toast.error("Ошибка при создании PDF");
+  const translations = {
+    ru: {
+      hero: {
+        title: "Комплексный подход к IT-решениям для бизнеса",
+        subtitle: "Не просто «пишем код». Смотрим на продукт и процессы глазами бизнеса.",
+        cta: "Рассчитать бюджет"
+      },
+      services: {
+        title: "Что мы делаем",
+        items: [
+          { title: "E-commerce решения", desc: "Каталоги, корзина, оплата, скидки — ориентир на конверсию." },
+          { title: "CRM / внутренние панели", desc: "Процессы, роли и доступы под вашу операционку." },
+          { title: "Админ-панели", desc: "Удобный контроль контента, заказов и команд." },
+          { title: "Telegram-боты", desc: "Оповещения, заявки и внешние интеграции." },
+          { title: "Интеграции с Supabase", desc: "Хранилище, роли, функции, email." },
+          { title: "Аудит и архитектура", desc: "Разбор решения и дорожная карта." }
+        ]
+      },
+      cases: {
+        title: "Кейсы",
+        items: [
+          {
+            name: "FoodSaur",
+            desc: "Маркетплейс для локальных производителей с админ-панелью и ролями.",
+            features: ["Каталоги и расписания", "Админ-панель с RLS", "Telegram уведомления"],
+            result: "Меньше ручных ошибок, быстрее обработка"
+          },
+          {
+            name: "SMT Premium Box",
+            desc: "Оптовый e-commerce для подарочных коробок с вариациями.",
+            features: ["Карточки с вариациями", "Предзаказ", "Email-подтверждение"],
+            result: "Сокращение времени обработки B2B"
+          },
+          {
+            name: "Вместе сильнее",
+            desc: "Сайт инклюзивного пространства для мам и детей в Молдове.",
+            features: ["Календарь событий", "Формы волонтёров", "База ресурсов"],
+            result: "Удобная точка входа для семей"
+          }
+        ]
+      },
+      contact: {
+        title: "Готовы обсудить?",
+        location: "Молдова, ЕС, Россия • Remote"
+      }
+    },
+    en: {
+      hero: {
+        title: "Comprehensive IT Solutions for Business",
+        subtitle: "Beyond coding: business lens from hypothesis to results.",
+        cta: "Calculate Budget"
+      },
+      services: {
+        title: "What we do",
+        items: [
+          { title: "E-commerce solutions", desc: "Catalogs, cart, payments, discounts — focused on conversion." },
+          { title: "CRM / internal panels", desc: "Processes, roles, access aligned with operations." },
+          { title: "Admin panels", desc: "Clear control over content, orders, teams." },
+          { title: "Telegram bots", desc: "Notifications, requests, integrations." },
+          { title: "Supabase integrations", desc: "Storage, roles, functions, email." },
+          { title: "Audit & architecture", desc: "Assessment and roadmap." }
+        ]
+      },
+      cases: {
+        title: "Case Studies",
+        items: [
+          {
+            name: "FoodSaur",
+            desc: "Marketplace for local producers with admin panel and roles.",
+            features: ["Catalogs & schedules", "Admin with RLS", "Telegram notifications"],
+            result: "Fewer errors, faster processing"
+          },
+          {
+            name: "SMT Premium Box",
+            desc: "Wholesale e-commerce for gift boxes with variants.",
+            features: ["Variant cards", "Pre-order", "Email confirmation"],
+            result: "Reduced B2B processing time"
+          },
+          {
+            name: "Together Stronger",
+            desc: "Website for inclusive space initiative in Moldova.",
+            features: ["Events calendar", "Volunteer forms", "Resources base"],
+            result: "Clear entry point for families"
+          }
+        ]
+      },
+      contact: {
+        title: "Ready to talk?",
+        location: "Moldova, EU, Russia • Remote"
+      }
     }
   };
 
-  const shareTelegram = () => {
-    const text = `📊 Смета проекта\n\nТип: ${projectType}\nРазмер: ${size}\nОпции: ${options.join(", ") || "Нет"}\n\nСтавка: €${rate}/час\nЧасы: ${result.hours}\nИтого: €${result.total}`;
-    window.open(`https://t.me/share/url?text=${encodeURIComponent(text)}`, "_blank");
+  const t = translations[lang as keyof typeof translations];
+  const icons = [ShoppingCart, Boxes, LayoutDashboard, MessageSquare, Database, FileSearch];
+
+  const toggleTheme = () => {
+    const newTheme = theme === "dark" ? "light" : "dark";
+    setTheme(newTheme);
+    document.documentElement.classList.remove("dark", "light");
+    document.documentElement.classList.add(newTheme);
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Hero с улучшенным контрастом */}
-      <section className="relative py-20 px-8 bg-gradient-to-br from-primary/30 via-secondary/20 to-accent/30 dark:from-primary/20 dark:via-background dark:to-secondary/20 border-b border-border">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiMwMDAiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PHBhdGggZD0iTTM2IDM0djItaDJ2LTJoLTJ6bTAtNHYyaDJ2LTJoLTJ6bTAgMTB2Mmgydi0yaC0yem0wLTR2Mmgydi0yaC0yeiIvPjwvZz48L2c+PC9zdmc+')] opacity-30 dark:opacity-20"></div>
-        
-        <div className="max-w-4xl mx-auto text-center relative z-10">
-          <div className="bg-background/80 dark:bg-background/40 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-border/50">
-            <h1 className="text-5xl md:text-6xl font-bold mb-6 text-foreground drop-shadow-sm">
-              Serbian IT Development
-            </h1>
-            <p className="text-xl md:text-2xl text-foreground mb-8 max-w-2xl mx-auto font-medium">
-              Комплексный подход к IT-решениям для бизнеса
-            </p>
-            <p className="text-lg text-foreground/70 mb-8">
-              Не просто «пишем код». Смотрим на продукт и процессы глазами бизнеса.
-            </p>
-            <button 
-              onClick={() => document.getElementById("calculator")?.scrollIntoView({ behavior: "smooth" })}
-              className="px-8 py-4 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 text-lg font-medium transition-all hover:scale-105 shadow-md"
-            >
-              Рассчитать бюджет →
-            </button>
+    <div className="min-h-screen flex flex-col">
+      {/* Header */}
+      <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur">
+        <div className="container flex h-16 items-center justify-between">
+          <div className="flex items-center gap-8">
+            <span className="text-lg font-bold">Serbian IT Development</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <Select value={lang} onValueChange={setLang}>
+              <SelectTrigger className="w-[100px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ru">RU</SelectItem>
+                <SelectItem value="en">EN</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button variant="ghost" size="icon" onClick={toggleTheme} className="rounded-full">
+              {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+            </Button>
           </div>
         </div>
-      </section>
+      </header>
 
-      <div className="max-w-6xl mx-auto p-8">
-
-        <main className="space-y-16">
-          {/* Интерактивный калькулятор */}
-          <section id="calculator">
-            <h2 className="text-3xl font-bold mb-8 text-center">Калькулятор бюджета</h2>
-            <div id="calculator-card" className="max-w-2xl mx-auto bg-card border border-border rounded-lg p-8 shadow-lg">
-              <div className="space-y-6">
-                <div>
-                  <label className="block text-sm font-medium mb-2">Ставка, €/час</label>
-                  <input 
-                    type="number" 
-                    value={rate}
-                    onChange={(e) => setRate(Number(e.target.value))}
-                    min={1} 
-                    className="w-full px-4 py-2 bg-background border border-input rounded-md focus:ring-2 focus:ring-primary"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium mb-2">Тип проекта</label>
-                  <select 
-                    value={projectType}
-                    onChange={(e) => setProjectType(e.target.value)}
-                    className="w-full px-4 py-2 bg-background border border-input rounded-md focus:ring-2 focus:ring-primary"
-                  >
-                    <option>E-commerce</option>
-                    <option>CRM/ERP</option>
-                    <option>Admin panel</option>
-                    <option>Telegram bot</option>
-                    <option>Custom integration</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2">Размер и сложность</label>
-                  <select 
-                    value={size}
-                    onChange={(e) => setSize(e.target.value)}
-                    className="w-full px-4 py-2 bg-background border border-input rounded-md focus:ring-2 focus:ring-primary"
-                  >
-                    <option>Small</option>
-                    <option>Medium</option>
-                    <option>Large</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-3">Дополнительные опции</label>
-                  <div className="space-y-2">
-                    {Object.keys(optionHours).map(opt => (
-                      <label key={opt} className="flex items-center gap-2 cursor-pointer hover:bg-secondary/20 p-2 rounded">
-                        <input
-                          type="checkbox"
-                          checked={options.includes(opt)}
-                          onChange={() => toggleOption(opt)}
-                          className="w-4 h-4 rounded border-input text-primary focus:ring-2 focus:ring-primary"
-                        />
-                        <span className="text-sm">{opt} (+{optionHours[opt]}ч)</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2">Срочность</label>
-                  <select 
-                    value={urgency}
-                    onChange={(e) => setUrgency(Number(e.target.value))}
-                    className="w-full px-4 py-2 bg-background border border-input rounded-md focus:ring-2 focus:ring-primary"
-                  >
-                    <option value={0}>Обычная</option>
-                    <option value={1}>Срочно (+20%)</option>
-                  </select>
-                </div>
-
-                <div className="pt-6 border-t border-border">
-                  <div className="grid grid-cols-2 gap-4 text-center">
-                    <div className="p-4 rounded-lg bg-primary/10 border border-primary/20">
-                      <div className="text-sm text-muted-foreground mb-1">Часы работы</div>
-                      <div className="text-3xl font-bold text-primary">{result.hours}</div>
-                    </div>
-                    <div className="p-4 rounded-lg bg-primary/10 border border-primary/20">
-                      <div className="text-sm text-muted-foreground mb-1">Итого</div>
-                      <div className="text-3xl font-bold text-primary">€{result.total}</div>
-                    </div>
-                  </div>
-                  
-                  {urgency === 1 && (
-                    <p className="text-sm text-center text-muted-foreground mt-3">
-                      * Включена наценка за срочность +20%
-                    </p>
-                  )}
-                </div>
-
-                <div className="flex gap-3 pt-4">
-                  <button 
-                    onClick={downloadPDF}
-                    className="flex-1 px-6 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-all font-medium"
-                  >
-                    📄 Скачать PDF
-                  </button>
-                  <button 
-                    onClick={shareTelegram}
-                    className="flex-1 px-6 py-3 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/90 transition-all font-medium"
-                  >
-                    📤 Telegram
-                  </button>
-                </div>
+      <main className="flex-1">
+        {/* Hero */}
+        <section className="relative min-h-[80vh] flex items-center gradient-hero overflow-hidden">
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDM0djItaDJ2LTJoLTJ6bTAtNHYyaDJ2LTJoLTJ6bTAgMTB2Mmgydi0yaC0yem0wLTR2Mmgydi0yaC0yeiIvPjwvZz48L2c+PC9zdmc+')] opacity-20"></div>
+          <div className="container relative z-10">
+            <div className="max-w-4xl mx-auto text-center space-y-8 animate-fade-in-up">
+              <h1 className="text-4xl md:text-6xl font-bold tracking-tight">{t.hero.title}</h1>
+              <p className="text-lg md:text-xl text-foreground/80 max-w-2xl mx-auto">{t.hero.subtitle}</p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+                <Button size="lg" className="group">
+                  {t.hero.cta}
+                  <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                </Button>
+                <Button size="lg" variant="secondary" asChild>
+                  <a href="https://t.me/your_username" target="_blank" rel="noopener noreferrer">
+                    <MessageCircle className="mr-2 h-4 w-4" />
+                    Telegram
+                  </a>
+                </Button>
               </div>
             </div>
-          </section>
+          </div>
+        </section>
 
-          <section className="text-center">
-            <h2 className="text-3xl font-bold mb-8">Контакты</h2>
-            <div className="flex gap-4 justify-center flex-wrap">
-              <a 
-                href="https://t.me/your_username"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-8 py-4 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 text-lg font-medium"
-              >
-                Написать в Telegram
-              </a>
-              <a 
-                href="mailto:contact@serbian-it.dev"
-                className="px-8 py-4 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/90 text-lg font-medium"
-              >
-                Email
-              </a>
+        {/* Services */}
+        <section className="py-20 bg-secondary/20">
+          <div className="container">
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">{t.services.title}</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {t.services.items.map((item, idx) => {
+                const Icon = icons[idx];
+                return (
+                  <Card key={idx} className="card-hover border-border/50">
+                    <CardHeader>
+                      <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
+                        <Icon className="h-6 w-6 text-primary" />
+                      </div>
+                      <CardTitle className="text-xl">{item.title}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <CardDescription className="text-base">{item.desc}</CardDescription>
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
-            <p className="mt-8 text-muted-foreground">
-              Молдова, ЕС, Россия • Remote work
-            </p>
-          </section>
-        </main>
+          </div>
+        </section>
 
-        <footer className="mt-16 pt-8 border-t text-center text-sm text-muted-foreground">
-          © 2025 Serbian IT Development. Professional IT solutions for business.
-        </footer>
-      </div>
+        {/* Cases */}
+        <section className="py-20">
+          <div className="container">
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">{t.cases.title}</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {t.cases.items.map((item, idx) => (
+                <Card key={idx} className="card-hover">
+                  <CardHeader>
+                    <CardTitle className="text-2xl">{item.name}</CardTitle>
+                    <CardDescription className="text-base pt-2">{item.desc}</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <ul className="space-y-2">
+                      {item.features.map((feature, i) => (
+                        <li key={i} className="flex items-start gap-2">
+                          <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                          <span className="text-sm">{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <div className="pt-2 border-t border-border/50">
+                      <p className="text-sm font-medium text-primary">{item.result}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Contact */}
+        <section className="py-20 bg-secondary/20">
+          <div className="container max-w-3xl text-center">
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">{t.contact.title}</h2>
+            <p className="text-muted-foreground mb-8 text-lg">{t.contact.location}</p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button asChild size="lg">
+                <a href="https://t.me/your_username" target="_blank" rel="noopener noreferrer">
+                  <MessageCircle className="mr-2 h-5 w-5" />
+                  Telegram
+                </a>
+              </Button>
+              <Button asChild variant="outline" size="lg">
+                <a href="mailto:contact@serbian-it.dev">
+                  <Mail className="mr-2 h-5 w-5" />
+                  Email
+                </a>
+              </Button>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      {/* Footer */}
+      <footer className="py-8 border-t border-border/40 bg-secondary/20">
+        <div className="container text-center">
+          <p className="text-sm text-muted-foreground">
+            © 2025 Serbian IT Development. Professional IT solutions for business.
+          </p>
+        </div>
+      </footer>
     </div>
   );
 };
