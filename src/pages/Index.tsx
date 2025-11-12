@@ -6,6 +6,7 @@ import { Sun, Moon, Mail, Phone } from "lucide-react";
 import { translations } from "@/data/translations";
 import { Hero } from "@/components/Hero";
 import { Services } from "@/components/Services";
+import { ClientIntakeForm } from "@/components/ClientIntakeForm";
 import { Calculator } from "@/components/Calculator";
 import { CaseStudies } from "@/components/CaseStudies";
 
@@ -60,6 +61,8 @@ const Index = () => {
         />
         
         <Services title={t.services.title} items={t.services.items} />
+        
+        <ClientIntakeForm translations={t} />
         
         <Calculator translations={t.calculator} lang={lang} theme={theme} />
         
