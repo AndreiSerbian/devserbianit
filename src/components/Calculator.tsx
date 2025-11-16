@@ -5,7 +5,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { Calculator as CalculatorIcon, Download, Share2 } from "lucide-react";
 
@@ -81,26 +80,131 @@ export const Calculator = ({ translations: t, lang, theme }: CalculatorProps) =>
   const estimate = calculateEstimate();
 
   const handleExportPDF = async () => {
-    const element = document.getElementById('calculator-estimate');
-    if (!element) return;
-
     try {
-      const canvas = await html2canvas(element, {
-        scale: 2,
-        backgroundColor: theme === 'dark' ? '#1a1d29' : '#ffffff',
-      });
-      
-      const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF({
         orientation: 'portrait',
         unit: 'mm',
         format: 'a4',
       });
       
-      const imgWidth = 210;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      const pageWidth = 210;
+      const margin = 20;
+      const contentWidth = pageWidth - (margin * 2);
+      let yPos = margin;
       
-      pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+      // Header
+      pdf.setFontSize(24);
+      pdf.setTextColor(66, 66, 66);
+      pdf.text('Serbian IT Development', margin, yPos);
+      yPos += 15;
+      
+      // Title
+      pdf.setFontSize(18);
+      pdf.setTextColor(100, 100, 100);
+      pdf.text(t.estimate, margin, yPos);
+      yPos += 15;
+      
+      // Project Type
+      pdf.setFontSize(12);
+      pdf.setTextColor(80, 80, 80);
+      pdf.text(`${t.projectType}:`, margin, yPos);
+      pdf.setTextColor(50, 50, 50);
+      pdf.text(t.types[projectType as keyof typeof t.types], margin + 50, yPos);
+      yPos += 10;
+      
+      // Project Size
+      pdf.setTextColor(80, 80, 80);
+      pdf.text(`${t.projectSize}:`, margin, yPos);
+      pdf.setTextColor(50, 50, 50);
+      pdf.text(t.sizes[projectSize as keyof typeof t.sizes], margin + 50, yPos);
+      yPos += 10;
+      
+      // Urgency
+      if (urgency) {
+        pdf.setTextColor(80, 80, 80);
+        pdf.text(`${t.urgency}:`, margin, yPos);
+        pdf.setTextColor(220, 38, 38);
+        pdf.text(lang === "ru" ? "Да (+20%)" : "Yes (+20%)", margin + 50, yPos);
+        yPos += 10;
+      }
+      
+      yPos += 5;
+      
+      // Selected Options
+      const selectedOptions = Object.entries(options).filter(([_, value]) => value);
+      if (selectedOptions.length > 0) {
+        pdf.setFontSize(14);
+        pdf.setTextColor(80, 80, 80);
+        pdf.text(t.options, margin, yPos);
+        yPos += 8;
+        
+        pdf.setFontSize(11);
+        selectedOptions.forEach(([key]) => {
+          pdf.setTextColor(50, 50, 50);
+          pdf.text(`• ${t.optionsList[key as keyof typeof t.optionsList]}`, margin + 5, yPos);
+          yPos += 6;
+        });
+        yPos += 5;
+      }
+      
+      // Separator line
+      pdf.setDrawColor(200, 200, 200);
+      pdf.line(margin, yPos, pageWidth - margin, yPos);
+      yPos += 10;
+      
+      // Calculation Details
+      pdf.setFontSize(12);
+      pdf.setTextColor(80, 80, 80);
+      
+      // Base hours
+      pdf.text(lang === "ru" ? "Базовые часы:" : "Base hours:", margin, yPos);
+      pdf.text(`${estimate.baseHours} ${t.hours}`, pageWidth - margin - 30, yPos);
+      yPos += 8;
+      
+      // Additional hours
+      if (estimate.additionalHours > 0) {
+        pdf.text(lang === "ru" ? "Доп. часы:" : "Additional hours:", margin, yPos);
+        pdf.text(`${estimate.additionalHours} ${t.hours}`, pageWidth - margin - 30, yPos);
+        yPos += 8;
+      }
+      
+      // Total hours
+      pdf.setTextColor(50, 50, 50);
+      pdf.text(lang === "ru" ? "Всего часов:" : "Total hours:", margin, yPos);
+      pdf.text(`${estimate.totalHours} ${t.hours}`, pageWidth - margin - 30, yPos);
+      yPos += 8;
+      
+      // Hourly rate
+      pdf.setTextColor(80, 80, 80);
+      pdf.text(`${t.rate}:`, margin, yPos);
+      pdf.text(`$${hourlyRate}/${t.hours.toLowerCase()}`, pageWidth - margin - 30, yPos);
+      yPos += 12;
+      
+      // Subtotal
+      if (urgency) {
+        pdf.setTextColor(80, 80, 80);
+        pdf.text(lang === "ru" ? "Промежуточная сумма:" : "Subtotal:", margin, yPos);
+        pdf.text(`$${estimate.subtotal.toFixed(2)}`, pageWidth - margin - 40, yPos);
+        yPos += 8;
+        
+        pdf.text(lang === "ru" ? "Срочность (+20%):" : "Urgency (+20%):", margin, yPos);
+        pdf.text(`$${(estimate.total - estimate.subtotal).toFixed(2)}`, pageWidth - margin - 40, yPos);
+        yPos += 10;
+      }
+      
+      // Total - larger and bold
+      pdf.setFontSize(16);
+      pdf.setTextColor(34, 197, 94);
+      pdf.text(`${t.total}:`, margin, yPos);
+      pdf.text(`$${estimate.total.toFixed(2)}`, pageWidth - margin - 50, yPos);
+      
+      // Footer
+      yPos = 280;
+      pdf.setFontSize(10);
+      pdf.setTextColor(150, 150, 150);
+      pdf.text('Serbian IT Development', margin, yPos);
+      pdf.text('contact@serbian-it.dev', pageWidth - margin - 50, yPos);
+      
       pdf.save(`estimate-${projectType}-${projectSize}.pdf`);
       
       toast({
