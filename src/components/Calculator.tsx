@@ -48,7 +48,7 @@ const optionHours = {
   telegram: 12,
 };
 
-const hourlyRate = 50;
+const hourlyRate = 12.5;
 
 export const Calculator = ({ translations: t, lang, theme }: CalculatorProps) => {
   const [projectType, setProjectType] = useState("ecommerce");
