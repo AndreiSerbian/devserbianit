@@ -53,22 +53,36 @@ export const translations = {
       title: "Кейсы",
       items: [
         {
-          name: "FoodSaur",
-          desc: "Маркетплейс для локальных производителей с админ-панелью и ролями.",
-          features: ["Каталоги и расписания", "Админ-панель с RLS", "Telegram уведомления"],
-          result: "Меньше ручных ошибок, быстрее обработка"
-        },
-        {
           name: "SMT Premium Box",
           desc: "Оптовый e-commerce для подарочных коробок с вариациями.",
           features: ["Карточки с вариациями", "Предзаказ", "Email-подтверждение"],
-          result: "Сокращение времени обработки B2B"
+          result: "Сокращение времени обработки B2B",
+          link: "https://giftboxopt.ru",
+          image: "smt-premium-box"
+        },
+        {
+          name: "FoodSaur",
+          desc: "Маркетплейс для локальных производителей с админ-панелью и ролями.",
+          features: ["Каталоги и расписания", "Админ-панель с RLS", "Telegram уведомления"],
+          result: "Меньше ручных ошибок, быстрее обработка",
+          link: "https://foodsaur.netlify.app/",
+          image: "foodsaur"
         },
         {
           name: "Вместе сильнее",
           desc: "Сайт инклюзивного пространства для мам и детей в Молдове.",
           features: ["Календарь событий", "Формы волонтёров", "База ресурсов"],
-          result: "Удобная точка входа для семей"
+          result: "Удобная точка входа для семей",
+          link: "https://vmeste-silnee-hub.lovable.app/",
+          image: "vmeste-silnee"
+        },
+        {
+          name: "Unit Economics Strategist",
+          desc: "Платформа для бизнес-консалтинга и анализа юнит-экономики.",
+          features: ["Расчёт метрик бизнеса", "Сравнение сценариев", "Анализ конкурентов", "Теория игр"],
+          result: "Научный подход к стратегии",
+          link: "https://unit-econ-strategist.lovable.app/",
+          image: "unit-econ"
         }
       ]
     },
@@ -211,22 +225,36 @@ export const translations = {
       title: "Case Studies",
       items: [
         {
-          name: "FoodSaur",
-          desc: "Marketplace for local producers with admin panel and roles.",
-          features: ["Catalogs & schedules", "Admin with RLS", "Telegram notifications"],
-          result: "Fewer errors, faster processing"
-        },
-        {
           name: "SMT Premium Box",
           desc: "Wholesale e-commerce for gift boxes with variants.",
           features: ["Variant cards", "Pre-order", "Email confirmation"],
-          result: "Reduced B2B processing time"
+          result: "Reduced B2B processing time",
+          link: "https://giftboxopt.ru",
+          image: "smt-premium-box"
+        },
+        {
+          name: "FoodSaur",
+          desc: "Marketplace for local producers with admin panel and roles.",
+          features: ["Catalogs & schedules", "Admin with RLS", "Telegram notifications"],
+          result: "Fewer errors, faster processing",
+          link: "https://foodsaur.netlify.app/",
+          image: "foodsaur"
         },
         {
           name: "Together Stronger",
           desc: "Website for inclusive space initiative in Moldova.",
           features: ["Events calendar", "Volunteer forms", "Resources base"],
-          result: "Clear entry point for families"
+          result: "Clear entry point for families",
+          link: "https://vmeste-silnee-hub.lovable.app/",
+          image: "vmeste-silnee"
+        },
+        {
+          name: "Unit Economics Strategist",
+          desc: "Business consulting platform for unit economics analysis.",
+          features: ["Business metrics calculation", "Scenario comparison", "Competitor analysis", "Game theory"],
+          result: "Scientific approach to strategy",
+          link: "https://unit-econ-strategist.lovable.app/",
+          image: "unit-econ"
         }
       ]
     },
