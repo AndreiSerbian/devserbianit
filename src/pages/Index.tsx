@@ -66,7 +66,7 @@ const Index = () => {
         
         <Calculator translations={t.calculator} lang={lang} theme={theme} />
         
-        <CaseStudies title={t.cases.title} items={t.cases.items} />
+        <CaseStudies title={t.cases.title} items={t.cases.items} lang={lang} />
         
         {/* Contact */}
         <section className="py-12 md:py-20 bg-background">
