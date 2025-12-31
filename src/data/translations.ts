@@ -145,10 +145,12 @@ export const translations = {
       contactLabel: "Как с вами связаться? (имя, email, телефон, Telegram)",
       contactPlaceholder: "Иван Петров\nemail: ivan@example.com\nTelegram: @ivanpetrov\n+373 123 456 78",
       submit: "Отправить заявку",
+      sending: "Отправка...",
       success: "Спасибо!",
       successMessage: "Ваша заявка отправлена. Мы свяжемся с вами в ближайшее время.",
       error: "Ошибка",
-      contactRequired: "Пожалуйста, укажите ваши контактные данные"
+      contactRequired: "Пожалуйста, укажите ваши контактные данные",
+      sendError: "Не удалось отправить заявку. Попробуйте позже."
     },
     contact: {
       title: "Готовы обсудить?",
@@ -301,10 +303,12 @@ export const translations = {
       contactLabel: "How can we contact you? (name, email, phone, Telegram)",
       contactPlaceholder: "John Smith\nemail: john@example.com\nTelegram: @johnsmith\n+1 234 567 890",
       submit: "Submit Request",
+      sending: "Sending...",
       success: "Thank you!",
       successMessage: "Your request has been submitted. We will contact you shortly.",
       error: "Error",
-      contactRequired: "Please provide your contact information"
+      contactRequired: "Please provide your contact information",
+      sendError: "Failed to submit the request. Please try again later."
     },
     contact: {
       title: "Ready to talk?",

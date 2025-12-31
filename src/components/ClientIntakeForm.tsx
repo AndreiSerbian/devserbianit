@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 type ProjectType = "ecommerce" | "telegram" | "crm" | "integration";
 
@@ -17,7 +17,9 @@ export const ClientIntakeForm = ({ translations }: ClientIntakeFormProps) => {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Валидация контактных данных
@@ -30,13 +32,36 @@ export const ClientIntakeForm = ({ translations }: ClientIntakeFormProps) => {
       return;
     }
 
-    toast({
-      title: translations.form.success,
-      description: translations.form.successMessage,
-    });
+    setIsSubmitting(true);
 
-    // Здесь будет интеграция с Telegram API
-    console.log("Form submitted:", { projectType, answers });
+    try {
+      const { data, error } = await supabase.functions.invoke("send-telegram-notification", {
+        body: {
+          projectType,
+          answers,
+          lang: "ru",
+        },
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: translations.form.success,
+        description: translations.form.successMessage,
+      });
+
+      // Очистка формы после успешной отправки
+      setAnswers({});
+    } catch (error) {
+      console.error("Error sending form:", error);
+      toast({
+        title: translations.form.error,
+        description: translations.form.sendError || "Ошибка при отправке формы",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleAnswerChange = (questionId: string, value: string) => {
@@ -122,8 +147,13 @@ export const ClientIntakeForm = ({ translations }: ClientIntakeFormProps) => {
                   </div>
                 </div>
 
-                <Button type="submit" size="lg" className="w-full text-sm md:text-base">
-                  {translations.form.submit}
+                <Button 
+                  type="submit" 
+                  size="lg" 
+                  className="w-full text-sm md:text-base"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (translations.form.sending || "Отправка...") : translations.form.submit}
                 </Button>
               </form>
             </CardContent>
