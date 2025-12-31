@@ -43,6 +43,7 @@ const Index = () => {
               <SelectContent>
                 <SelectItem value="ru">RU</SelectItem>
                 <SelectItem value="en">EN</SelectItem>
+                <SelectItem value="ro">RO</SelectItem>
               </SelectContent>
             </Select>
             <Button variant="ghost" size="icon" onClick={toggleTheme} className="rounded-full h-8 w-8 md:h-10 md:w-10">

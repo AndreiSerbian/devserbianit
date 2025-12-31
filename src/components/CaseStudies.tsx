@@ -60,7 +60,7 @@ export const CaseStudies = ({ title, items, lang = "ru" }: CaseStudiesProps) => 
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-4">
                       <span className="text-sm font-medium flex items-center gap-1">
-                        {lang === "ru" ? "Подробнее" : "Learn more"}
+                        {lang === "ru" ? "Подробнее" : lang === "ro" ? "Află mai mult" : "Learn more"}
                         <ArrowRight className="h-4 w-4" />
                       </span>
                     </div>
@@ -96,7 +96,7 @@ export const CaseStudies = ({ title, items, lang = "ru" }: CaseStudiesProps) => 
                   <div className="flex gap-2">
                     <Button variant="outline" size="sm" asChild className="flex-1">
                       <Link to={`/cases/${caseId}`}>
-                        {lang === "ru" ? "Подробнее" : "Details"}
+                        {lang === "ru" ? "Подробнее" : lang === "ro" ? "Detalii" : "Details"}
                         <ArrowRight className="ml-2 h-3 w-3" />
                       </Link>
                     </Button>
