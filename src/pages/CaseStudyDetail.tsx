@@ -76,6 +76,7 @@ const CaseStudyDetail = () => {
               <SelectContent>
                 <SelectItem value="ru">RU</SelectItem>
                 <SelectItem value="en">EN</SelectItem>
+                <SelectItem value="ro">RO</SelectItem>
               </SelectContent>
             </Select>
             <Button variant="ghost" size="icon" onClick={toggleTheme} className="rounded-full h-8 w-8 md:h-10 md:w-10">
@@ -91,7 +92,7 @@ const CaseStudyDetail = () => {
           <div className="w-full h-64 md:h-96 overflow-hidden">
             <img 
               src={caseStudy.image} 
-              alt={caseStudy.name[lang as "ru" | "en"]}
+              alt={caseStudy.name[lang as "ru" | "en" | "ro"]}
               className="w-full h-full object-cover object-top"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />

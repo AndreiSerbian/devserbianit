@@ -25,15 +25,15 @@ export const translations = {
       optionsList: {
         auth: "Авторизация и роли (+16ч)",
         payments: "Платежи (+24ч)",
-        analytics: "Аналитика (+10ч)",
+        analytics: "Аналитика (+12ч)",
         multilingual: "Мультиязычность (+18ч)",
         supabase: "Интеграция Supabase (+20ч)",
         telegram: "Telegram интеграция (+12ч)"
       },
-      urgency: "Срочная разработка (+20%)",
+      urgency: "Срочная разработка (+30%)",
       estimate: "Смета проекта",
       hours: "ч",
-      rate: "Ставка: €50/ч",
+      rate: "Ставка: €12.5/ч",
       total: "Итого",
       exportPdf: "Экспорт в PDF",
       sharetelegram: "Отправить в Telegram"
@@ -84,7 +84,9 @@ export const translations = {
           link: "https://unit-econ-strategist.lovable.app/",
           image: "unit-econ"
         }
-      ]
+      ],
+      viewDetails: "Подробнее",
+      learnMore: "Подробнее"
     },
     form: {
       title: "Помогите мне лучше понять ваш бизнес",
@@ -197,15 +199,15 @@ export const translations = {
       optionsList: {
         auth: "Auth & Roles (+16h)",
         payments: "Payments (+24h)",
-        analytics: "Analytics (+10h)",
+        analytics: "Analytics (+12h)",
         multilingual: "Multilingual (+18h)",
         supabase: "Supabase Integration (+20h)",
         telegram: "Telegram Integration (+12h)"
       },
-      urgency: "Urgent Development (+20%)",
+      urgency: "Urgent Development (+30%)",
       estimate: "Project Estimate",
       hours: "h",
-      rate: "Rate: €50/h",
+      rate: "Rate: €12.5/h",
       total: "Total",
       exportPdf: "Export PDF",
       sharetelegram: "Share to Telegram"
@@ -256,7 +258,9 @@ export const translations = {
           link: "https://unit-econ-strategist.lovable.app/",
           image: "unit-econ"
         }
-      ]
+      ],
+      viewDetails: "Details",
+      learnMore: "Learn more"
     },
     form: {
       title: "Help me understand your business better",
@@ -341,6 +345,180 @@ export const translations = {
     contact: {
       title: "Ready to talk?",
       location: "Moldova, EU, Russia • Remote"
+    }
+  },
+  ro: {
+    hero: {
+      title: "Abordare cuprinzătoare a soluțiilor IT pentru afaceri",
+      subtitle: "Mai mult decât cod: privim produsul și procesele prin prisma business-ului.",
+      cta: "Calculează bugetul"
+    },
+    calculator: {
+      title: "Calculator de costuri",
+      projectType: "Tipul proiectului",
+      projectSize: "Dimensiunea proiectului",
+      types: {
+        ecommerce: "Soluție E-commerce",
+        crm: "Sistem CRM/ERP",
+        admin: "Panou de administrare",
+        telegram: "Bot Telegram",
+        integration: "Integrare personalizată"
+      },
+      sizes: {
+        small: "Mic",
+        medium: "Mediu",
+        large: "Mare"
+      },
+      options: "Opțiuni suplimentare",
+      optionsList: {
+        auth: "Autentificare și roluri (+16h)",
+        payments: "Plăți (+24h)",
+        analytics: "Analiză (+12h)",
+        multilingual: "Multilingv (+18h)",
+        supabase: "Integrare Supabase (+20h)",
+        telegram: "Integrare Telegram (+12h)"
+      },
+      urgency: "Dezvoltare urgentă (+30%)",
+      estimate: "Estimare proiect",
+      hours: "h",
+      rate: "Tarif: €12.5/h",
+      total: "Total",
+      exportPdf: "Export PDF",
+      sharetelegram: "Trimite pe Telegram"
+    },
+    services: {
+      title: "Ce facem",
+      items: [
+        { title: "Soluții e-commerce", desc: "Cataloage, coș, plăți, reduceri — focus pe conversie." },
+        { title: "CRM / panouri interne", desc: "Procese, roluri și acces adaptat operațiunilor." },
+        { title: "Panouri de administrare", desc: "Control clar asupra conținutului, comenzilor, echipelor." },
+        { title: "Boți Telegram", desc: "Notificări, cereri și integrări." },
+        { title: "Integrări Supabase", desc: "Stocare, roluri, funcții, email." },
+        { title: "Audit și arhitectură", desc: "Evaluare și foaie de parcurs." }
+      ]
+    },
+    cases: {
+      title: "Studii de caz",
+      items: [
+        {
+          name: "SMT Premium Box",
+          desc: "E-commerce en-gros pentru cutii cadou cu variante.",
+          features: ["Carduri cu variante", "Pre-comandă", "Confirmare email"],
+          result: "Reducerea timpului de procesare B2B",
+          link: "https://giftboxopt.ru",
+          image: "smt-premium-box"
+        },
+        {
+          name: "FoodSaur",
+          desc: "Marketplace pentru producători locali cu panou admin și roluri.",
+          features: ["Cataloage și programări", "Admin cu RLS", "Notificări Telegram"],
+          result: "Mai puține erori, procesare mai rapidă",
+          link: "https://foodsaur.netlify.app/",
+          image: "foodsaur"
+        },
+        {
+          name: "Împreună mai puternici",
+          desc: "Site pentru inițiativa spațiului incluziv din Moldova.",
+          features: ["Calendar evenimente", "Formulare voluntari", "Baza de resurse"],
+          result: "Punct de intrare clar pentru familii",
+          link: "https://vmeste-silnee-hub.lovable.app/",
+          image: "vmeste-silnee"
+        },
+        {
+          name: "Unit Economics Strategist",
+          desc: "Platformă de consultanță pentru analiza economiei unitare.",
+          features: ["Calculul metricilor de business", "Comparație scenarii", "Analiză concurenți", "Teoria jocurilor"],
+          result: "Abordare științifică a strategiei",
+          link: "https://unit-econ-strategist.lovable.app/",
+          image: "unit-econ"
+        }
+      ],
+      viewDetails: "Detalii",
+      learnMore: "Află mai mult"
+    },
+    form: {
+      title: "Ajută-mă să înțeleg mai bine afacerea ta",
+      subtitle: "Răspunde la câteva întrebări pentru a pregăti soluția perfectă",
+      selectType: "Selectează tipul proiectului",
+      types: {
+        ecommerce: "E-commerce",
+        telegram: "Bot Telegram",
+        crm: "CRM/Panou Admin",
+        integration: "Integrare"
+      },
+      questions: {
+        ecommerce: [
+          "Care este numele brandului sau companiei tale și cu ce te ocupi?",
+          "Ai deja un site sau pagini pe rețele sociale? (dacă da, oferă linkurile)",
+          "Care este obiectivul principal al creării site-ului? (vânzări, catalog, imagine, comenzi, etc.)",
+          "Ce produse sau servicii vrei să vinzi prin site?",
+          "Au produsele tale variante — de exemplu, culori, mărimi, ambalaje?",
+          "Câte produse vrei să listezi la lansare?",
+          "Cum vrei să funcționeze procesul de comandă? (coș, confirmare email, bot Telegram, etc.)",
+          "Ce metode de plată și livrare planifici să folosești?",
+          "Vrei un panou de administrare pentru gestionarea produselor și comenzilor?",
+          "Ai exemple de site-uri al căror design îți place?",
+          "Ai nevoie ca site-ul să fie adaptat pentru mai multe limbi?",
+          "Până la ce dată vrei să lansezi proiectul și care este bugetul aproximativ?"
+        ],
+        telegram: [
+          "Care este numele afacerii sau proiectului tău?",
+          "Ce sarcină principală trebuie să rezolve botul? (notificări, preluare comenzi, suport, etc.)",
+          "Cu ce sisteme trebuie să se integreze botul? (site, CRM, bază de date, etc.)",
+          "Ai nevoie de autorizare și identificare a utilizatorilor?",
+          "Ce comenzi și funcții trebuie să execute botul?",
+          "Ai nevoie de o bază de date pentru stocarea informațiilor despre utilizatori?",
+          "Planifici să accepți plăți prin bot?",
+          "Câți utilizatori aștepți în primele luni de funcționare?",
+          "Ai nevoie de un panou web pentru gestionarea botului și vizualizarea statisticilor?",
+          "Ai exemple de boți a căror funcționalitate îți place?",
+          "Ai nevoie de suport pentru mai multe limbi?",
+          "Până când trebuie lansat botul și care este bugetul?"
+        ],
+        crm: [
+          "Care este numele companiei și în ce domeniu lucrezi?",
+          "Ce procese de business trebuie automatizate? (vânzări, depozit, documente, etc.)",
+          "Câți angajați vor lucra cu sistemul?",
+          "Ce roluri și niveluri de acces sunt necesare? (admin, manager, operator, etc.)",
+          "Ce date trebuie stocate și procesate? (clienți, comenzi, produse, finanțe, etc.)",
+          "Ai nevoie de integrare cu sisteme existente? (1C, email, mesagerie, etc.)",
+          "Ce rapoarte și analize ai nevoie?",
+          "Ai nevoie de notificări? (email, Telegram, push)",
+          "Există cerințe speciale de securitate a datelor?",
+          "Ai exemple de sisteme a căror interfață îți place?",
+          "Ai nevoie de versiune mobilă sau aplicație?",
+          "Data planificată de lansare și bugetul proiectului?"
+        ],
+        integration: [
+          "Care este numele companiei tale?",
+          "Ce sisteme sau servicii trebuie integrate? (specifică numele)",
+          "Care este obiectivul principal al integrării? (automatizare, sincronizare date, etc.)",
+          "Au aceste sisteme API sau trebuie dezvoltate conectori personalizați?",
+          "Ce date trebuie transferate între sisteme?",
+          "Cât de des trebuie să aibă loc sincronizarea? (timp real, orar, zilnic)",
+          "Ai nevoie de gestionarea erorilor și reîncercare automată?",
+          "Există cerințe de performanță? (volum date, viteză de procesare)",
+          "Ai nevoie de monitorizarea integrării și notificări despre erori?",
+          "Ai documentație API pentru sistemele existente?",
+          "Există exemple de integrări similare?",
+          "Termenul planificat de implementare și bugetul?"
+        ]
+      },
+      answerPlaceholder: "Răspunsul tău...",
+      contactTitle: "Date de contact",
+      contactLabel: "Cum te putem contacta? (nume, email, telefon, Telegram)",
+      contactPlaceholder: "Ion Popescu\nemail: ion@example.com\nTelegram: @ionpopescu\n+373 123 456 78",
+      submit: "Trimite cererea",
+      sending: "Se trimite...",
+      success: "Mulțumim!",
+      successMessage: "Cererea ta a fost trimisă. Te vom contacta în curând.",
+      error: "Eroare",
+      contactRequired: "Te rugăm să oferi datele de contact",
+      sendError: "Nu s-a putut trimite cererea. Încearcă mai târziu."
+    },
+    contact: {
+      title: "Pregătit să discutăm?",
+      location: "Moldova, UE, Rusia • Remote"
     }
   }
 };
