@@ -42,7 +42,7 @@ const projectHours = {
 const optionHours = {
   auth: 16,
   payments: 24,
-  analytics: 10,
+  analytics: 12,
   multilingual: 18,
   supabase: 20,
   telegram: 12,
@@ -71,7 +71,7 @@ export const Calculator = ({ translations: t, lang, theme }: CalculatorProps) =>
     }, 0);
     const totalHours = baseHours + additionalHours;
     const subtotal = totalHours * hourlyRate;
-    const urgencyMultiplier = urgency ? 1.2 : 1;
+    const urgencyMultiplier = urgency ? 1.3 : 1;
     const total = subtotal * urgencyMultiplier;
     
     return { baseHours, additionalHours, totalHours, subtotal, total };
@@ -128,7 +128,7 @@ export const Calculator = ({ translations: t, lang, theme }: CalculatorProps) =>
       // Urgency
       if (urgency) {
         pdf.setTextColor(220, 38, 38);
-        pdf.text(`${t.urgency}: ${lang === "ru" ? "Да (+20%)" : "Yes (+20%)"}`, margin, yPos);
+        pdf.text(`${t.urgency}: ${lang === "ru" ? "Да (+30%)" : "Yes (+30%)"}`, margin, yPos);
         yPos += 10;
       }
       
@@ -186,7 +186,7 @@ export const Calculator = ({ translations: t, lang, theme }: CalculatorProps) =>
         yPos += 8;
         
         pdf.setTextColor(220, 38, 38);
-        pdf.text(`${lang === "ru" ? "Срочность" : "Urgency"} (+20%): €${(estimate.total - estimate.subtotal).toFixed(2)}`, margin, yPos);
+        pdf.text(`${lang === "ru" ? "Срочность" : "Urgency"} (+30%): €${(estimate.total - estimate.subtotal).toFixed(2)}`, margin, yPos);
         yPos += 10;
       }
       
@@ -333,7 +333,7 @@ Serbian IT Development
                 {urgency && (
                   <div className="flex justify-between text-xs md:text-sm text-amber-600 dark:text-amber-400">
                     <span>{t.urgency}</span>
-                    <span>+20%</span>
+                    <span>+30%</span>
                   </div>
                 )}
                 <div className="border-t-2 border-primary/30 pt-3 flex justify-between items-center">
