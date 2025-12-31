@@ -87,9 +87,20 @@ export const Calculator = ({ translations: t, lang, theme }: CalculatorProps) =>
         format: 'a4',
       });
       
+      // Load font with Cyrillic support
+      const fontUrl = 'https://cdn.jsdelivr.net/npm/@fontsource/roboto@5.0.8/files/roboto-cyrillic-400-normal.woff';
+      const fontResponse = await fetch(fontUrl);
+      const fontBuffer = await fontResponse.arrayBuffer();
+      const fontBase64 = btoa(
+        new Uint8Array(fontBuffer).reduce((data, byte) => data + String.fromCharCode(byte), '')
+      );
+      
+      pdf.addFileToVFS('Roboto-Regular.ttf', fontBase64);
+      pdf.addFont('Roboto-Regular.ttf', 'Roboto', 'normal');
+      pdf.setFont('Roboto');
+      
       const pageWidth = 210;
       const margin = 20;
-      const contentWidth = pageWidth - (margin * 2);
       let yPos = margin;
       
       // Header
@@ -107,24 +118,17 @@ export const Calculator = ({ translations: t, lang, theme }: CalculatorProps) =>
       // Project Type
       pdf.setFontSize(12);
       pdf.setTextColor(80, 80, 80);
-      pdf.text(`${t.projectType}:`, margin, yPos);
-      pdf.setTextColor(50, 50, 50);
-      pdf.text(t.types[projectType as keyof typeof t.types], margin + 50, yPos);
+      pdf.text(`${t.projectType}: ${t.types[projectType as keyof typeof t.types]}`, margin, yPos);
       yPos += 10;
       
       // Project Size
-      pdf.setTextColor(80, 80, 80);
-      pdf.text(`${t.projectSize}:`, margin, yPos);
-      pdf.setTextColor(50, 50, 50);
-      pdf.text(t.sizes[projectSize as keyof typeof t.sizes], margin + 50, yPos);
+      pdf.text(`${t.projectSize}: ${t.sizes[projectSize as keyof typeof t.sizes]}`, margin, yPos);
       yPos += 10;
       
       // Urgency
       if (urgency) {
-        pdf.setTextColor(80, 80, 80);
-        pdf.text(`${t.urgency}:`, margin, yPos);
         pdf.setTextColor(220, 38, 38);
-        pdf.text(lang === "ru" ? "Да (+20%)" : "Yes (+20%)", margin + 50, yPos);
+        pdf.text(`${t.urgency}: ${lang === "ru" ? "Да (+20%)" : "Yes (+20%)"}`, margin, yPos);
         yPos += 10;
       }
       
@@ -135,7 +139,7 @@ export const Calculator = ({ translations: t, lang, theme }: CalculatorProps) =>
       if (selectedOptions.length > 0) {
         pdf.setFontSize(14);
         pdf.setTextColor(80, 80, 80);
-        pdf.text(t.options, margin, yPos);
+        pdf.text(t.options + ':', margin, yPos);
         yPos += 8;
         
         pdf.setFontSize(11);
@@ -157,46 +161,39 @@ export const Calculator = ({ translations: t, lang, theme }: CalculatorProps) =>
       pdf.setTextColor(80, 80, 80);
       
       // Base hours
-      pdf.text(lang === "ru" ? "Базовые часы:" : "Base hours:", margin, yPos);
-      pdf.text(`${estimate.baseHours} ${t.hours}`, pageWidth - margin - 30, yPos);
+      pdf.text(`${lang === "ru" ? "Базовые часы" : "Base hours"}: ${estimate.baseHours} ${t.hours}`, margin, yPos);
       yPos += 8;
       
       // Additional hours
       if (estimate.additionalHours > 0) {
-        pdf.text(lang === "ru" ? "Доп. часы:" : "Additional hours:", margin, yPos);
-        pdf.text(`${estimate.additionalHours} ${t.hours}`, pageWidth - margin - 30, yPos);
+        pdf.text(`${lang === "ru" ? "Доп. часы" : "Additional hours"}: ${estimate.additionalHours} ${t.hours}`, margin, yPos);
         yPos += 8;
       }
       
       // Total hours
       pdf.setTextColor(50, 50, 50);
-      pdf.text(lang === "ru" ? "Всего часов:" : "Total hours:", margin, yPos);
-      pdf.text(`${estimate.totalHours} ${t.hours}`, pageWidth - margin - 30, yPos);
+      pdf.text(`${lang === "ru" ? "Всего часов" : "Total hours"}: ${estimate.totalHours} ${t.hours}`, margin, yPos);
       yPos += 8;
       
       // Hourly rate
       pdf.setTextColor(80, 80, 80);
-      pdf.text(`${t.rate}:`, margin, yPos);
-      pdf.text(`$${hourlyRate}/${t.hours.toLowerCase()}`, pageWidth - margin - 30, yPos);
+      pdf.text(`${t.rate}: €${hourlyRate}/${lang === "ru" ? "час" : "hour"}`, margin, yPos);
       yPos += 12;
       
       // Subtotal
       if (urgency) {
-        pdf.setTextColor(80, 80, 80);
-        pdf.text(lang === "ru" ? "Промежуточная сумма:" : "Subtotal:", margin, yPos);
-        pdf.text(`$${estimate.subtotal.toFixed(2)}`, pageWidth - margin - 40, yPos);
+        pdf.text(`${lang === "ru" ? "Промежуточная сумма" : "Subtotal"}: €${estimate.subtotal.toFixed(2)}`, margin, yPos);
         yPos += 8;
         
-        pdf.text(lang === "ru" ? "Срочность (+20%):" : "Urgency (+20%):", margin, yPos);
-        pdf.text(`$${(estimate.total - estimate.subtotal).toFixed(2)}`, pageWidth - margin - 40, yPos);
+        pdf.setTextColor(220, 38, 38);
+        pdf.text(`${lang === "ru" ? "Срочность" : "Urgency"} (+20%): €${(estimate.total - estimate.subtotal).toFixed(2)}`, margin, yPos);
         yPos += 10;
       }
       
       // Total - larger and bold
       pdf.setFontSize(16);
       pdf.setTextColor(34, 197, 94);
-      pdf.text(`${t.total}:`, margin, yPos);
-      pdf.text(`$${estimate.total.toFixed(2)}`, pageWidth - margin - 50, yPos);
+      pdf.text(`${t.total}: €${estimate.total.toFixed(2)}`, margin, yPos);
       
       // Footer
       yPos = 280;
