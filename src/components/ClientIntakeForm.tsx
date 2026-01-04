@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { motion, AnimatePresence } from "framer-motion";
+import { ConfettiEffect, SuccessCheckmark } from "./ConfettiEffect";
 
 type ProjectType = "ecommerce" | "telegram" | "crm" | "integration";
 
@@ -19,6 +20,8 @@ export const ClientIntakeForm = ({ translations }: ClientIntakeFormProps) => {
   const { toast } = useToast();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,6 +47,14 @@ export const ClientIntakeForm = ({ translations }: ClientIntakeFormProps) => {
       });
 
       if (error) throw error;
+
+      // Trigger success animations
+      setShowConfetti(true);
+      setShowSuccess(true);
+      
+      setTimeout(() => {
+        setShowSuccess(false);
+      }, 2000);
 
       toast({
         title: translations.form.success,
@@ -77,9 +88,13 @@ export const ClientIntakeForm = ({ translations }: ClientIntakeFormProps) => {
   const questions = translations.form.questions[projectType];
 
   return (
-    <section id="intake-form" className="py-16 md:py-24 bg-secondary/20">
-      <div className="container px-4 sm:px-6">
-        <div className="max-w-4xl mx-auto">
+    <>
+      <ConfettiEffect isActive={showConfetti} onComplete={() => setShowConfetti(false)} />
+      <SuccessCheckmark isVisible={showSuccess} />
+      
+      <section id="intake-form" className="py-16 md:py-24 bg-secondary/20">
+        <div className="container px-4 sm:px-6">
+          <div className="max-w-4xl mx-auto">
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -198,7 +213,8 @@ export const ClientIntakeForm = ({ translations }: ClientIntakeFormProps) => {
             </Card>
           </motion.div>
         </div>
-      </div>
-    </section>
+        </div>
+      </section>
+    </>
   );
 };
