@@ -8,7 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import jsPDF from "jspdf";
 import { Calculator as CalculatorIcon, Download, Share2 } from "lucide-react";
 import { motion } from "framer-motion";
-
+import { AnimatedNumber } from "./AnimatedNumber";
 interface CalculatorTranslations {
   title: string;
   projectType: string;
@@ -334,33 +334,27 @@ Serbian IT Development
                 <div className="space-y-2 text-xs sm:text-sm md:text-base">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">{t.projectType}:</span>
-                    <motion.span 
-                      key={estimate.baseHours}
-                      initial={{ scale: 1.2, color: "hsl(var(--primary))" }}
-                      animate={{ scale: 1, color: "inherit" }}
-                      className="font-medium"
-                    >
-                      {estimate.baseHours}{t.hours}
-                    </motion.span>
+                    <span className="font-medium">
+                      <AnimatedNumber value={estimate.baseHours} suffix={t.hours} />
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">{t.options}:</span>
-                    <motion.span 
-                      key={estimate.additionalHours}
-                      initial={{ scale: 1.2, color: "hsl(var(--primary))" }}
-                      animate={{ scale: 1, color: "inherit" }}
-                      className="font-medium"
-                    >
-                      +{estimate.additionalHours}{t.hours}
-                    </motion.span>
+                    <span className="font-medium">
+                      <AnimatedNumber value={estimate.additionalHours} prefix="+" suffix={t.hours} />
+                    </span>
                   </div>
                   <div className="border-t border-border/50 pt-2 flex justify-between text-sm md:text-base lg:text-lg font-semibold">
                     <span>{t.hours}:</span>
-                    <span>{estimate.totalHours}{t.hours}</span>
+                    <span>
+                      <AnimatedNumber value={estimate.totalHours} suffix={t.hours} />
+                    </span>
                   </div>
                   <div className="flex justify-between text-xs md:text-sm text-muted-foreground">
                     <span>{t.rate}</span>
-                    <span>€{estimate.subtotal.toFixed(2)}</span>
+                    <span>
+                      <AnimatedNumber value={estimate.subtotal} decimals={2} prefix="€" />
+                    </span>
                   </div>
                   {urgency && (
                     <motion.div 
@@ -374,14 +368,13 @@ Serbian IT Development
                   )}
                   <div className="border-t-2 border-primary/30 pt-3 flex justify-between items-center">
                     <span className="text-sm md:text-lg lg:text-xl font-bold">{t.total}:</span>
-                    <motion.span 
-                      key={estimate.total}
-                      initial={{ scale: 1.1 }}
-                      animate={{ scale: 1 }}
+                    <AnimatedNumber 
+                      value={estimate.total} 
+                      decimals={2} 
+                      prefix="€" 
                       className="text-lg md:text-xl lg:text-2xl font-bold text-primary"
-                    >
-                      €{estimate.total.toFixed(2)}
-                    </motion.span>
+                      highlightOnChange
+                    />
                   </div>
                 </div>
 
