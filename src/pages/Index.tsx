@@ -10,14 +10,33 @@ import { Services } from "@/components/Services";
 import { ClientIntakeForm } from "@/components/ClientIntakeForm";
 import { Calculator } from "@/components/Calculator";
 import { CaseStudies } from "@/components/CaseStudies";
+import { FloatingParticles } from "@/components/FloatingParticles";
+import { ProgressIndicator } from "@/components/ProgressIndicator";
+import { ScrollToTop } from "@/components/ScrollToTop";
+import { Magnetic } from "@/components/Magnetic";
 
 const Index = () => {
   const [lang, setLang] = useState("ru");
-  const [theme, setTheme] = useState("dark");
+  const [theme, setTheme] = useState(() => {
+    // Check localStorage first, then system preference, default to dark
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('theme');
+      if (saved) return saved;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    return 'dark';
+  });
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const t = translations[lang as keyof typeof translations];
+
+  // Apply theme on mount and changes
+  useEffect(() => {
+    document.documentElement.classList.remove('dark', 'light');
+    document.documentElement.classList.add(theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -28,10 +47,7 @@ const Index = () => {
   }, []);
 
   const toggleTheme = () => {
-    const newTheme = theme === "dark" ? "light" : "dark";
-    setTheme(newTheme);
-    document.documentElement.classList.remove("dark", "light");
-    document.documentElement.classList.add(newTheme);
+    setTheme(prev => prev === "dark" ? "light" : "dark");
   };
 
   const scrollToCalculator = () => {
@@ -45,7 +61,11 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col relative">
+      <ProgressIndicator />
+      <FloatingParticles />
+      <ScrollToTop />
+      
       {/* Header */}
       <motion.header 
         initial={{ y: -100 }}
@@ -69,24 +89,33 @@ const Index = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-6">
-            <button 
-              onClick={() => scrollToSection('services')}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              {lang === "ru" ? "Услуги" : lang === "ro" ? "Servicii" : "Services"}
-            </button>
-            <button 
-              onClick={() => scrollToSection('cases')}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              {lang === "ru" ? "Кейсы" : lang === "ro" ? "Cazuri" : "Cases"}
-            </button>
-            <button 
-              onClick={scrollToCalculator}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              {lang === "ru" ? "Калькулятор" : lang === "ro" ? "Calculator" : "Calculator"}
-            </button>
+            <Magnetic strength={0.2}>
+              <button 
+                onClick={() => scrollToSection('services')}
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors relative group"
+              >
+                {lang === "ru" ? "Услуги" : lang === "ro" ? "Servicii" : "Services"}
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full" />
+              </button>
+            </Magnetic>
+            <Magnetic strength={0.2}>
+              <button 
+                onClick={() => scrollToSection('cases')}
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors relative group"
+              >
+                {lang === "ru" ? "Кейсы" : lang === "ro" ? "Cazuri" : "Cases"}
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full" />
+              </button>
+            </Magnetic>
+            <Magnetic strength={0.2}>
+              <button 
+                onClick={scrollToCalculator}
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors relative group"
+              >
+                {lang === "ru" ? "Калькулятор" : lang === "ro" ? "Calculator" : "Calculator"}
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full" />
+              </button>
+            </Magnetic>
           </nav>
 
           <div className="flex items-center gap-2 md:gap-3">

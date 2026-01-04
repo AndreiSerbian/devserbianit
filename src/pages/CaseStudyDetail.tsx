@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { motion, AnimatePresence } from "framer-motion";
 import { 
   ArrowLeft, 
   ExternalLink, 
@@ -20,21 +21,25 @@ const CaseStudyDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [lang, setLang] = useState("ru");
-  const [theme, setTheme] = useState("dark");
+  const [theme, setTheme] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('theme');
+      if (saved) return saved;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    return 'dark';
+  });
   
   const caseStudy = id ? getCaseStudyById(id) : undefined;
 
   useEffect(() => {
-    // Check for stored preferences
-    const storedTheme = document.documentElement.classList.contains("light") ? "light" : "dark";
-    setTheme(storedTheme);
-  }, []);
+    document.documentElement.classList.remove('dark', 'light');
+    document.documentElement.classList.add(theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
 
   const toggleTheme = () => {
-    const newTheme = theme === "dark" ? "light" : "dark";
-    setTheme(newTheme);
-    document.documentElement.classList.remove("dark", "light");
-    document.documentElement.classList.add(newTheme);
+    setTheme(prev => prev === "dark" ? "light" : "dark");
   };
 
   if (!caseStudy) {
@@ -79,9 +84,21 @@ const CaseStudyDetail = () => {
                 <SelectItem value="ro">RO</SelectItem>
               </SelectContent>
             </Select>
-            <Button variant="ghost" size="icon" onClick={toggleTheme} className="rounded-full h-8 w-8 md:h-10 md:w-10">
-              {theme === "dark" ? <Sun className="h-4 w-4 md:h-5 md:w-5" /> : <Moon className="h-4 w-4 md:h-5 md:w-5" />}
-            </Button>
+            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
+              <Button variant="ghost" size="icon" onClick={toggleTheme} className="rounded-full h-8 w-8 md:h-10 md:w-10">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={theme}
+                    initial={{ rotate: -90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: 90, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    {theme === "dark" ? <Sun className="h-4 w-4 md:h-5 md:w-5" /> : <Moon className="h-4 w-4 md:h-5 md:w-5" />}
+                  </motion.div>
+                </AnimatePresence>
+              </Button>
+            </motion.div>
           </div>
         </div>
       </header>
