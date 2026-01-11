@@ -88,16 +88,17 @@ export const Calculator = ({ translations: t, lang, theme }: CalculatorProps) =>
         format: 'a4',
       });
       
-      const fontUrl = 'https://cdn.jsdelivr.net/npm/@fontsource/roboto@5.0.8/files/roboto-cyrillic-400-normal.woff';
+      // Use Noto Sans - has proper TTF format with full Cyrillic support
+      const fontUrl = 'https://cdn.jsdelivr.net/gh/nicokempe/google-fonts-subset@main/NotoSans-Regular.ttf';
       const fontResponse = await fetch(fontUrl);
       const fontBuffer = await fontResponse.arrayBuffer();
       const fontBase64 = btoa(
         new Uint8Array(fontBuffer).reduce((data, byte) => data + String.fromCharCode(byte), '')
       );
       
-      pdf.addFileToVFS('Roboto-Regular.ttf', fontBase64);
-      pdf.addFont('Roboto-Regular.ttf', 'Roboto', 'normal');
-      pdf.setFont('Roboto');
+      pdf.addFileToVFS('NotoSans-Regular.ttf', fontBase64);
+      pdf.addFont('NotoSans-Regular.ttf', 'NotoSans', 'normal');
+      pdf.setFont('NotoSans');
       
       const pageWidth = 210;
       const margin = 20;
