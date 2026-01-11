@@ -88,17 +88,41 @@ export const Calculator = ({ translations: t, lang, theme }: CalculatorProps) =>
         format: 'a4',
       });
       
-      // Use Noto Sans - has proper TTF format with full Cyrillic support
-      const fontUrl = 'https://cdn.jsdelivr.net/gh/nicokempe/google-fonts-subset@main/NotoSans-Regular.ttf';
-      const fontResponse = await fetch(fontUrl);
-      const fontBuffer = await fontResponse.arrayBuffer();
-      const fontBase64 = btoa(
-        new Uint8Array(fontBuffer).reduce((data, byte) => data + String.fromCharCode(byte), '')
-      );
+      // Use PT Sans from raw GitHub - verified TTF with full Cyrillic support
+      const fontUrl = 'https://raw.githubusercontent.com/nicokempe/google-fonts-subset/main/PTSans-Regular.ttf';
       
-      pdf.addFileToVFS('NotoSans-Regular.ttf', fontBase64);
-      pdf.addFont('NotoSans-Regular.ttf', 'NotoSans', 'normal');
-      pdf.setFont('NotoSans');
+      try {
+        const fontResponse = await fetch(fontUrl);
+        if (!fontResponse.ok) {
+          throw new Error('Font fetch failed');
+        }
+        const fontBuffer = await fontResponse.arrayBuffer();
+        const fontBytes = new Uint8Array(fontBuffer);
+        let fontBase64 = '';
+        for (let i = 0; i < fontBytes.length; i++) {
+          fontBase64 += String.fromCharCode(fontBytes[i]);
+        }
+        fontBase64 = btoa(fontBase64);
+        
+        pdf.addFileToVFS('PTSans-Regular.ttf', fontBase64);
+        pdf.addFont('PTSans-Regular.ttf', 'PTSans', 'normal');
+        pdf.setFont('PTSans');
+      } catch (fontError) {
+        // Fallback: try Roboto from Google Fonts CDN
+        const fallbackUrl = 'https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Me5Q.ttf';
+        const fallbackResponse = await fetch(fallbackUrl);
+        const fallbackBuffer = await fallbackResponse.arrayBuffer();
+        const fallbackBytes = new Uint8Array(fallbackBuffer);
+        let fallbackBase64 = '';
+        for (let i = 0; i < fallbackBytes.length; i++) {
+          fallbackBase64 += String.fromCharCode(fallbackBytes[i]);
+        }
+        fallbackBase64 = btoa(fallbackBase64);
+        
+        pdf.addFileToVFS('Roboto-Regular.ttf', fallbackBase64);
+        pdf.addFont('Roboto-Regular.ttf', 'Roboto', 'normal');
+        pdf.setFont('Roboto');
+      }
       
       const pageWidth = 210;
       const margin = 20;
