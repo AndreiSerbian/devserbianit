@@ -1,5 +1,4 @@
 import smtPremiumBox from "@/assets/cases/smt-premium-box.png";
-import foodsaur from "@/assets/cases/foodsaur.png";
 import vmesteSilnee from "@/assets/cases/vmeste-silnee.png";
 import unitEcon from "@/assets/cases/unit-econ.png";
 
@@ -105,57 +104,6 @@ export const caseStudiesData: CaseStudyDetail[] = [
       ru: "Разработали кастомную систему карточек товаров с динамическими вариациями, интегрировали email-уведомления и создали удобный интерфейс для B2B-клиентов.",
       en: "Developed a custom product card system with dynamic variations, integrated email notifications, and created a user-friendly interface for B2B clients.",
       ro: "Am dezvoltat un sistem personalizat de carduri de produse cu variații dinamice, am integrat notificări email și am creat o interfață prietenoasă pentru clienții B2B."
-    }
-  },
-  {
-    id: "foodsaur",
-    name: {
-      ru: "FoodSaur",
-      en: "FoodSaur",
-      ro: "FoodSaur"
-    },
-    category: {
-      ru: "Маркетплейс",
-      en: "Marketplace",
-      ro: "Marketplace"
-    },
-    desc: {
-      ru: "Маркетплейс для локальных производителей с админ-панелью и ролями.",
-      en: "Marketplace for local producers with admin panel and roles.",
-      ro: "Marketplace pentru producători locali cu panou admin și roluri."
-    },
-    fullDesc: {
-      ru: "Маркетплейс скидок для локальных ресторанов и производителей еды. Платформа объединяет заведения, предлагающие скидки на блюда, с покупателями, ищущими выгодные предложения. Включает полноценную админ-панель с разграничением ролей.",
-      en: "Discount marketplace for local restaurants and food producers. The platform connects establishments offering discounts on dishes with buyers looking for great deals. Includes a full-featured admin panel with role separation.",
-      ro: "Marketplace de reduceri pentru restaurante și producători locali de mâncare. Platforma conectează localurile care oferă reduceri la preparate cu cumpărătorii care caută oferte avantajoase. Include un panou de administrare complet cu separarea rolurilor."
-    },
-    features: {
-      ru: ["Каталоги и расписания", "Админ-панель с RLS", "Telegram уведомления", "Поиск по категориям", "Система ролей"],
-      en: ["Catalogs & schedules", "Admin with RLS", "Telegram notifications", "Category search", "Role system"],
-      ro: ["Cataloage și programări", "Admin cu RLS", "Notificări Telegram", "Căutare pe categorii", "Sistem de roluri"]
-    },
-    result: {
-      ru: "Меньше ручных ошибок, быстрее обработка",
-      en: "Fewer errors, faster processing",
-      ro: "Mai puține erori, procesare mai rapidă"
-    },
-    link: "https://foodsaur.netlify.app/",
-    image: foodsaur,
-    technologies: ["React", "TypeScript", "Supabase", "RLS", "Telegram API"],
-    duration: {
-      ru: "4 недели",
-      en: "4 weeks",
-      ro: "4 săptămâni"
-    },
-    challenge: {
-      ru: "Необходимо было создать платформу, которая позволяла бы ресторанам самостоятельно управлять своими предложениями, при этом обеспечивая безопасность данных и разграничение доступа между пользователями.",
-      en: "It was necessary to create a platform that would allow restaurants to independently manage their offers while ensuring data security and access control between users.",
-      ro: "A fost necesar să creăm o platformă care să permită restaurantelor să-și gestioneze independent ofertele, asigurând în același timp securitatea datelor și controlul accesului între utilizatori."
-    },
-    solution: {
-      ru: "Реализовали систему на базе Supabase с Row Level Security, создали интуитивную админ-панель для ресторанов и интегрировали Telegram-уведомления для мгновенной связи с клиентами.",
-      en: "Implemented a Supabase-based system with Row Level Security, created an intuitive admin panel for restaurants, and integrated Telegram notifications for instant customer communication.",
-      ro: "Am implementat un sistem bazat pe Supabase cu Row Level Security, am creat un panou de administrare intuitiv pentru restaurante și am integrat notificări Telegram pentru comunicare instantanee cu clienții."
     }
   },
   {

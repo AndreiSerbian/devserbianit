@@ -203,7 +203,7 @@ const Index = () => {
           <Services title={t.services.title} items={t.services.items} />
         </div>
         
-        <ClientIntakeForm translations={t} />
+        <ClientIntakeForm translations={t} lang={lang} />
         
         <Calculator translations={t.calculator} lang={lang} theme={theme} />
         
@@ -229,7 +229,7 @@ const Index = () => {
                   <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center">
                     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="w-full sm:w-auto">
                       <Button size="lg" variant="outline" asChild className="w-full sm:w-auto text-sm">
-                        <a href="mailto:contact@serbian-it.dev">
+                        <a href="mailto:serbiyan012@gmail.com">
                           <Mail className="mr-2 h-4 w-4" />
                           Email
                         </a>
@@ -237,7 +237,7 @@ const Index = () => {
                     </motion.div>
                     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="w-full sm:w-auto">
                       <Button size="lg" asChild className="w-full sm:w-auto text-sm">
-                        <a href="https://t.me/your_username" target="_blank" rel="noopener noreferrer">
+                        <a href="https://t.me/public_serb" target="_blank" rel="noopener noreferrer">
                           <Phone className="mr-2 h-4 w-4" />
                           Telegram
                         </a>

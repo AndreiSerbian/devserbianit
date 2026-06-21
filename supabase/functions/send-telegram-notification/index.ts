@@ -7,7 +7,10 @@ const corsHeaders = {
 
 interface FormData {
   projectType: string;
+  projectTypeLabel?: string;
   answers: Record<string, string>;
+  questions?: string[];
+  contactLabel?: string;
   lang: string;
 }
 
@@ -17,7 +20,7 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { projectType, answers, lang }: FormData = await req.json();
+    const { projectType, projectTypeLabel, answers, questions, contactLabel, lang }: FormData = await req.json();
     
     const botToken = Deno.env.get("TELEGRAM_BOT_TOKEN");
     const chatId = Deno.env.get("TELEGRAM_CHAT_ID");
@@ -28,28 +31,33 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     // Format the message
-    const projectTypeLabels: Record<string, string> = {
-      ecommerce: "🛒 E-commerce магазин",
-      telegram: "🤖 Telegram бот",
-      crm: "📊 CRM / Админ-панель",
-      integration: "🔗 Кастомная интеграция",
+    const fallbackLabels: Record<string, string> = {
+      ecommerce: "E-commerce",
+      telegram: "Telegram",
+      crm: "CRM",
     };
+    const typeLabel = projectTypeLabel || fallbackLabels[projectType] || projectType;
 
     let message = `📋 *Новая заявка*\n\n`;
-    message += `*Тип проекта:* ${projectTypeLabels[projectType] || projectType}\n\n`;
+    message += `*Тип проекта:* ${escapeMarkdown(typeLabel)}\n\n`;
     message += `*Ответы на вопросы:*\n`;
 
-    // Add all answers
+    // Add answers to questions in order
     Object.entries(answers).forEach(([key, value]) => {
+      if (key === "contact") return;
       if (value && value.trim()) {
-        if (key === "contact") {
-          message += `\n📞 *Контактные данные:*\n${escapeMarkdown(value)}\n`;
-        } else {
-          const questionNum = key.replace("q", "");
-          message += `\n*${parseInt(questionNum) + 1}.* ${escapeMarkdown(value)}\n`;
-        }
+        const idx = parseInt(key.replace("q", ""));
+        const questionText = questions && questions[idx]
+          ? `_${escapeMarkdown(questions[idx])}_\n`
+          : "";
+        message += `\n*${idx + 1}.* ${questionText}${escapeMarkdown(value)}\n`;
       }
     });
+
+    if (answers.contact && answers.contact.trim()) {
+      const cLabel = contactLabel || "Контактные данные";
+      message += `\n📞 *${escapeMarkdown(cLabel)}*\n${escapeMarkdown(answers.contact)}\n`;
+    }
 
     message += `\n---\n_Serbian IT Development_`;
 
