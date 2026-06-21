@@ -122,7 +122,7 @@ export const ClientIntakeForm = ({ translations, lang = "ru" }: ClientIntakeForm
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <Card className="border-primary/20 bg-card/50 backdrop-blur-sm">
+            <Card className="border-0 bg-card/50 backdrop-blur-sm">
               <CardHeader className="pb-4">
                 <CardTitle className="text-base md:text-lg lg:text-xl mb-4">
                   {translations.form.selectType}

@@ -288,7 +288,9 @@ Serbian IT Development
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {Object.entries(t.types).map(([key, label]) => (
+                      {Object.entries(t.types)
+                        .filter(([key]) => key !== "integration")
+                        .map(([key, label]) => (
                         <SelectItem key={key} value={key} className="text-xs sm:text-sm md:text-base">{label}</SelectItem>
                       ))}
                     </SelectContent>
