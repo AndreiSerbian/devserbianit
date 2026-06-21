@@ -126,7 +126,7 @@ export const Hero = ({ title, subtitle, cta, onCtaClick }: HeroProps) => {
                 asChild 
                 className="w-full sm:w-auto shadow-lg hover:shadow-xl transition-all duration-300 text-sm md:text-base px-6 md:px-8"
               >
-                <a href="https://t.me/your_username" target="_blank" rel="noopener noreferrer">
+                <a href="https://t.me/public_serb" target="_blank" rel="noopener noreferrer">
                   <MessageCircle className="mr-2 h-4 w-4" />
                   Telegram
                 </a>
