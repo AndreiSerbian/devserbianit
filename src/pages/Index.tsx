@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Sun, Moon, Mail, Phone, Menu, X } from "lucide-react";
+import { Sun, Moon, Phone, Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { translations } from "@/data/translations";
 import { Hero } from "@/components/Hero";
@@ -51,13 +51,17 @@ const Index = () => {
   };
 
   const scrollToCalculator = () => {
-    document.getElementById('calculator')?.scrollIntoView({ behavior: 'smooth' });
     setMobileMenuOpen(false);
+    setTimeout(() => {
+      document.getElementById('calculator')?.scrollIntoView({ behavior: 'smooth' });
+    }, 250);
   };
 
   const scrollToSection = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
     setMobileMenuOpen(false);
+    setTimeout(() => {
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    }, 250);
   };
 
   return (
@@ -227,14 +231,6 @@ const Index = () => {
                 <CardContent className="space-y-4 md:space-y-6">
                   <p className="text-xs sm:text-sm md:text-base text-muted-foreground">{t.contact.location}</p>
                   <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center">
-                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="w-full sm:w-auto">
-                      <Button size="lg" variant="outline" asChild className="w-full sm:w-auto text-sm">
-                        <a href="mailto:serbiyan012@gmail.com">
-                          <Mail className="mr-2 h-4 w-4" />
-                          Email
-                        </a>
-                      </Button>
-                    </motion.div>
                     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="w-full sm:w-auto">
                       <Button size="lg" asChild className="w-full sm:w-auto text-sm">
                         <a href="https://t.me/public_serb" target="_blank" rel="noopener noreferrer">
