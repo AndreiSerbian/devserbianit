@@ -123,11 +123,15 @@ function escapeHtml(text: string): string {
     .replace(/>/g, "&gt;");
 }
 
-function encodeBase64Url(str: string): string {
+function encodeBase64(str: string): string {
   const bytes = new TextEncoder().encode(str);
   let binary = "";
   bytes.forEach((b) => (binary += String.fromCharCode(b)));
-  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  return btoa(binary);
+}
+
+function encodeBase64Url(str: string): string {
+  return encodeBase64(str).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
 
 async function sendEmailNotification(
@@ -166,7 +170,7 @@ async function sendEmailNotification(
   html += `<hr/><p><em>Serbian IT Development</em></p>`;
 
   const subject = `Новая заявка — ${typeLabel}`;
-  const encodedSubject = `=?UTF-8?B?${encodeBase64Url(subject).replace(/-/g, "+").replace(/_/g, "/")}?=`;
+  const encodedSubject = `=?UTF-8?B?${encodeBase64(subject)}?=`;
 
   const rawMessage = [
     `To: ${EMAIL_RECIPIENT}`,
