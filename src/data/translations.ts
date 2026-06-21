@@ -14,7 +14,6 @@ export const translations = {
         crm: "CRM/ERP система",
         admin: "Админ-панель",
         telegram: "Telegram-бот",
-        integration: "Кастомная интеграция"
       },
       sizes: {
         small: "Малый",
@@ -146,7 +145,6 @@ export const translations = {
         crm: "CRM/ERP System",
         admin: "Admin Panel",
         telegram: "Telegram Bot",
-        integration: "Custom Integration"
       },
       sizes: {
         small: "Small",
@@ -278,7 +276,6 @@ export const translations = {
         crm: "Sistem CRM/ERP",
         admin: "Panou de administrare",
         telegram: "Bot Telegram",
-        integration: "Integrare personalizată"
       },
       sizes: {
         small: "Mic",
