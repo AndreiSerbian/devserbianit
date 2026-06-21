@@ -203,7 +203,7 @@ const Index = () => {
           <Services title={t.services.title} items={t.services.items} />
         </div>
         
-        <ClientIntakeForm translations={t} />
+        <ClientIntakeForm translations={t} lang={lang} />
         
         <Calculator translations={t.calculator} lang={lang} theme={theme} />
         
