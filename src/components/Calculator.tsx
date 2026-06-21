@@ -37,7 +37,6 @@ const projectHours = {
   crm: { small: 70, medium: 140, large: 260 },
   admin: { small: 50, medium: 100, large: 180 },
   telegram: { small: 30, medium: 60, large: 100 },
-  integration: { small: 40, medium: 90, large: 160 },
 };
 
 const optionHours = {
@@ -288,9 +287,7 @@ Serbian IT Development
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {Object.entries(t.types)
-                        .filter(([key]) => key !== "integration")
-                        .map(([key, label]) => (
+                      {Object.entries(t.types).map(([key, label]) => (
                         <SelectItem key={key} value={key} className="text-xs sm:text-sm md:text-base">{label}</SelectItem>
                       ))}
                     </SelectContent>
