@@ -8,13 +8,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { motion, AnimatePresence } from "framer-motion";
 import { ConfettiEffect, SuccessCheckmark } from "./ConfettiEffect";
 
-type ProjectType = "ecommerce" | "telegram" | "crm" | "integration";
+type ProjectType = "ecommerce" | "telegram" | "crm";
 
 interface ClientIntakeFormProps {
   translations: any;
+  lang?: string;
 }
 
-export const ClientIntakeForm = ({ translations }: ClientIntakeFormProps) => {
+export const ClientIntakeForm = ({ translations, lang = "ru" }: ClientIntakeFormProps) => {
   const [projectType, setProjectType] = useState<ProjectType>("ecommerce");
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const { toast } = useToast();
@@ -37,12 +38,17 @@ export const ClientIntakeForm = ({ translations }: ClientIntakeFormProps) => {
 
     setIsSubmitting(true);
 
+    const questionsList: string[] = translations.form.questions[projectType] || [];
+
     try {
       const { data, error } = await supabase.functions.invoke("send-telegram-notification", {
         body: {
           projectType,
+          projectTypeLabel: translations.form.types[projectType],
           answers,
-          lang: "ru",
+          questions: questionsList,
+          contactLabel: translations.form.contactLabel,
+          lang,
         },
       });
 
@@ -82,7 +88,6 @@ export const ClientIntakeForm = ({ translations }: ClientIntakeFormProps) => {
     { id: "ecommerce", label: translations.form.types.ecommerce },
     { id: "telegram", label: translations.form.types.telegram },
     { id: "crm", label: translations.form.types.crm },
-    { id: "integration", label: translations.form.types.integration },
   ];
 
   const questions = translations.form.questions[projectType];
