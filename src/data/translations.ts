@@ -357,65 +357,34 @@ export const translations = {
       types: {
         ecommerce: "E-commerce",
         telegram: "Bot Telegram",
-        crm: "CRM/Panou Admin",
-        integration: "Integrare"
+        crm: "CRM/Panou Admin"
       },
       questions: {
         ecommerce: [
           "Care este numele brandului sau companiei tale și cu ce te ocupi?",
           "Ai deja un site sau pagini pe rețele sociale? (dacă da, oferă linkurile)",
-          "Care este obiectivul principal al creării site-ului? (vânzări, catalog, imagine, comenzi, etc.)",
-          "Ce produse sau servicii vrei să vinzi prin site?",
-          "Au produsele tale variante — de exemplu, culori, mărimi, ambalaje?",
-          "Câte produse vrei să listezi la lansare?",
-          "Cum vrei să funcționeze procesul de comandă? (coș, confirmare email, bot Telegram, etc.)",
-          "Ce metode de plată și livrare planifici să folosești?",
-          "Vrei un panou de administrare pentru gestionarea produselor și comenzilor?",
-          "Ai exemple de site-uri al căror design îți place?",
+          "Care este obiectivul principal al site-ului și ce produse sau servicii planifici să vinzi?",
+          "Ce particularități tehnice are nevoie magazinul? (coș, plăți, livrare, variante de produse, panou de administrare, etc.)",
+          "Există exemple de site-uri sau referințe la care ar trebui să ne uităm?",
           "Ai nevoie ca site-ul să fie adaptat pentru mai multe limbi?",
           "Până la ce dată vrei să lansezi proiectul și care este bugetul aproximativ?"
         ],
         telegram: [
           "Care este numele afacerii sau proiectului tău?",
-          "Ce sarcină principală trebuie să rezolve botul? (notificări, preluare comenzi, suport, etc.)",
-          "Cu ce sisteme trebuie să se integreze botul? (site, CRM, bază de date, etc.)",
-          "Ai nevoie de autorizare și identificare a utilizatorilor?",
-          "Ce comenzi și funcții trebuie să execute botul?",
-          "Ai nevoie de o bază de date pentru stocarea informațiilor despre utilizatori?",
-          "Planifici să accepți plăți prin bot?",
-          "Câți utilizatori aștepți în primele luni de funcționare?",
-          "Ai nevoie de un panou web pentru gestionarea botului și vizualizarea statisticilor?",
-          "Ai exemple de boți a căror funcționalitate îți place?",
+          "Ce sarcină principală trebuie să rezolve botul și ce funcții/comenzi trebuie să execute?",
+          "Ce particularități tehnice sunt necesare? (integrări cu site/CRM, autorizare, bază de date, plăți, panou web)",
+          "Există referințe sau materiale care ne-ar ajuta să construim botul?",
           "Ai nevoie de suport pentru mai multe limbi?",
           "Până când trebuie lansat botul și care este bugetul?"
         ],
         crm: [
           "Care este numele companiei și în ce domeniu lucrezi?",
-          "Ce procese de business trebuie automatizate? (vânzări, depozit, documente, etc.)",
+          "Ce procese de business trebuie automatizate, ce date trebuie stocate și ce rapoarte/analize ai nevoie?",
           "Câți angajați vor lucra cu sistemul?",
-          "Ce roluri și niveluri de acces sunt necesare? (admin, manager, operator, etc.)",
-          "Ce date trebuie stocate și procesate? (clienți, comenzi, produse, finanțe, etc.)",
           "Ai nevoie de integrare cu sisteme existente? (1C, email, mesagerie, etc.)",
-          "Ce rapoarte și analize ai nevoie?",
-          "Ai nevoie de notificări? (email, Telegram, push)",
           "Există cerințe speciale de securitate a datelor?",
-          "Ai exemple de sisteme a căror interfață îți place?",
           "Ai nevoie de versiune mobilă sau aplicație?",
           "Data planificată de lansare și bugetul proiectului?"
-        ],
-        integration: [
-          "Care este numele companiei tale?",
-          "Ce sisteme sau servicii trebuie integrate? (specifică numele)",
-          "Care este obiectivul principal al integrării? (automatizare, sincronizare date, etc.)",
-          "Au aceste sisteme API sau trebuie dezvoltate conectori personalizați?",
-          "Ce date trebuie transferate între sisteme?",
-          "Cât de des trebuie să aibă loc sincronizarea? (timp real, orar, zilnic)",
-          "Ai nevoie de gestionarea erorilor și reîncercare automată?",
-          "Există cerințe de performanță? (volum date, viteză de procesare)",
-          "Ai nevoie de monitorizarea integrării și notificări despre erori?",
-          "Ai documentație API pentru sistemele existente?",
-          "Există exemple de integrări similare?",
-          "Termenul planificat de implementare și bugetul?"
         ]
       },
       answerPlaceholder: "Răspunsul tău...",
