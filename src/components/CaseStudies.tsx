@@ -6,20 +6,17 @@ import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 
 import smtPremiumBox from "@/assets/cases/smt-premium-box.png";
-import foodsaur from "@/assets/cases/foodsaur.png";
 import vmesteSilnee from "@/assets/cases/vmeste-silnee.png";
 import unitEcon from "@/assets/cases/unit-econ.png";
 
 const caseImages: Record<string, string> = {
   "smt-premium-box": smtPremiumBox,
-  "foodsaur": foodsaur,
   "vmeste-silnee": vmesteSilnee,
   "unit-econ": unitEcon,
 };
 
 const caseIds: Record<string, string> = {
   "smt-premium-box": "smt-premium-box",
-  "foodsaur": "foodsaur",
   "vmeste-silnee": "vmeste-silnee",
   "unit-econ": "unit-econ-strategist",
 };
