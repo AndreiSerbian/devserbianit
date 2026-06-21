@@ -61,14 +61,6 @@ export const translations = {
           image: "smt-premium-box"
         },
         {
-          name: "FoodSaur",
-          desc: "Маркетплейс для локальных производителей с админ-панелью и ролями.",
-          features: ["Каталоги и расписания", "Админ-панель с RLS", "Telegram уведомления"],
-          result: "Меньше ручных ошибок, быстрее обработка",
-          link: "https://foodsaur.netlify.app/",
-          image: "foodsaur"
-        },
-        {
           name: "Вместе сильнее",
           desc: "Сайт инклюзивного пространства для мам и детей в Молдове.",
           features: ["Календарь событий", "Формы волонтёров", "База ресурсов"],
@@ -235,14 +227,6 @@ export const translations = {
           image: "smt-premium-box"
         },
         {
-          name: "FoodSaur",
-          desc: "Marketplace for local producers with admin panel and roles.",
-          features: ["Catalogs & schedules", "Admin with RLS", "Telegram notifications"],
-          result: "Fewer errors, faster processing",
-          link: "https://foodsaur.netlify.app/",
-          image: "foodsaur"
-        },
-        {
           name: "Together Stronger",
           desc: "Website for inclusive space initiative in Moldova.",
           features: ["Events calendar", "Volunteer forms", "Resources base"],
@@ -407,14 +391,6 @@ export const translations = {
           result: "Reducerea timpului de procesare B2B",
           link: "https://giftboxopt.ru",
           image: "smt-premium-box"
-        },
-        {
-          name: "FoodSaur",
-          desc: "Marketplace pentru producători locali cu panou admin și roluri.",
-          features: ["Cataloage și programări", "Admin cu RLS", "Notificări Telegram"],
-          result: "Mai puține erori, procesare mai rapidă",
-          link: "https://foodsaur.netlify.app/",
-          image: "foodsaur"
         },
         {
           name: "Împreună mai puternici",
