@@ -222,65 +222,34 @@ export const translations = {
       types: {
         ecommerce: "E-commerce",
         telegram: "Telegram Bot",
-        crm: "CRM/Admin Panel",
-        integration: "Integration"
+        crm: "CRM/Admin Panel"
       },
       questions: {
         ecommerce: [
           "What is your brand or company name and what do you do?",
           "Do you already have a website or social media pages? (if yes, please provide links)",
-          "What is the main goal of creating the website? (sales, catalog, brand image, order convenience, etc.)",
-          "What products or services do you want to sell through the website?",
-          "Do your products have variants — for example, colors, sizes, packaging?",
-          "Approximately how many products do you want to list at launch?",
-          "How would you like the order process to work? (cart, email confirmation, Telegram bot, etc.)",
-          "What payment and delivery methods do you plan to use?",
-          "Would you like an admin panel to manage products and orders?",
-          "Do you have examples of websites whose design you like?",
+          "What is the main goal of the website and what products or services do you plan to sell?",
+          "What technical features does the store need? (cart, payments, delivery, product variants, admin panel, etc.)",
+          "Are there example websites or references we should look at?",
           "Do you need the site adapted for multiple languages (Russian, Romanian, English, etc.)?",
           "By what date do you want to launch the project and what is your approximate budget?"
         ],
         telegram: [
           "What is your business or project name?",
-          "What main task should the bot solve? (notifications, order taking, customer support, etc.)",
-          "What systems should the bot integrate with? (website, CRM, database, etc.)",
-          "Do you need user authorization and identification?",
-          "What commands and functions should the bot perform?",
-          "Do you need a database to store information about users and their actions?",
-          "Do you plan to accept payments through the bot?",
-          "How many users do you expect in the first months of operation?",
-          "Do you need a web admin panel to manage the bot and view statistics?",
-          "Are there examples of bots whose functionality you like?",
+          "What main task should the bot solve and what functions/commands should it perform?",
+          "What technical features are needed? (integrations with website/CRM, authorization, database, payments, web admin)",
+          "Are there references or materials that would help us build the bot?",
           "Do you need support for multiple languages?",
           "By what date do you need to launch the bot and what is your budget?"
         ],
         crm: [
           "What is your company name and what field do you work in?",
-          "What business processes need to be automated? (sales, warehouse, documents, tasks, etc.)",
+          "What business processes need to be automated, what data should be stored, and what reports/analytics do you need?",
           "How many employees will work with the system?",
-          "What roles and access levels are needed? (admin, manager, operator, etc.)",
-          "What data needs to be stored and processed? (clients, orders, products, finances, etc.)",
           "Do you need integration with existing systems? (1C, email, messengers, etc.)",
-          "What reports and analytics do you need?",
-          "Do you need notifications? (email, Telegram, push)",
           "Are there special data security requirements?",
-          "Are there examples of systems whose interface you like?",
           "Do you need a mobile version or app?",
           "Planned launch date and project budget?"
-        ],
-        integration: [
-          "What is your company name?",
-          "What systems or services need to be integrated? (specify names)",
-          "What is the main goal of the integration? (automation, data synchronization, etc.)",
-          "Do these systems have APIs or will custom connectors need to be developed?",
-          "What data should be transferred between systems?",
-          "How often should synchronization occur? (real-time, hourly, daily)",
-          "Do you need error handling and automatic retry on failures?",
-          "Are there performance requirements? (data volume, processing speed)",
-          "Do you need integration monitoring and error notifications?",
-          "Do you have API documentation for existing systems?",
-          "Are there examples of similar integrations?",
-          "Planned implementation timeline and budget?"
         ]
       },
       answerPlaceholder: "Your answer...",
