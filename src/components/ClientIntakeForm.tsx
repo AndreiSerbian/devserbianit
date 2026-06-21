@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { motion, AnimatePresence } from "framer-motion";
 import { ConfettiEffect, SuccessCheckmark } from "./ConfettiEffect";
+import { ShoppingBag, Send, LayoutGrid, Check } from "lucide-react";
 
 type ProjectType = "ecommerce" | "telegram" | "crm";
 
@@ -85,9 +86,9 @@ export const ClientIntakeForm = ({ translations, lang = "ru" }: ClientIntakeForm
   };
 
   const projectTypes = [
-    { id: "ecommerce", label: translations.form.types.ecommerce },
-    { id: "telegram", label: translations.form.types.telegram },
-    { id: "crm", label: translations.form.types.crm },
+    { id: "ecommerce", label: translations.form.types.ecommerce, Icon: ShoppingBag },
+    { id: "telegram", label: translations.form.types.telegram, Icon: Send },
+    { id: "crm", label: translations.form.types.crm, Icon: LayoutGrid },
   ];
 
   const questions = translations.form.questions[projectType];
@@ -126,22 +127,46 @@ export const ClientIntakeForm = ({ translations, lang = "ru" }: ClientIntakeForm
                 <CardTitle className="text-base md:text-lg lg:text-xl mb-4">
                   {translations.form.selectType}
                 </CardTitle>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 md:gap-3">
-                  {projectTypes.map((type) => (
-                    <motion.div
-                      key={type.id}
-                      whileHover={{ scale: 1.03 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      <Button
-                        variant={projectType === type.id ? "default" : "outline"}
+                <div className="flex flex-col gap-3">
+                  {projectTypes.map((type) => {
+                    const isActive = projectType === type.id;
+                    const Icon = type.Icon;
+                    return (
+                      <motion.button
+                        key={type.id}
+                        type="button"
                         onClick={() => setProjectType(type.id as ProjectType)}
-                        className="w-full text-xs md:text-sm h-auto py-2.5 md:py-3"
+                        whileHover={{ scale: 1.01 }}
+                        whileTap={{ scale: 0.99 }}
+                        aria-pressed={isActive}
+                        className={`relative flex items-center gap-4 w-full rounded-2xl border px-4 py-4 md:px-5 md:py-5 text-left transition-all duration-300 ${
+                          isActive
+                            ? "border-primary bg-primary/10 shadow-lg shadow-primary/15"
+                            : "border-border bg-card/40 hover:border-primary/50 hover:bg-card/70"
+                        }`}
                       >
-                        {type.label}
-                      </Button>
-                    </motion.div>
-                  ))}
+                        <span
+                          className={`flex h-11 w-11 md:h-12 md:w-12 shrink-0 items-center justify-center rounded-xl transition-colors ${
+                            isActive ? "bg-primary text-primary-foreground" : "bg-primary/10 text-primary"
+                          }`}
+                        >
+                          <Icon className="h-5 w-5 md:h-6 md:w-6" strokeWidth={2.25} />
+                        </span>
+                        <span className="flex-1 text-sm md:text-base font-semibold">
+                          {type.label}
+                        </span>
+                        <span
+                          className={`flex h-6 w-6 items-center justify-center rounded-full border transition-all ${
+                            isActive
+                              ? "border-primary bg-primary text-primary-foreground"
+                              : "border-border text-transparent"
+                          }`}
+                        >
+                          <Check className="h-4 w-4" strokeWidth={3} />
+                        </span>
+                      </motion.button>
+                    );
+                  })}
                 </div>
               </CardHeader>
 
