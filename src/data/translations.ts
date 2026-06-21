@@ -41,12 +41,9 @@ export const translations = {
     services: {
       title: "Что мы делаем",
       items: [
-        { title: "E-commerce решения", desc: "Каталоги, корзина, оплата, скидки — ориентир на конверсию." },
-        { title: "CRM / внутренние панели", desc: "Процессы, роли и доступы под вашу операционку." },
-        { title: "Админ-панели", desc: "Удобный контроль контента, заказов и команд." },
-        { title: "Telegram-боты", desc: "Оповещения, заявки и внешние интеграции." },
-        { title: "Интеграции с Supabase", desc: "Хранилище, роли, функции, email." },
-        { title: "Аудит и архитектура", desc: "Разбор решения и дорожная карта." }
+        { title: "E-commerce и сайты", desc: "Каталог, оплата, конверсия." },
+        { title: "CRM и админ-панели", desc: "Процессы, роли, контроль." },
+        { title: "Telegram-боты и интеграции", desc: "Заявки, оповещения, Supabase." }
       ]
     },
     cases: {
@@ -176,12 +173,9 @@ export const translations = {
     services: {
       title: "What we do",
       items: [
-        { title: "E-commerce solutions", desc: "Catalogs, cart, payments, discounts — focused on conversion." },
-        { title: "CRM / internal panels", desc: "Processes, roles, access aligned with operations." },
-        { title: "Admin panels", desc: "Clear control over content, orders, teams." },
-        { title: "Telegram bots", desc: "Notifications, requests, integrations." },
-        { title: "Supabase integrations", desc: "Storage, roles, functions, email." },
-        { title: "Audit & architecture", desc: "Assessment and roadmap." }
+        { title: "E-commerce & websites", desc: "Catalog, payments, conversion." },
+        { title: "CRM & admin panels", desc: "Processes, roles, control." },
+        { title: "Telegram bots & integrations", desc: "Requests, notifications, Supabase." }
       ]
     },
     cases: {
@@ -311,12 +305,9 @@ export const translations = {
     services: {
       title: "Ce facem",
       items: [
-        { title: "Soluții e-commerce", desc: "Cataloage, coș, plăți, reduceri — focus pe conversie." },
-        { title: "CRM / panouri interne", desc: "Procese, roluri și acces adaptat operațiunilor." },
-        { title: "Panouri de administrare", desc: "Control clar asupra conținutului, comenzilor, echipelor." },
-        { title: "Boți Telegram", desc: "Notificări, cereri și integrări." },
-        { title: "Integrări Supabase", desc: "Stocare, roluri, funcții, email." },
-        { title: "Audit și arhitectură", desc: "Evaluare și foaie de parcurs." }
+        { title: "E-commerce și site-uri", desc: "Catalog, plăți, conversie." },
+        { title: "CRM și panouri admin", desc: "Procese, roluri, control." },
+        { title: "Boți Telegram și integrări", desc: "Cereri, notificări, Supabase." }
       ]
     },
     cases: {
