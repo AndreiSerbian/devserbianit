@@ -1,4 +1,5 @@
 import { motion, useReducedMotion } from "framer-motion";
+import { ASMonogram } from "@/components/brand";
 
 interface HeroDiagramProps {
   labels: {
@@ -124,18 +125,9 @@ export const HeroDiagram = ({ labels }: HeroDiagramProps) => {
           stroke="hsl(var(--teal-bright))"
           strokeWidth="1.5"
         />
-        <text
-          x={coreCx}
-          y={coreCy + 5}
-          textAnchor="middle"
-          fill="hsl(var(--cream))"
-          fontSize="15"
-          fontWeight="600"
-          letterSpacing="3"
-          fontFamily="Oswald, system-ui, sans-serif"
-        >
-          SYSTEM
-        </text>
+        <g transform={`translate(${coreCx - 17}, ${coreCy - 17})`}>
+          <ASMonogram variant="micro" tone="light" size={34} decorative />
+        </g>
       </motion.g>
     </svg>
   );
