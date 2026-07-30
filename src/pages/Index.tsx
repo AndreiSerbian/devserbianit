@@ -1,140 +1,114 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Sun, Moon, Phone, Menu, X } from "lucide-react";
+import { Sun, Moon, Menu, X, Send, Mail, ArrowUpRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { translations } from "@/data/translations";
+import { brand, type Lang } from "@/data/translations";
+import { useLanguage } from "@/context/LanguageContext";
+import { Seo } from "@/components/Seo";
+import { Wordmark } from "@/components/brand/Monogram";
 import { Hero } from "@/components/Hero";
 import { Services } from "@/components/Services";
-import { ClientIntakeForm } from "@/components/ClientIntakeForm";
-import { Calculator } from "@/components/Calculator";
+import { Process } from "@/components/Process";
+import { ContactForm } from "@/components/ContactForm";
 import { CaseStudies } from "@/components/CaseStudies";
-import { FloatingParticles } from "@/components/FloatingParticles";
 import { ProgressIndicator } from "@/components/ProgressIndicator";
 import { ScrollToTop } from "@/components/ScrollToTop";
-import { Magnetic } from "@/components/Magnetic";
+import { trackEvent } from "@/lib/analytics";
 
 const Index = () => {
-  const [lang, setLang] = useState("ru");
-  const [theme, setTheme] = useState(() => {
-    // Check localStorage first, then system preference, default to dark
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('theme');
-      if (saved) return saved;
-      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    }
-    return 'dark';
-  });
+  const { lang, setLang, t } = useLanguage();
+  const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "dark");
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const t = translations[lang as keyof typeof translations];
-
-  // Apply theme on mount and changes
   useEffect(() => {
-    document.documentElement.classList.remove('dark', 'light');
+    document.documentElement.classList.remove("dark", "light");
     document.documentElement.classList.add(theme);
-    localStorage.setItem('theme', theme);
+    localStorage.setItem("theme", theme);
   }, [theme]);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    const onScroll = () => setIsScrolled(window.scrollY > 40);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
-
-  const toggleTheme = () => {
-    setTheme(prev => prev === "dark" ? "light" : "dark");
-  };
-
-  const scrollToCalculator = () => {
-    setMobileMenuOpen(false);
-    setTimeout(() => {
-      document.getElementById('calculator')?.scrollIntoView({ behavior: 'smooth' });
-    }, 250);
-  };
 
   const scrollToSection = (id: string) => {
     setMobileMenuOpen(false);
-    setTimeout(() => {
-      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
-    }, 250);
+    setTimeout(() => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" }), 250);
   };
 
+  const navItems = [
+    { id: "services", label: t.nav.services },
+    { id: "cases", label: t.nav.cases },
+    { id: "process", label: t.nav.process },
+    { id: "contact", label: t.nav.contact },
+  ];
+
   return (
-    <div className="min-h-screen flex flex-col relative">
+    <div className="min-h-screen flex flex-col">
+      <Seo
+        title={t.seo.title}
+        description={t.seo.description}
+        lang={lang}
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "ProfessionalService",
+          name: "Andrei Serbian — IT Solutions",
+          description: t.seo.description,
+          areaServed: ["MD", "EU"],
+          email: brand.email,
+          sameAs: [brand.telegram],
+        }}
+      />
       <ProgressIndicator />
-      <FloatingParticles />
       <ScrollToTop />
-      
-      {/* Header */}
-      <motion.header 
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.5 }}
-        className={`sticky top-0 z-50 w-full border-b transition-all duration-300 ${
-          isScrolled 
-            ? "border-border/60 bg-background/95 backdrop-blur-lg shadow-sm" 
-            : "border-transparent bg-background/80 backdrop-blur"
+
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:absolute focus:z-[60] focus:top-2 focus:left-2 focus:bg-primary focus:text-primary-foreground focus:px-4 focus:py-2"
+      >
+        Skip to content
+      </a>
+
+      <header
+        className={`sticky top-0 z-50 w-full border-b transition-colors duration-300 ${
+          isScrolled ? "border-border bg-background/95 backdrop-blur" : "border-border/60 bg-background"
         }`}
       >
-        <div className="container flex h-14 md:h-16 items-center justify-between px-4 sm:px-6">
-          <motion.div 
-            className="flex items-center gap-4 md:gap-8"
-            whileHover={{ scale: 1.02 }}
-          >
-            <span className="text-sm sm:text-base md:text-lg font-bold truncate max-w-[180px] sm:max-w-none">
-              Serbian IT Development
-            </span>
-          </motion.div>
+        <div className="container flex h-16 items-center justify-between gap-3 px-4 sm:px-6">
+          <Link to={`/${lang}`} className="min-w-0" aria-label="Andrei Serbian — IT Solutions">
+            <Wordmark descriptor={brand.descriptor} />
+          </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-6">
-            <Magnetic strength={0.2}>
-              <button 
-                onClick={() => scrollToSection('services')}
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors relative group"
+          <nav className="hidden lg:flex items-center gap-7" aria-label="Main">
+            {navItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => scrollToSection(item.id)}
+                className="text-xs uppercase tracking-[0.14em] text-muted-foreground hover:text-foreground transition-colors"
               >
-                {lang === "ru" ? "Услуги" : lang === "ro" ? "Servicii" : "Services"}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full" />
+                {item.label}
               </button>
-            </Magnetic>
-            <Magnetic strength={0.2}>
-              <button 
-                onClick={() => scrollToSection('cases')}
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors relative group"
-              >
-                {lang === "ru" ? "Кейсы" : lang === "ro" ? "Cazuri" : "Cases"}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full" />
-              </button>
-            </Magnetic>
-            <Magnetic strength={0.2}>
-              <button 
-                onClick={scrollToCalculator}
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors relative group"
-              >
-                {lang === "ru" ? "Калькулятор" : lang === "ro" ? "Calculator" : "Calculator"}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full" />
-              </button>
-            </Magnetic>
+            ))}
           </nav>
 
-          <div className="flex items-center gap-2 md:gap-3">
-            {/* Mobile Menu Button */}
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="md:hidden h-8 w-8"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          <div className="flex items-center gap-2">
+            <Button
+              size="sm"
+              className="hidden sm:inline-flex rounded-none font-display uppercase tracking-[0.08em]"
+              onClick={() => {
+                trackEvent("cta_nav_click", { locale: lang });
+                scrollToSection("contact-form");
+              }}
             >
-              {mobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+              {t.nav.cta}
             </Button>
 
-            <Select value={lang} onValueChange={setLang}>
-              <SelectTrigger className="w-[65px] sm:w-[80px] md:w-[100px] text-xs md:text-sm">
+            <Select value={lang} onValueChange={(v) => setLang(v as Lang)}>
+              <SelectTrigger className="w-[68px] h-9 text-xs rounded-none" aria-label="Language">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -143,114 +117,146 @@ const Index = () => {
                 <SelectItem value="ro">RO</SelectItem>
               </SelectContent>
             </Select>
-            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
-              <Button variant="ghost" size="icon" onClick={toggleTheme} className="rounded-full h-8 w-8 md:h-10 md:w-10">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={theme}
-                    initial={{ rotate: -90, opacity: 0 }}
-                    animate={{ rotate: 0, opacity: 1 }}
-                    exit={{ rotate: 90, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    {theme === "dark" ? <Sun className="h-4 w-4 md:h-5 md:w-5" /> : <Moon className="h-4 w-4 md:h-5 md:w-5" />}
-                  </motion.div>
-                </AnimatePresence>
-              </Button>
-            </motion.div>
+
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-9 w-9"
+              onClick={() => setTheme((p) => (p === "dark" ? "light" : "dark"))}
+              aria-label="Toggle theme"
+            >
+              {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </Button>
+
+            <Button
+              variant="ghost"
+              size="icon"
+              className="lg:hidden h-9 w-9"
+              onClick={() => setMobileMenuOpen((v) => !v)}
+              aria-label={t.nav.menu}
+              aria-expanded={mobileMenuOpen}
+            >
+              {mobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+            </Button>
           </div>
         </div>
 
-        {/* Mobile Menu */}
         <AnimatePresence>
           {mobileMenuOpen && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              className="md:hidden border-t border-border/40 bg-background/95 backdrop-blur-lg"
+              className="lg:hidden border-t border-border bg-background overflow-hidden"
             >
-              <nav className="container px-4 py-4 flex flex-col gap-3">
-                <button 
-                  onClick={() => scrollToSection('services')}
-                  className="text-left text-sm py-2 text-muted-foreground hover:text-foreground transition-colors"
+              <nav className="container px-4 py-4 flex flex-col" aria-label="Mobile">
+                {navItems.map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => scrollToSection(item.id)}
+                    className="text-left text-sm uppercase tracking-[0.14em] py-3 border-b border-border/60 text-muted-foreground hover:text-foreground"
+                  >
+                    {item.label}
+                  </button>
+                ))}
+                <Button
+                  className="mt-4 rounded-none font-display uppercase tracking-[0.08em]"
+                  onClick={() => scrollToSection("contact-form")}
                 >
-                  {lang === "ru" ? "Услуги" : lang === "ro" ? "Servicii" : "Services"}
-                </button>
-                <button 
-                  onClick={() => scrollToSection('cases')}
-                  className="text-left text-sm py-2 text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  {lang === "ru" ? "Кейсы" : lang === "ro" ? "Cazuri" : "Cases"}
-                </button>
-                <button 
-                  onClick={scrollToCalculator}
-                  className="text-left text-sm py-2 text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  {lang === "ru" ? "Калькулятор" : lang === "ro" ? "Calculator" : "Calculator"}
-                </button>
+                  {t.nav.cta}
+                </Button>
               </nav>
             </motion.div>
           )}
         </AnimatePresence>
-      </motion.header>
+      </header>
 
-      <main className="flex-1">
-        <Hero 
+      <main id="main" className="flex-1">
+        <Hero
           title={t.hero.title}
           subtitle={t.hero.subtitle}
           cta={t.hero.cta}
-          onCtaClick={scrollToCalculator}
+          ctaSecondary={t.hero.ctaSecondary}
+          specializations={t.hero.specializations}
+          diagramLabels={t.hero.diagram}
+          onCtaClick={() => {
+            trackEvent("cta_hero_click", { locale: lang });
+            scrollToSection("contact-form");
+          }}
+          onSecondaryClick={() => scrollToSection("cases")}
         />
-        
+
         <div id="services">
           <Services title={t.services.title} items={t.services.items} />
         </div>
-        
-        <ClientIntakeForm translations={t} lang={lang} />
-        
-        <Calculator translations={t.calculator} lang={lang} theme={theme} />
-        
+
         <div id="cases">
           <CaseStudies title={t.cases.title} items={t.cases.items} lang={lang} />
         </div>
-        
-        {/* Contact */}
-        <section className="py-16 md:py-24 bg-background">
+
+        <Process title={t.process.title} steps={t.process.steps} />
+
+        <ContactForm t={t.form} lang={lang} />
+
+        <section id="contact" className="py-16 md:py-24">
           <div className="container px-4 sm:px-6">
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-            >
-              <Card className="max-w-2xl mx-auto text-center border-primary/20 bg-card/50 backdrop-blur-sm">
-                <CardHeader className="pb-4">
-                  <CardTitle className="text-xl sm:text-2xl md:text-3xl lg:text-4xl">{t.contact.title}</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4 md:space-y-6">
-                  <p className="text-xs sm:text-sm md:text-base text-muted-foreground">{t.contact.location}</p>
-                  <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center">
-                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }} className="w-full sm:w-auto">
-                      <Button size="lg" asChild className="w-full sm:w-auto text-sm">
-                        <a href="https://t.me/public_serb" target="_blank" rel="noopener noreferrer">
-                          <Phone className="mr-2 h-4 w-4" />
-                          Telegram
-                        </a>
-                      </Button>
-                    </motion.div>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
+            <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight">
+              <span className="text-primary mr-3">05</span>
+              {t.contact.title}
+            </h2>
+            <p className="mt-4 text-sm md:text-base text-muted-foreground max-w-xl">{t.contact.subtitle}</p>
+
+            <div className="mt-8 grid sm:grid-cols-2 gap-px bg-border border border-border max-w-3xl">
+              <a
+                href={brand.telegram}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => trackEvent("telegram_click", { locale: lang })}
+                className="bg-card p-6 flex items-center justify-between gap-4 hover:bg-surface-raised transition-colors group"
+              >
+                <span className="flex items-center gap-4 min-w-0">
+                  <Send className="h-5 w-5 text-primary shrink-0" strokeWidth={1.5} />
+                  <span className="min-w-0">
+                    <span className="block text-xs uppercase tracking-[0.14em] text-muted-foreground">
+                      {t.contact.telegramLabel}
+                    </span>
+                    <span className="block font-medium truncate">{brand.telegramHandle}</span>
+                  </span>
+                </span>
+                <ArrowUpRight className="h-4 w-4 shrink-0 opacity-50 group-hover:opacity-100 transition-opacity" />
+              </a>
+
+              <a
+                href={`mailto:${brand.email}`}
+                onClick={() => trackEvent("email_click", { locale: lang })}
+                className="bg-card p-6 flex items-center justify-between gap-4 hover:bg-surface-raised transition-colors group"
+              >
+                <span className="flex items-center gap-4 min-w-0">
+                  <Mail className="h-5 w-5 text-primary shrink-0" strokeWidth={1.5} />
+                  <span className="min-w-0">
+                    <span className="block text-xs uppercase tracking-[0.14em] text-muted-foreground">
+                      {t.contact.emailLabel}
+                    </span>
+                    <span className="block font-medium truncate">{brand.email}</span>
+                  </span>
+                </span>
+                <ArrowUpRight className="h-4 w-4 shrink-0 opacity-50 group-hover:opacity-100 transition-opacity" />
+              </a>
+            </div>
+
+            <p className="mt-6 text-xs uppercase tracking-[0.18em] text-muted-foreground">
+              {t.contact.location}
+            </p>
           </div>
         </section>
       </main>
 
-      {/* Footer */}
-      <footer className="py-6 md:py-8 border-t border-border/40 bg-secondary/20">
-        <div className="container px-4 sm:px-6 text-center text-xs md:text-sm text-muted-foreground">
-          <p>&copy; 2024 Serbian IT Development. All rights reserved.</p>
+      <footer className="border-t border-border py-8">
+        <div className="container px-4 sm:px-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <Wordmark descriptor={brand.descriptor} />
+          <p className="text-xs text-muted-foreground">
+            © {new Date().getFullYear()} {brand.name}. {t.footer.rights}
+          </p>
         </div>
       </footer>
     </div>
