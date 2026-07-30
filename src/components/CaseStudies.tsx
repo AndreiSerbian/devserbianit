@@ -22,17 +22,17 @@ const caseIds: Record<string, string> = {
 };
 
 interface CaseStudy {
-  name: string;
-  desc: string;
-  features: string[];
-  result: string;
-  link?: string;
-  image?: string;
+  readonly name: string;
+  readonly desc: string;
+  readonly features: readonly string[];
+  readonly result: string;
+  readonly link?: string;
+  readonly image?: string;
 }
 
 interface CaseStudiesProps {
   title: string;
-  items: CaseStudy[];
+  items: readonly CaseStudy[];
   lang?: string;
 }
 
@@ -67,15 +67,16 @@ export const CaseStudies = ({ title, items, lang = "ru" }: CaseStudiesProps) => 
   };
 
   return (
-    <section className="py-16 md:py-24 bg-secondary/20">
+    <section className="py-16 md:py-24 border-b border-border bg-surface">
       <div className="container px-4 sm:px-6">
         <motion.h2 
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-10 md:mb-14"
+          className="font-display text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight mb-10 md:mb-14"
         >
+          <span className="text-primary mr-3">02</span>
           {title}
         </motion.h2>
         <motion.div 
