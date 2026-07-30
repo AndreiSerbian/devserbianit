@@ -7,76 +7,85 @@ All colors MUST be HSL.
 */
 
 @layer base {
+  /* Light theme — cream paper, graphite ink */
   :root {
-    --background: 220 20% 97%;
-    --foreground: 220 15% 15%;
+    --background: 40 30% 96%;
+    --foreground: 210 14% 12%;
 
     --card: 0 0% 100%;
-    --card-foreground: 220 15% 15%;
+    --card-foreground: 210 14% 12%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 15% 15%;
+    --popover-foreground: 210 14% 12%;
 
-    --primary: 197 92% 45%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 182 58% 28%;
+    --primary-foreground: 40 40% 97%;
 
-    --secondary: 220 15% 92%;
-    --secondary-foreground: 220 15% 15%;
+    --secondary: 40 18% 90%;
+    --secondary-foreground: 210 14% 12%;
 
-    --muted: 220 15% 92%;
-    --muted-foreground: 220 10% 45%;
+    --muted: 40 18% 90%;
+    --muted-foreground: 210 8% 40%;
 
-    --accent: 197 92% 45%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 74 62% 38%;
+    --accent-foreground: 40 40% 97%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 6 72% 46%;
+    --destructive-foreground: 40 40% 97%;
 
-    --border: 220 15% 88%;
-    --input: 220 15% 88%;
-    --ring: 197 92% 45%;
+    --border: 40 14% 84%;
+    --input: 40 14% 84%;
+    --ring: 182 58% 28%;
 
-    --radius: 1rem;
+    --radius: 0.375rem;
 
-    --gradient-hero-start: 220 30% 10%;
-    --gradient-hero-end: 197 60% 20%;
-    --gradient-accent-start: 197 92% 45%;
-    --gradient-accent-end: 220 80% 55%;
+    /* Brand scale */
+    --teal-deep: 186 62% 18%;
+    --teal-bright: 178 64% 44%;
+    --lime: 74 78% 48%;
+    --cream: 40 34% 94%;
+    --graphite: 210 14% 10%;
+    --surface: 40 22% 92%;
+    --surface-raised: 0 0% 100%;
   }
 
+  /* Dark theme — deep graphite, cream text (default) */
   .dark {
-    --background: 220 25% 8%;
-    --foreground: 220 15% 95%;
+    --background: 210 14% 8%;
+    --foreground: 40 34% 94%;
 
-    --card: 220 25% 12%;
-    --card-foreground: 220 15% 95%;
+    --card: 210 13% 11%;
+    --card-foreground: 40 34% 94%;
 
-    --popover: 220 25% 12%;
-    --popover-foreground: 220 15% 95%;
+    --popover: 210 13% 11%;
+    --popover-foreground: 40 34% 94%;
 
-    --primary: 197 92% 55%;
-    --primary-foreground: 220 25% 8%;
+    --primary: 178 64% 44%;
+    --primary-foreground: 210 20% 7%;
 
-    --secondary: 220 20% 18%;
-    --secondary-foreground: 220 15% 95%;
+    --secondary: 210 12% 15%;
+    --secondary-foreground: 40 34% 94%;
 
-    --muted: 220 20% 18%;
-    --muted-foreground: 220 15% 65%;
+    --muted: 210 12% 15%;
+    --muted-foreground: 40 10% 66%;
 
-    --accent: 197 92% 55%;
-    --accent-foreground: 220 25% 8%;
+    --accent: 74 78% 52%;
+    --accent-foreground: 210 20% 7%;
 
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 220 15% 95%;
+    --destructive: 6 74% 56%;
+    --destructive-foreground: 210 20% 7%;
 
-    --border: 220 20% 20%;
-    --input: 220 20% 20%;
-    --ring: 197 92% 55%;
+    --border: 210 12% 19%;
+    --input: 210 12% 19%;
+    --ring: 178 64% 44%;
 
-    --gradient-hero-start: 220 30% 10%;
-    --gradient-hero-end: 197 60% 20%;
-    --gradient-accent-start: 197 92% 55%;
-    --gradient-accent-end: 220 80% 65%;
+    --teal-deep: 186 62% 14%;
+    --teal-bright: 178 64% 48%;
+    --lime: 74 82% 58%;
+    --cream: 40 34% 94%;
+    --graphite: 210 14% 8%;
+    --surface: 210 13% 11%;
+    --surface-raised: 210 12% 14%;
   }
 }
 
@@ -86,21 +95,43 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
+    overflow-x: clip;
   }
 
   html {
     scroll-behavior: smooth;
+    overflow-x: clip;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-display uppercase;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
   }
 }
 
 @layer utilities {
-  .gradient-hero {
-    background: linear-gradient(135deg, hsl(var(--gradient-hero-start)), hsl(var(--gradient-hero-end)));
+  .surface-panel {
+    background: hsl(var(--surface));
   }
 
-  .gradient-accent {
-    background: linear-gradient(135deg, hsl(var(--gradient-accent-start)), hsl(var(--gradient-accent-end)));
+  .rule-line {
+    border-top: 1px solid hsl(var(--border));
+  }
+
+  .text-balance {
+    text-wrap: balance;
   }
 
   .card-hover {
