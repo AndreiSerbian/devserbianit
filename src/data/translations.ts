@@ -1,9 +1,160 @@
+// NOTE (RO): Romanian strings are machine-assisted and require manual review
+// by a native speaker before production publishing.
+
+export const brand = {
+  name: "ANDREI SERBIAN",
+  descriptor: "IT SOLUTIONS", // editable, intentionally not translated
+  telegram: "https://t.me/public_serb",
+  telegramHandle: "@public_serb",
+  email: "serbiyan012@gmail.com",
+};
+
 export const translations = {
   ru: {
+    nav: {
+      cases: "Кейсы",
+      services: "Услуги",
+      process: "Как я работаю",
+      contact: "Контакт",
+      cta: "Обсудить проект",
+      menu: "Меню",
+    },
     hero: {
-      title: "Комплексный подход к IT-решениям для бизнеса",
-      subtitle: "Не просто «пишем код». Смотрим на продукт и процессы глазами бизнеса.",
-      cta: "Рассчитать бюджет"
+      title: "САЙТ, CRM И АВТОМАТИЗАЦИЯ\nДОЛЖНЫ РАБОТАТЬ ВМЕСТЕ.",
+      subtitle:
+        "Разбираюсь, как в компании проходят заявки, продажи и работа с клиентами. Затем связываю сайт, CRM, Telegram и нужные сервисы в одну рабочую систему.",
+      cta: "Обсудить проект",
+      ctaSecondary: "Смотреть кейсы",
+      specializations: "E-COMMERCE / WEBSITES / CRM / INTEGRATIONS / TELEGRAM",
+      diagram: {
+        marketing: "Маркетинг",
+        sales: "Продажи",
+        site: "Сайт",
+        crm: "CRM",
+        automation: "Автоматизация",
+        analytics: "Аналитика",
+      },
+    },
+    services: {
+      title: "Услуги",
+      items: [
+        {
+          title: "Интернет-магазины",
+          desc: "Собираю магазины для B2B и розницы: каталог, заявки, предзаказы, оплата и удобная работа с заказами.",
+        },
+        {
+          title: "Сайты компаний и НКО",
+          desc: "Делаю сайты, которые понятно объясняют, чем вы занимаетесь, вызывают доверие и приводят обращения.",
+        },
+        {
+          title: "CRM и интеграции",
+          desc: "Соединяю сайт, CRM, таблицы, почту и Telegram так, чтобы заявки не терялись, а данные не дублировались.",
+        },
+        {
+          title: "Telegram-боты",
+          desc: "Разрабатываю ботов для заявок, уведомлений, поддержки и внутренних задач команды.",
+        },
+      ],
+    },
+    process: {
+      title: "Как я работаю",
+      steps: [
+        {
+          title: "Разбор задачи",
+          desc: "Выясняю, что должно измениться в работе компании и как сейчас проходят заявки, продажи и взаимодействие с клиентами.",
+        },
+        {
+          title: "Оценка и план",
+          desc: "Определяю состав работ, приоритеты, этапы, сроки и предварительную стоимость проекта.",
+        },
+        {
+          title: "Разработка с демо",
+          desc: "Собираю продукт по этапам и показываю промежуточный результат, чтобы решения можно было проверить до финального запуска.",
+        },
+        {
+          title: "Запуск и поддержка",
+          desc: "Проверяю основные сценарии, запускаю продукт, передаю документацию и при необходимости продолжаю техническую поддержку.",
+        },
+      ],
+    },
+    cases: {
+      title: "Кейсы",
+      viewDetails: "Подробнее",
+      learnMore: "Подробнее",
+      items: [
+        {
+          name: "SMT Premium Box",
+          desc: "B2B-магазин подарочной упаковки. Каталог, предзаказы, кастомизация коробок и CRM-сценарии.",
+          features: ["Более 50 товаров", "Система предзаказов", "Кастомизация коробок"],
+          result: "Собственный канал продаж вне маркетплейса",
+          link: "https://giftboxopt.ru",
+          image: "smt-premium-box",
+        },
+        {
+          name: "Вместе сильнее",
+          desc: "Сайт инклюзивного пространства для мам и детей с особенностями развития.",
+          features: ["Календарь событий", "Формы участия", "База ресурсов"],
+          result: "Понятная точка входа для семей",
+          link: "https://vmeste-silnee-hub.lovable.app/",
+          image: "vmeste-silnee",
+        },
+        {
+          name: "Unit Economics",
+          desc: "Финансовый веб-сервис для ввода данных, расчёта моделей и анализа ключевых показателей.",
+          features: ["Ввод данных", "Расчёт моделей", "Анализ показателей"],
+          result: "Наглядные финансовые модели",
+          link: "https://unit-econ-strategist.lovable.app/",
+          image: "unit-econ",
+        },
+      ],
+    },
+    form: {
+      title: "Расскажите о задаче",
+      subtitle: "Отвечу в Telegram или на почту. Обычно в течение рабочего дня.",
+      name: "Имя",
+      namePlaceholder: "Как к вам обращаться",
+      preferredContactMethod: "Как с вами связаться",
+      methods: {
+        telegram: "Telegram",
+        email: "Email",
+        whatsapp: "WhatsApp",
+        other: "Другой способ",
+      },
+      contactValue: "Ваш контакт",
+      contactPlaceholders: {
+        telegram: "@username",
+        email: "you@example.com",
+        whatsapp: "+373 XX XXX XXX",
+        other: "Укажите, как вас найти",
+      },
+      request: "Ваш запрос",
+      requestPlaceholder: "Опишите задачу и что должно измениться в работе",
+      budgetAndTimeline: "Расскажите о вашем бюджете и сроках",
+      budgetPlaceholder: "Необязательно",
+      optional: "необязательно",
+      submit: "Отправить заявку",
+      sending: "Отправка...",
+      success: "Спасибо!",
+      successMessage: "Заявка отправлена. Свяжусь с вами в ближайшее время.",
+      error: "Ошибка",
+      required: "Заполните обязательные поля",
+      invalidContact: "Проверьте формат контакта",
+      sendError: "Не удалось отправить заявку. Напишите, пожалуйста, в Telegram.",
+    },
+    contact: {
+      title: "Готовы обсудить проект?",
+      subtitle: "Telegram — основной способ связи. Email — как альтернатива.",
+      location: "Молдова • ЕС • Remote",
+      telegramLabel: "Написать в Telegram",
+      emailLabel: "Написать на почту",
+    },
+    footer: {
+      rights: "Все права защищены.",
+    },
+    seo: {
+      title: "ANDREI SERBIAN — IT SOLUTIONS",
+      description:
+        "Сайты, интернет-магазины, CRM и Telegram-боты для малого бизнеса, e-commerce и социальных проектов. Связываю сайт, CRM и сервисы в одну рабочую систему.",
     },
     calculator: {
       title: "Калькулятор стоимости",
@@ -15,11 +166,7 @@ export const translations = {
         admin: "Админ-панель",
         telegram: "Telegram-бот",
       },
-      sizes: {
-        small: "Малый",
-        medium: "Средний",
-        large: "Большой"
-      },
+      sizes: { small: "Малый", medium: "Средний", large: "Большой" },
       options: "Дополнительные опции",
       optionsList: {
         auth: "Авторизация и роли (+16ч)",
@@ -27,7 +174,7 @@ export const translations = {
         analytics: "Аналитика (+12ч)",
         multilingual: "Мультиязычность (+18ч)",
         supabase: "Интеграция Supabase (+20ч)",
-        telegram: "Telegram интеграция (+12ч)"
+        telegram: "Telegram интеграция (+12ч)",
       },
       urgency: "Срочная разработка (+30%)",
       estimate: "Смета проекта",
@@ -35,253 +182,339 @@ export const translations = {
       rate: "Ставка: €12.5/ч",
       total: "Итого",
       exportPdf: "Экспорт в PDF",
-      sharetelegram: "Отправить в Telegram"
+      sharetelegram: "Отправить в Telegram",
+    },
+  },
+
+  en: {
+    nav: {
+      cases: "Cases",
+      services: "Services",
+      process: "How I work",
+      contact: "Contact",
+      cta: "Discuss a project",
+      menu: "Menu",
+    },
+    hero: {
+      title: "WEBSITE, CRM AND AUTOMATION\nSHOULD WORK TOGETHER.",
+      subtitle:
+        "I look into how requests, sales and client work actually flow inside your company. Then I connect the website, CRM, Telegram and the services you need into one working system.",
+      cta: "Discuss a project",
+      ctaSecondary: "View cases",
+      specializations: "E-COMMERCE / WEBSITES / CRM / INTEGRATIONS / TELEGRAM",
+      diagram: {
+        marketing: "Marketing",
+        sales: "Sales",
+        site: "Website",
+        crm: "CRM",
+        automation: "Automation",
+        analytics: "Analytics",
+      },
     },
     services: {
-      title: "Что мы делаем",
+      title: "Services",
       items: [
-        { title: "E-commerce и сайты", desc: "Каталог, оплата, конверсия." },
-        { title: "CRM и админ-панели", desc: "Процессы, роли, контроль." },
-        { title: "Telegram-боты и интеграции", desc: "Заявки, оповещения, Supabase." }
-      ]
+        {
+          title: "Online stores",
+          desc: "I build stores for B2B and retail: catalogue, orders, pre-orders, payments and convenient order handling.",
+        },
+        {
+          title: "Company and NGO websites",
+          desc: "Websites that clearly explain what you do, build trust and bring in enquiries.",
+        },
+        {
+          title: "CRM and integrations",
+          desc: "I connect website, CRM, spreadsheets, email and Telegram so requests are not lost and data is not duplicated.",
+        },
+        {
+          title: "Telegram bots",
+          desc: "Bots for requests, notifications, support and internal team tasks.",
+        },
+      ],
+    },
+    process: {
+      title: "How I work",
+      steps: [
+        {
+          title: "Understanding the task",
+          desc: "I find out what should change in your operations and how requests, sales and client communication work today.",
+        },
+        {
+          title: "Estimate and plan",
+          desc: "I define the scope, priorities, stages, timeline and a preliminary project cost.",
+        },
+        {
+          title: "Development with demos",
+          desc: "I build the product in stages and show intermediate results so decisions can be verified before launch.",
+        },
+        {
+          title: "Launch and support",
+          desc: "I test the main scenarios, launch the product, hand over documentation and continue technical support if needed.",
+        },
+      ],
     },
     cases: {
-      title: "Кейсы",
+      title: "Cases",
+      viewDetails: "Details",
+      learnMore: "Details",
       items: [
         {
           name: "SMT Premium Box",
-          desc: "Оптовый e-commerce для подарочных коробок с вариациями.",
-          features: ["Карточки с вариациями", "Предзаказ", "Email-подтверждение"],
-          result: "Сокращение времени обработки B2B",
+          desc: "B2B gift packaging store. Catalogue, pre-orders, box customisation and CRM scenarios.",
+          features: ["50+ products", "Pre-order system", "Box customisation"],
+          result: "An own sales channel beyond marketplaces",
           link: "https://giftboxopt.ru",
-          image: "smt-premium-box"
+          image: "smt-premium-box",
         },
         {
-          name: "Вместе сильнее",
-          desc: "Сайт инклюзивного пространства для мам и детей в Молдове.",
-          features: ["Календарь событий", "Формы волонтёров", "База ресурсов"],
-          result: "Удобная точка входа для семей",
+          name: "Vmeste Silnee",
+          desc: "Website of an inclusive space for mothers and children with developmental differences.",
+          features: ["Event calendar", "Participation forms", "Resource base"],
+          result: "A clear entry point for families",
           link: "https://vmeste-silnee-hub.lovable.app/",
-          image: "vmeste-silnee"
+          image: "vmeste-silnee",
         },
         {
-          name: "Unit Economics Strategist",
-          desc: "Платформа для бизнес-консалтинга и анализа юнит-экономики.",
-          features: ["Расчёт метрик бизнеса", "Сравнение сценариев", "Анализ конкурентов", "Теория игр"],
-          result: "Научный подход к стратегии",
+          name: "Unit Economics",
+          desc: "A financial web service for entering data, calculating models and analysing key metrics.",
+          features: ["Data input", "Model calculation", "Metrics analysis"],
+          result: "Clear financial models",
           link: "https://unit-econ-strategist.lovable.app/",
-          image: "unit-econ"
-        }
+          image: "unit-econ",
+        },
       ],
-      viewDetails: "Подробнее",
-      learnMore: "Подробнее"
     },
     form: {
-      title: "Помогите мне лучше понять ваш бизнес",
-      subtitle: "Ответьте на несколько вопросов, чтобы мы могли подготовить для вас идеальное решение",
-      selectType: "Выберите тип проекта",
-      types: {
-        ecommerce: "E-commerce",
-        telegram: "Telegram-бот",
-        crm: "CRM/Админ-панель"
+      title: "Tell me about your task",
+      subtitle: "I reply on Telegram or by email, usually within a working day.",
+      name: "Name",
+      namePlaceholder: "How should I address you",
+      preferredContactMethod: "How to reach you",
+      methods: {
+        telegram: "Telegram",
+        email: "Email",
+        whatsapp: "WhatsApp",
+        other: "Other",
       },
-      questions: {
-        ecommerce: [
-          "Как называется ваш бренд или компания, и чем вы занимаетесь?",
-          "Есть ли у вас уже сайт или страницы в соцсетях? (если да — укажите ссылки)",
-          "Какая основная цель сайта и какие товары или услуги вы планируете продавать?",
-          "Какие технические особенности нужны магазину? (корзина, оплата, доставка, варианты товаров, админ-панель и т.д.)",
-          "Есть ли примеры сайтов или референсы, на которые нам стоит ориентироваться?",
-          "Нужно ли адаптировать сайт под несколько языков (русский, румынский, английский и др.)?",
-          "К какому сроку вы хотите запустить проект и какой ориентировочный бюджет закладываете?"
-        ],
-        telegram: [
-          "Как называется ваш бизнес или проект?",
-          "Какую основную задачу должен решать бот и какие функции/команды выполнять?",
-          "Какие технические особенности нужны? (интеграции с сайтом/CRM, авторизация, база данных, приём платежей, веб-админка)",
-          "Есть ли референсы или материалы, которые помогут нам в разработке бота?",
-          "Нужна ли поддержка нескольких языков?",
-          "К какому сроку нужно запустить бота и какой бюджет вы планируете?"
-        ],
-        crm: [
-          "Как называется ваша компания и в какой сфере вы работаете?",
-          "Какие бизнес-процессы нужно автоматизировать, какие данные хранить и какие отчёты/аналитика вам нужны?",
-          "Сколько сотрудников будут работать с системой?",
-          "Нужна ли интеграция с существующими системами? (1С, почта, мессенджеры и т.д.)",
-          "Есть ли особые требования к безопасности данных?",
-          "Нужна ли мобильная версия или приложение?",
-          "Планируемый срок запуска и бюджет проекта?"
-        ]
+      contactValue: "Your contact",
+      contactPlaceholders: {
+        telegram: "@username",
+        email: "you@example.com",
+        whatsapp: "+373 XX XXX XXX",
+        other: "How can I reach you",
       },
-      answerPlaceholder: "Ваш ответ...",
-      contactTitle: "Контактные данные",
-      contactLabel: "Как с вами связаться? (имя, email, телефон, Telegram)",
-      contactPlaceholder: "Иван Петров\nemail: ivan@example.com\nTelegram: @ivanpetrov\n+373 123 456 78",
-      submit: "Отправить заявку",
-      sending: "Отправка...",
-      success: "Спасибо!",
-      successMessage: "Ваша заявка отправлена. Мы свяжемся с вами в ближайшее время.",
-      error: "Ошибка",
-      contactRequired: "Пожалуйста, укажите ваши контактные данные",
-      sendError: "Не удалось отправить заявку. Попробуйте позже."
+      request: "Your request",
+      requestPlaceholder: "Describe the task and what should change in your work",
+      budgetAndTimeline: "Tell me about your budget and timeline",
+      budgetPlaceholder: "Optional",
+      optional: "optional",
+      submit: "Send request",
+      sending: "Sending...",
+      success: "Thank you!",
+      successMessage: "Your request has been sent. I will get back to you shortly.",
+      error: "Error",
+      required: "Please fill in the required fields",
+      invalidContact: "Please check the contact format",
+      sendError: "Could not send the request. Please write to me on Telegram.",
     },
     contact: {
-      title: "Готовы обсудить?",
-      location: "Молдова, ЕС, Россия • Remote"
-    }
-  },
-  en: {
-    hero: {
-      title: "Comprehensive IT Solutions for Business",
-      subtitle: "Beyond coding: business lens from hypothesis to results.",
-      cta: "Calculate Budget"
+      title: "Ready to discuss a project?",
+      subtitle: "Telegram is the main channel. Email works as an alternative.",
+      location: "Moldova • EU • Remote",
+      telegramLabel: "Message on Telegram",
+      emailLabel: "Send an email",
+    },
+    footer: { rights: "All rights reserved." },
+    seo: {
+      title: "ANDREI SERBIAN — IT SOLUTIONS",
+      description:
+        "Websites, online stores, CRM and Telegram bots for small business, e-commerce and social projects. Website, CRM and services connected into one working system.",
     },
     calculator: {
       title: "Cost Calculator",
-      projectType: "Project Type",
-      projectSize: "Project Size",
+      projectType: "Project type",
+      projectSize: "Project size",
       types: {
-        ecommerce: "E-commerce Solution",
-        crm: "CRM/ERP System",
-        admin: "Admin Panel",
-        telegram: "Telegram Bot",
+        ecommerce: "E-commerce solution",
+        crm: "CRM/ERP system",
+        admin: "Admin panel",
+        telegram: "Telegram bot",
       },
-      sizes: {
-        small: "Small",
-        medium: "Medium",
-        large: "Large"
-      },
-      options: "Additional Options",
+      sizes: { small: "Small", medium: "Medium", large: "Large" },
+      options: "Additional options",
       optionsList: {
-        auth: "Auth & Roles (+16h)",
+        auth: "Auth and roles (+16h)",
         payments: "Payments (+24h)",
         analytics: "Analytics (+12h)",
         multilingual: "Multilingual (+18h)",
-        supabase: "Supabase Integration (+20h)",
-        telegram: "Telegram Integration (+12h)"
+        supabase: "Supabase integration (+20h)",
+        telegram: "Telegram integration (+12h)",
       },
-      urgency: "Urgent Development (+30%)",
-      estimate: "Project Estimate",
+      urgency: "Rush development (+30%)",
+      estimate: "Project estimate",
       hours: "h",
       rate: "Rate: €12.5/h",
       total: "Total",
-      exportPdf: "Export PDF",
-      sharetelegram: "Share to Telegram"
+      exportPdf: "Export to PDF",
+      sharetelegram: "Share via Telegram",
+    },
+  },
+
+  ro: {
+    nav: {
+      cases: "Studii de caz",
+      services: "Servicii",
+      process: "Cum lucrez",
+      contact: "Contact",
+      cta: "Discutăm proiectul",
+      menu: "Meniu",
+    },
+    hero: {
+      title: "SITE, CRM ȘI AUTOMATIZARE\nTREBUIE SĂ LUCREZE ÎMPREUNĂ.",
+      subtitle:
+        "Analizez cum circulă cererile, vânzările și relația cu clienții în compania dumneavoastră. Apoi conectez site-ul, CRM-ul, Telegram și serviciile necesare într-un singur sistem funcțional.",
+      cta: "Discutăm proiectul",
+      ctaSecondary: "Vezi studiile de caz",
+      specializations: "E-COMMERCE / WEBSITES / CRM / INTEGRATIONS / TELEGRAM",
+      diagram: {
+        marketing: "Marketing",
+        sales: "Vânzări",
+        site: "Site",
+        crm: "CRM",
+        automation: "Automatizare",
+        analytics: "Analiză",
+      },
     },
     services: {
-      title: "What we do",
+      title: "Servicii",
       items: [
-        { title: "E-commerce & websites", desc: "Catalog, payments, conversion." },
-        { title: "CRM & admin panels", desc: "Processes, roles, control." },
-        { title: "Telegram bots & integrations", desc: "Requests, notifications, Supabase." }
-      ]
+        {
+          title: "Magazine online",
+          desc: "Construiesc magazine pentru B2B și retail: catalog, comenzi, precomenzi, plăți și gestionare comodă a comenzilor.",
+        },
+        {
+          title: "Site-uri de companie și ONG",
+          desc: "Site-uri care explică clar ce faceți, inspiră încredere și aduc solicitări.",
+        },
+        {
+          title: "CRM și integrări",
+          desc: "Conectez site-ul, CRM-ul, tabelele, e-mailul și Telegram astfel încât cererile să nu se piardă, iar datele să nu se dubleze.",
+        },
+        {
+          title: "Boți Telegram",
+          desc: "Boți pentru cereri, notificări, suport și sarcini interne ale echipei.",
+        },
+      ],
+    },
+    process: {
+      title: "Cum lucrez",
+      steps: [
+        {
+          title: "Analiza sarcinii",
+          desc: "Aflu ce trebuie să se schimbe în activitatea companiei și cum funcționează acum cererile, vânzările și comunicarea cu clienții.",
+        },
+        {
+          title: "Estimare și plan",
+          desc: "Stabilesc volumul lucrărilor, prioritățile, etapele, termenele și costul preliminar al proiectului.",
+        },
+        {
+          title: "Dezvoltare cu demo",
+          desc: "Construiesc produsul pe etape și arăt rezultate intermediare, ca deciziile să poată fi verificate înainte de lansare.",
+        },
+        {
+          title: "Lansare și suport",
+          desc: "Verific scenariile principale, lansez produsul, predau documentația și continui suportul tehnic la nevoie.",
+        },
+      ],
     },
     cases: {
-      title: "Case Studies",
+      title: "Studii de caz",
+      viewDetails: "Detalii",
+      learnMore: "Detalii",
       items: [
         {
           name: "SMT Premium Box",
-          desc: "Wholesale e-commerce for gift boxes with variants.",
-          features: ["Variant cards", "Pre-order", "Email confirmation"],
-          result: "Reduced B2B processing time",
+          desc: "Magazin B2B de ambalaje cadou. Catalog, precomenzi, personalizarea cutiilor și scenarii CRM.",
+          features: ["Peste 50 de produse", "Sistem de precomenzi", "Personalizarea cutiilor"],
+          result: "Canal propriu de vânzări, independent de marketplace",
           link: "https://giftboxopt.ru",
-          image: "smt-premium-box"
+          image: "smt-premium-box",
         },
         {
-          name: "Together Stronger",
-          desc: "Website for inclusive space initiative in Moldova.",
-          features: ["Events calendar", "Volunteer forms", "Resources base"],
-          result: "Clear entry point for families",
+          name: "Vmeste Silnee",
+          desc: "Site-ul unui spațiu incluziv pentru mame și copii cu particularități de dezvoltare.",
+          features: ["Calendar de evenimente", "Formulare de participare", "Bază de resurse"],
+          result: "Un punct de intrare clar pentru familii",
           link: "https://vmeste-silnee-hub.lovable.app/",
-          image: "vmeste-silnee"
+          image: "vmeste-silnee",
         },
         {
-          name: "Unit Economics Strategist",
-          desc: "Business consulting platform for unit economics analysis.",
-          features: ["Business metrics calculation", "Scenario comparison", "Competitor analysis", "Game theory"],
-          result: "Scientific approach to strategy",
+          name: "Unit Economics",
+          desc: "Serviciu web financiar pentru introducerea datelor, calculul modelelor și analiza indicatorilor cheie.",
+          features: ["Introducerea datelor", "Calculul modelelor", "Analiza indicatorilor"],
+          result: "Modele financiare clare",
           link: "https://unit-econ-strategist.lovable.app/",
-          image: "unit-econ"
-        }
+          image: "unit-econ",
+        },
       ],
-      viewDetails: "Details",
-      learnMore: "Learn more"
     },
     form: {
-      title: "Help me understand your business better",
-      subtitle: "Answer a few questions so we can prepare the perfect solution for you",
-      selectType: "Select project type",
-      types: {
-        ecommerce: "E-commerce",
-        telegram: "Telegram Bot",
-        crm: "CRM/Admin Panel"
+      title: "Povestiți-mi despre sarcină",
+      subtitle: "Răspund pe Telegram sau pe e-mail, de obicei într-o zi lucrătoare.",
+      name: "Nume",
+      namePlaceholder: "Cum să vă adresez",
+      preferredContactMethod: "Cum vă contactez",
+      methods: {
+        telegram: "Telegram",
+        email: "Email",
+        whatsapp: "WhatsApp",
+        other: "Altă metodă",
       },
-      questions: {
-        ecommerce: [
-          "What is your brand or company name and what do you do?",
-          "Do you already have a website or social media pages? (if yes, please provide links)",
-          "What is the main goal of the website and what products or services do you plan to sell?",
-          "What technical features does the store need? (cart, payments, delivery, product variants, admin panel, etc.)",
-          "Are there example websites or references we should look at?",
-          "Do you need the site adapted for multiple languages (Russian, Romanian, English, etc.)?",
-          "By what date do you want to launch the project and what is your approximate budget?"
-        ],
-        telegram: [
-          "What is your business or project name?",
-          "What main task should the bot solve and what functions/commands should it perform?",
-          "What technical features are needed? (integrations with website/CRM, authorization, database, payments, web admin)",
-          "Are there references or materials that would help us build the bot?",
-          "Do you need support for multiple languages?",
-          "By what date do you need to launch the bot and what is your budget?"
-        ],
-        crm: [
-          "What is your company name and what field do you work in?",
-          "What business processes need to be automated, what data should be stored, and what reports/analytics do you need?",
-          "How many employees will work with the system?",
-          "Do you need integration with existing systems? (1C, email, messengers, etc.)",
-          "Are there special data security requirements?",
-          "Do you need a mobile version or app?",
-          "Planned launch date and project budget?"
-        ]
+      contactValue: "Contactul dumneavoastră",
+      contactPlaceholders: {
+        telegram: "@username",
+        email: "you@example.com",
+        whatsapp: "+373 XX XXX XXX",
+        other: "Cum vă pot găsi",
       },
-      answerPlaceholder: "Your answer...",
-      contactTitle: "Contact Information",
-      contactLabel: "How can we contact you? (name, email, phone, Telegram)",
-      contactPlaceholder: "John Smith\nemail: john@example.com\nTelegram: @johnsmith\n+1 234 567 890",
-      submit: "Submit Request",
-      sending: "Sending...",
-      success: "Thank you!",
-      successMessage: "Your request has been submitted. We will contact you shortly.",
-      error: "Error",
-      contactRequired: "Please provide your contact information",
-      sendError: "Failed to submit the request. Please try again later."
+      request: "Solicitarea dumneavoastră",
+      requestPlaceholder: "Descrieți sarcina și ce trebuie să se schimbe în activitate",
+      budgetAndTimeline: "Povestiți despre buget și termene",
+      budgetPlaceholder: "Opțional",
+      optional: "opțional",
+      submit: "Trimite solicitarea",
+      sending: "Se trimite...",
+      success: "Mulțumesc!",
+      successMessage: "Solicitarea a fost trimisă. Vă contactez în curând.",
+      error: "Eroare",
+      required: "Completați câmpurile obligatorii",
+      invalidContact: "Verificați formatul contactului",
+      sendError: "Nu am putut trimite solicitarea. Scrieți-mi pe Telegram.",
     },
     contact: {
-      title: "Ready to talk?",
-      location: "Moldova, EU, Russia • Remote"
-    }
-  },
-  ro: {
-    hero: {
-      title: "Abordare cuprinzătoare a soluțiilor IT pentru afaceri",
-      subtitle: "Mai mult decât cod: privim produsul și procesele prin prisma business-ului.",
-      cta: "Calculează bugetul"
+      title: "Gata să discutăm proiectul?",
+      subtitle: "Telegram este canalul principal. E-mailul este alternativa.",
+      location: "Moldova • UE • Remote",
+      telegramLabel: "Scrieți pe Telegram",
+      emailLabel: "Trimiteți un e-mail",
+    },
+    footer: { rights: "Toate drepturile rezervate." },
+    seo: {
+      title: "ANDREI SERBIAN — IT SOLUTIONS",
+      description:
+        "Site-uri, magazine online, CRM și boți Telegram pentru business mic, e-commerce și proiecte sociale.",
     },
     calculator: {
-      title: "Calculator de costuri",
-      projectType: "Tipul proiectului",
-      projectSize: "Dimensiunea proiectului",
+      title: "Calculator de cost",
+      projectType: "Tip de proiect",
+      projectSize: "Mărimea proiectului",
       types: {
-        ecommerce: "Soluție E-commerce",
+        ecommerce: "Soluție e-commerce",
         crm: "Sistem CRM/ERP",
         admin: "Panou de administrare",
         telegram: "Bot Telegram",
       },
-      sizes: {
-        small: "Mic",
-        medium: "Mediu",
-        large: "Mare"
-      },
+      sizes: { small: "Mic", medium: "Mediu", large: "Mare" },
       options: "Opțiuni suplimentare",
       optionsList: {
         auth: "Autentificare și roluri (+16h)",
@@ -289,7 +522,7 @@ export const translations = {
         analytics: "Analiză (+12h)",
         multilingual: "Multilingv (+18h)",
         supabase: "Integrare Supabase (+20h)",
-        telegram: "Integrare Telegram (+12h)"
+        telegram: "Integrare Telegram (+12h)",
       },
       urgency: "Dezvoltare urgentă (+30%)",
       estimate: "Estimare proiect",
@@ -297,102 +530,10 @@ export const translations = {
       rate: "Tarif: €12.5/h",
       total: "Total",
       exportPdf: "Export PDF",
-      sharetelegram: "Trimite pe Telegram"
+      sharetelegram: "Trimite pe Telegram",
     },
-    services: {
-      title: "Ce facem",
-      items: [
-        { title: "E-commerce și site-uri", desc: "Catalog, plăți, conversie." },
-        { title: "CRM și panouri admin", desc: "Procese, roluri, control." },
-        { title: "Boți Telegram și integrări", desc: "Cereri, notificări, Supabase." }
-      ]
-    },
-    cases: {
-      title: "Studii de caz",
-      items: [
-        {
-          name: "SMT Premium Box",
-          desc: "E-commerce en-gros pentru cutii cadou cu variante.",
-          features: ["Carduri cu variante", "Pre-comandă", "Confirmare email"],
-          result: "Reducerea timpului de procesare B2B",
-          link: "https://giftboxopt.ru",
-          image: "smt-premium-box"
-        },
-        {
-          name: "Împreună mai puternici",
-          desc: "Site pentru inițiativa spațiului incluziv din Moldova.",
-          features: ["Calendar evenimente", "Formulare voluntari", "Baza de resurse"],
-          result: "Punct de intrare clar pentru familii",
-          link: "https://vmeste-silnee-hub.lovable.app/",
-          image: "vmeste-silnee"
-        },
-        {
-          name: "Unit Economics Strategist",
-          desc: "Platformă de consultanță pentru analiza economiei unitare.",
-          features: ["Calculul metricilor de business", "Comparație scenarii", "Analiză concurenți", "Teoria jocurilor"],
-          result: "Abordare științifică a strategiei",
-          link: "https://unit-econ-strategist.lovable.app/",
-          image: "unit-econ"
-        }
-      ],
-      viewDetails: "Detalii",
-      learnMore: "Află mai mult"
-    },
-    form: {
-      title: "Ajută-mă să înțeleg mai bine afacerea ta",
-      subtitle: "Răspunde la câteva întrebări pentru a pregăti soluția perfectă",
-      selectType: "Selectează tipul proiectului",
-      types: {
-        ecommerce: "E-commerce",
-        telegram: "Bot Telegram",
-        crm: "CRM/Panou Admin"
-      },
-      questions: {
-        ecommerce: [
-          "Care este numele brandului sau companiei tale și cu ce te ocupi?",
-          "Ai deja un site sau pagini pe rețele sociale? (dacă da, oferă linkurile)",
-          "Care este obiectivul principal al site-ului și ce produse sau servicii planifici să vinzi?",
-          "Ce particularități tehnice are nevoie magazinul? (coș, plăți, livrare, variante de produse, panou de administrare, etc.)",
-          "Există exemple de site-uri sau referințe la care ar trebui să ne uităm?",
-          "Ai nevoie ca site-ul să fie adaptat pentru mai multe limbi?",
-          "Până la ce dată vrei să lansezi proiectul și care este bugetul aproximativ?"
-        ],
-        telegram: [
-          "Care este numele afacerii sau proiectului tău?",
-          "Ce sarcină principală trebuie să rezolve botul și ce funcții/comenzi trebuie să execute?",
-          "Ce particularități tehnice sunt necesare? (integrări cu site/CRM, autorizare, bază de date, plăți, panou web)",
-          "Există referințe sau materiale care ne-ar ajuta să construim botul?",
-          "Ai nevoie de suport pentru mai multe limbi?",
-          "Până când trebuie lansat botul și care este bugetul?"
-        ],
-        crm: [
-          "Care este numele companiei și în ce domeniu lucrezi?",
-          "Ce procese de business trebuie automatizate, ce date trebuie stocate și ce rapoarte/analize ai nevoie?",
-          "Câți angajați vor lucra cu sistemul?",
-          "Ai nevoie de integrare cu sisteme existente? (1C, email, mesagerie, etc.)",
-          "Există cerințe speciale de securitate a datelor?",
-          "Ai nevoie de versiune mobilă sau aplicație?",
-          "Data planificată de lansare și bugetul proiectului?"
-        ]
-      },
-      answerPlaceholder: "Răspunsul tău...",
-      contactTitle: "Date de contact",
-      contactLabel: "Cum te putem contacta? (nume, email, telefon, Telegram)",
-      contactPlaceholder: "Ion Popescu\nemail: ion@example.com\nTelegram: @ionpopescu\n+373 123 456 78",
-      submit: "Trimite cererea",
-      sending: "Se trimite...",
-      success: "Mulțumim!",
-      successMessage: "Cererea ta a fost trimisă. Te vom contacta în curând.",
-      error: "Eroare",
-      contactRequired: "Te rugăm să oferi datele de contact",
-      sendError: "Nu s-a putut trimite cererea. Încearcă mai târziu."
-    },
-    contact: {
-      title: "Pregătit să discutăm?",
-      location: "Moldova, UE, Rusia • Remote"
-    }
-  }
-};
+  },
+} as const;
 
-export type TranslationsType = typeof translations;
-export type LanguageType = keyof TranslationsType;
+export type Lang = keyof typeof translations;
+export const SUPPORTED_LANGS: Lang[] = ["ru", "en", "ro"];

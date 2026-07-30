@@ -22,17 +22,17 @@ const caseIds: Record<string, string> = {
 };
 
 interface CaseStudy {
-  name: string;
-  desc: string;
-  features: string[];
-  result: string;
-  link?: string;
-  image?: string;
+  readonly name: string;
+  readonly desc: string;
+  readonly features: readonly string[];
+  readonly result: string;
+  readonly link?: string;
+  readonly image?: string;
 }
 
 interface CaseStudiesProps {
   title: string;
-  items: CaseStudy[];
+  items: readonly CaseStudy[];
   lang?: string;
 }
 
@@ -67,15 +67,16 @@ export const CaseStudies = ({ title, items, lang = "ru" }: CaseStudiesProps) => 
   };
 
   return (
-    <section className="py-16 md:py-24 bg-secondary/20">
+    <section className="py-16 md:py-24 border-b border-border bg-surface">
       <div className="container px-4 sm:px-6">
         <motion.h2 
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-10 md:mb-14"
+          className="font-display text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight mb-10 md:mb-14"
         >
+          <span className="text-primary mr-3">02</span>
           {title}
         </motion.h2>
         <motion.div 
@@ -98,7 +99,7 @@ export const CaseStudies = ({ title, items, lang = "ru" }: CaseStudiesProps) => 
                 >
                   <Card className="h-full border-border/50 bg-card/50 backdrop-blur-sm overflow-hidden group hover:shadow-xl hover:shadow-primary/5 transition-all duration-300">
                     {item.image && caseImages[item.image] && (
-                      <Link to={`/cases/${caseId}`} className="block relative w-full h-40 sm:h-48 md:h-52 overflow-hidden">
+                      <Link to={`/${lang}/cases/${caseId}`} className="block relative w-full h-40 sm:h-48 md:h-52 overflow-hidden">
                         <motion.img 
                           src={caseImages[item.image]} 
                           alt={item.name}
@@ -120,7 +121,7 @@ export const CaseStudies = ({ title, items, lang = "ru" }: CaseStudiesProps) => 
                     )}
                     <CardHeader className="pb-2">
                       <CardTitle className="text-base md:text-lg lg:text-xl flex items-center justify-between">
-                        <Link to={`/cases/${caseId}`} className="hover:text-primary transition-colors">
+                        <Link to={`/${lang}/cases/${caseId}`} className="hover:text-primary transition-colors">
                           {item.name}
                         </Link>
                         {item.link && (
@@ -161,7 +162,7 @@ export const CaseStudies = ({ title, items, lang = "ru" }: CaseStudiesProps) => 
                           whileTap={{ scale: 0.98 }}
                         >
                           <Button variant="outline" size="sm" asChild className="w-full text-xs md:text-sm">
-                            <Link to={`/cases/${caseId}`}>
+                            <Link to={`/${lang}/cases/${caseId}`}>
                               {getLocalizedText("details")}
                               <ArrowRight className="ml-2 h-3 w-3" />
                             </Link>

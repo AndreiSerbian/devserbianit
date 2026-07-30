@@ -14,7 +14,87 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      analytics_events: {
+        Row: {
+          case_id: string | null
+          created_at: string
+          event_name: string
+          id: string
+          locale: string | null
+          page: string | null
+          session_id: string | null
+        }
+        Insert: {
+          case_id?: string | null
+          created_at?: string
+          event_name: string
+          id?: string
+          locale?: string | null
+          page?: string | null
+          session_id?: string | null
+        }
+        Update: {
+          case_id?: string | null
+          created_at?: string
+          event_name?: string
+          id?: string
+          locale?: string | null
+          page?: string | null
+          session_id?: string | null
+        }
+        Relationships: []
+      }
+      leads: {
+        Row: {
+          budget_and_timeline: string | null
+          contact_value: string
+          created_at: string
+          email_delivery_status: string
+          id: string
+          ip_hash: string | null
+          locale: string
+          name: string
+          overall_status: string
+          page_url: string | null
+          preferred_contact_method: string
+          request: string
+          telegram_delivery_status: string
+          updated_at: string
+        }
+        Insert: {
+          budget_and_timeline?: string | null
+          contact_value: string
+          created_at?: string
+          email_delivery_status?: string
+          id?: string
+          ip_hash?: string | null
+          locale?: string
+          name: string
+          overall_status?: string
+          page_url?: string | null
+          preferred_contact_method: string
+          request: string
+          telegram_delivery_status?: string
+          updated_at?: string
+        }
+        Update: {
+          budget_and_timeline?: string | null
+          contact_value?: string
+          created_at?: string
+          email_delivery_status?: string
+          id?: string
+          ip_hash?: string | null
+          locale?: string
+          name?: string
+          overall_status?: string
+          page_url?: string | null
+          preferred_contact_method?: string
+          request?: string
+          telegram_delivery_status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
