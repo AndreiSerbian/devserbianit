@@ -4,6 +4,7 @@ import Index from "@/pages/Index";
 import CaseStudyDetail from "@/pages/CaseStudyDetail";
 import CalculatorPage from "@/pages/CalculatorPage";
 import NotFound from "@/pages/NotFound";
+import BrandCheck from "@/pages/BrandCheck";
 import { PageTransition } from "./PageTransition";
 import { SUPPORTED_LANGS, type Lang } from "@/data/translations";
 
@@ -21,6 +22,7 @@ export const AnimatedRoutes = () => {
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<Navigate to={`/${preferredLang()}`} replace />} />
+        {import.meta.env.DEV && <Route path="/__brand-check" element={<BrandCheck />} />}
         <Route path="/cases/:id" element={<Navigate to={`/${preferredLang()}${location.pathname}`} replace />} />
         <Route path="/calculator" element={<Navigate to={`/${preferredLang()}/calculator`} replace />} />
         <Route
