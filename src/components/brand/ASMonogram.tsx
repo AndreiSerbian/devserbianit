@@ -99,8 +99,8 @@ export const ASMonogram = ({
       <path
         d={
           micro
-            ? "M55 21c-2.8-3-8.5-3.6-11 -0.4-2.4 3.1.3 6.6 4.2 8 3.9 1.4 7.4 3.3 7.4 7.2 0 4.4-5.6 7.2-10.4 5"
-            : "M55.5 20.5c-2.7-2.9-7.2-3.8-10.3-1.9-3.6 2.2-3.7 7 0 9.4 2.3 1.5 5.4 2.2 7.6 3.9 3.6 2.8 3.1 8.3-1.1 10.4-3.2 1.6-7.2.8-9.7-1.8"
+            ? "M55 20.5c-3.2-3.6-9-4.4-12.3-1.6-3.9 3.3-2.9 8.6 1.3 11 2.9 1.7 7 2.5 9.4 4.9 3.7 3.7 2.4 10-2.6 12.2-3.6 1.6-8 .6-10.8-2.5"
+            : "M55 19c-3.1-3.4-8.7-4.3-12-1.8-4.1 3.1-3.6 8.9.6 11.5 2.8 1.7 6.7 2.5 9.1 4.7 3.8 3.5 2.7 9.9-2.2 12.2-3.6 1.7-8.2.8-11.1-2.3"
         }
         stroke={p.cable}
         strokeWidth={cableWidth}
@@ -110,8 +110,8 @@ export const ASMonogram = ({
       {/* simplified cable terminals — full variant only */}
       {variant === "full" && (
         <>
-          <path d="M55.5 20.5h4.5" stroke={p.cable} strokeWidth="4" strokeLinecap="butt" />
-          <path d="M41.5 44.5h-4.5" stroke={p.cable} strokeWidth="4" strokeLinecap="butt" />
+          <path d="M55 19l3.5-3.5" stroke={p.cable} strokeWidth="4" strokeLinecap="round" />
+          <path d="M39.4 43.3l-3.6 3.6" stroke={p.cable} strokeWidth="4" strokeLinecap="round" />
         </>
       )}
     </svg>
