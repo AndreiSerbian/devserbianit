@@ -9,6 +9,13 @@ export const brand = {
   email: "serbiyan012@gmail.com",
 };
 
+/** Accessible name for the standalone AS monogram, per locale. */
+export const logoAlt = {
+  ru: "Логотип Andrei Serbian",
+  en: "Andrei Serbian logo",
+  ro: "Logo Andrei Serbian",
+} as const;
+
 export const translations = {
   ru: {
     nav: {

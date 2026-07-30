@@ -4,7 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Calculator } from "@/components/Calculator";
 import { Seo } from "@/components/Seo";
-import { Wordmark } from "@/components/brand/Monogram";
+import { BrandLockup } from "@/components/brand";
 import { useLanguage } from "@/context/LanguageContext";
 import { brand } from "@/data/translations";
 import { trackEvent } from "@/lib/analytics";
@@ -29,7 +29,7 @@ const CalculatorPage = () => {
       <header className="border-b border-border">
         <div className="container px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
           <Link to={`/${lang}`} className="min-w-0">
-            <Wordmark descriptor={brand.descriptor} />
+            <BrandLockup compact name={brand.name} descriptor={brand.descriptor} />
           </Link>
           <Button variant="ghost" size="sm" asChild className="rounded-none">
             <Link to={`/${lang}`}>

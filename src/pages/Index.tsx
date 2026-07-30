@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { brand, type Lang } from "@/data/translations";
 import { useLanguage } from "@/context/LanguageContext";
 import { Seo } from "@/components/Seo";
-import { Wordmark } from "@/components/brand/Monogram";
+import { BrandLockup } from "@/components/brand";
 import { Hero } from "@/components/Hero";
 import { Services } from "@/components/Services";
 import { Process } from "@/components/Process";
@@ -80,7 +80,7 @@ const Index = () => {
       >
         <div className="container flex h-16 items-center justify-between gap-3 px-4 sm:px-6">
           <Link to={`/${lang}`} className="min-w-0" aria-label="Andrei Serbian — IT Solutions">
-            <Wordmark descriptor={brand.descriptor} />
+            <BrandLockup compact name={brand.name} descriptor={brand.descriptor} />
           </Link>
 
           <nav className="hidden lg:flex items-center gap-7" aria-label="Main">
@@ -253,7 +253,7 @@ const Index = () => {
 
       <footer className="border-t border-border py-8">
         <div className="container px-4 sm:px-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <Wordmark descriptor={brand.descriptor} />
+          <BrandLockup name={brand.name} descriptor={brand.descriptor} />
           <p className="text-xs text-muted-foreground">
             © {new Date().getFullYear()} {brand.name}. {t.footer.rights}
           </p>
