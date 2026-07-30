@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://devserbianit.lovable.app/ru</loc>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://devserbianit.lovable.app/ru"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://devserbianit.lovable.app/en"/>
+    <xhtml:link rel="alternate" hreflang="ro" href="https://devserbianit.lovable.app/ro"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://devserbianit.lovable.app/ru"/>
+    <priority>1.0</priority>
+  </url>
+  <url><loc>https://devserbianit.lovable.app/en</loc><priority>1.0</priority></url>
+  <url><loc>https://devserbianit.lovable.app/ro</loc><priority>1.0</priority></url>
+  <url><loc>https://devserbianit.lovable.app/ru/cases/smt-premium-box</loc><priority>0.7</priority></url>
+  <url><loc>https://devserbianit.lovable.app/ru/cases/vmeste-silnee</loc><priority>0.7</priority></url>
+  <url><loc>https://devserbianit.lovable.app/ru/cases/unit-econ-strategist</loc><priority>0.7</priority></url>
+</urlset>
