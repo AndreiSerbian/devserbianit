@@ -259,32 +259,41 @@ export const RevolverHeroDiagram = ({
         {/* 7. center trigger phrase */}
         <motion.g {...show(ASSEMBLY.centerText.delay, ASSEMBLY.centerText.duration)}>
           <AnimatePresence mode="wait" initial={false}>
-            <motion.text
+            <motion.g
               key={phrases[phrase]}
-              x={g.center}
-              y={g.center}
-              textAnchor="middle"
-              dominantBaseline="middle"
-              fill="hsl(var(--cream))"
-              fontFamily={OSWALD}
-              fontSize={g.centerFontSize}
-              fontWeight={600}
-              letterSpacing="0.5"
-              initial={still ? undefined : { opacity: 0, y: g.center + 8 }}
-              animate={{ opacity: 1, y: g.center }}
-              exit={still ? undefined : { opacity: 0, y: g.center - 8 }}
+              initial={still ? undefined : { opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={still ? undefined : { opacity: 0, y: -8 }}
               transition={CENTER_SWAP}
             >
-              {phrases[phrase].split(" ").map((part, i, arr) => (
-                <tspan
-                  key={part + i}
-                  x={g.center}
-                  dy={i === 0 ? (arr.length > 1 ? -g.centerFontSize * 0.45 : 0) : g.centerFontSize * 0.95}
-                >
-                  {part}
-                </tspan>
-              ))}
-            </motion.text>
+              <text
+                x={g.center}
+                y={g.center}
+                textAnchor="middle"
+                dominantBaseline="middle"
+                fill="hsl(var(--cream))"
+                fontFamily={OSWALD}
+                fontSize={g.centerFontSize}
+                fontWeight={600}
+                letterSpacing="0.5"
+              >
+                {phrases[phrase].split(" ").map((part, i, arr) => (
+                  <tspan
+                    key={part + i}
+                    x={g.center}
+                    dy={
+                      i === 0
+                        ? arr.length > 1
+                          ? -g.centerFontSize * 0.45
+                          : 0
+                        : g.centerFontSize * 0.95
+                    }
+                  >
+                    {part}
+                  </tspan>
+                ))}
+              </text>
+            </motion.g>
           </AnimatePresence>
         </motion.g>
 
