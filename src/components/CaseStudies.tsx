@@ -99,7 +99,7 @@ export const CaseStudies = ({ title, items, lang = "ru" }: CaseStudiesProps) => 
                 >
                   <Card className="h-full border-border/50 bg-card/50 backdrop-blur-sm overflow-hidden group hover:shadow-xl hover:shadow-primary/5 transition-all duration-300">
                     {item.image && caseImages[item.image] && (
-                      <Link to={`/cases/${caseId}`} className="block relative w-full h-40 sm:h-48 md:h-52 overflow-hidden">
+                      <Link to={`/${lang}/cases/${caseId}`} className="block relative w-full h-40 sm:h-48 md:h-52 overflow-hidden">
                         <motion.img 
                           src={caseImages[item.image]} 
                           alt={item.name}
@@ -121,7 +121,7 @@ export const CaseStudies = ({ title, items, lang = "ru" }: CaseStudiesProps) => 
                     )}
                     <CardHeader className="pb-2">
                       <CardTitle className="text-base md:text-lg lg:text-xl flex items-center justify-between">
-                        <Link to={`/cases/${caseId}`} className="hover:text-primary transition-colors">
+                        <Link to={`/${lang}/cases/${caseId}`} className="hover:text-primary transition-colors">
                           {item.name}
                         </Link>
                         {item.link && (
@@ -162,7 +162,7 @@ export const CaseStudies = ({ title, items, lang = "ru" }: CaseStudiesProps) => 
                           whileTap={{ scale: 0.98 }}
                         >
                           <Button variant="outline" size="sm" asChild className="w-full text-xs md:text-sm">
-                            <Link to={`/cases/${caseId}`}>
+                            <Link to={`/${lang}/cases/${caseId}`}>
                               {getLocalizedText("details")}
                               <ArrowRight className="ml-2 h-3 w-3" />
                             </Link>

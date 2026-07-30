@@ -271,7 +271,7 @@ const CaseStudyDetail = () => {
             <div className="flex justify-between items-center">
               {prevCase ? (
                 <Button variant="ghost" asChild>
-                  <Link to={`/cases/${prevCase.id}`} className="flex items-center gap-2">
+                  <Link to={`/${lang}/cases/${prevCase.id}`} className="flex items-center gap-2">
                     <ArrowLeft className="h-4 w-4" />
                     <span className="hidden sm:inline">{prevCase.name[lang as "ru" | "en"]}</span>
                     <span className="sm:hidden">{lang === "ru" ? "Назад" : "Previous"}</span>
@@ -287,7 +287,7 @@ const CaseStudyDetail = () => {
               
               {nextCase ? (
                 <Button variant="ghost" asChild>
-                  <Link to={`/cases/${nextCase.id}`} className="flex items-center gap-2">
+                  <Link to={`/${lang}/cases/${nextCase.id}`} className="flex items-center gap-2">
                     <span className="hidden sm:inline">{nextCase.name[lang as "ru" | "en"]}</span>
                     <span className="sm:hidden">{lang === "ru" ? "Далее" : "Next"}</span>
                     <ArrowLeft className="h-4 w-4 rotate-180" />
