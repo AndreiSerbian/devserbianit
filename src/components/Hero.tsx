@@ -1,7 +1,9 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-import { HeroDiagram } from "@/components/HeroDiagram";
+import { RevolverHeroDiagram } from "@/components/hero/RevolverHeroDiagram";
+import { useIsMobile } from "@/hooks/use-mobile";
+import type { RevolverLocale } from "@/components/hero/revolverData";
 
 interface HeroProps {
   title: string;
@@ -9,14 +11,7 @@ interface HeroProps {
   cta: string;
   ctaSecondary: string;
   specializations: string;
-  diagramLabels: {
-    marketing: string;
-    sales: string;
-    site: string;
-    crm: string;
-    automation: string;
-    analytics: string;
-  };
+  locale: RevolverLocale;
   onCtaClick: () => void;
   onSecondaryClick: () => void;
 }
@@ -27,13 +22,15 @@ export const Hero = ({
   cta,
   ctaSecondary,
   specializations,
-  diagramLabels,
+  locale,
   onCtaClick,
   onSecondaryClick,
-}: HeroProps) => (
+}: HeroProps) => {
+  const isMobile = useIsMobile();
+  return (
   <section className="relative border-b border-border bg-background overflow-hidden">
     <div className="container px-4 sm:px-6 py-14 md:py-24">
-      <div className="grid lg:grid-cols-[1.05fr_0.95fr] gap-10 lg:gap-14 items-center">
+      <div className="grid lg:grid-cols-[0.95fr_1.05fr] gap-10 lg:gap-12 items-center">
         <div className="min-w-0">
           <motion.p
             initial={{ opacity: 0 }}
@@ -87,11 +84,12 @@ export const Hero = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="flex justify-center lg:justify-end min-w-0"
+          className="flex justify-center lg:justify-end min-w-0 w-full"
         >
-          <HeroDiagram labels={diagramLabels} />
+          <RevolverHeroDiagram locale={locale} compact={isMobile} className="w-full" />
         </motion.div>
       </div>
     </div>
-  </section>
-);
+    </section>
+  );
+};

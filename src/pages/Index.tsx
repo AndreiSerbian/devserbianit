@@ -178,7 +178,7 @@ const Index = () => {
           cta={t.hero.cta}
           ctaSecondary={t.hero.ctaSecondary}
           specializations={t.hero.specializations}
-          diagramLabels={t.hero.diagram}
+          locale={lang}
           onCtaClick={() => {
             trackEvent("cta_hero_click", { locale: lang });
             scrollToSection("contact-form");
