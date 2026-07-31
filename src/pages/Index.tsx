@@ -187,14 +187,22 @@ const Index = () => {
         />
 
         <div id="services">
-          <Services title={t.services.title} items={t.services.items} />
+          <Services title={t.services.title} intro={t.services.intro} items={t.services.items} />
         </div>
 
         <div id="cases">
           <CaseStudies title={t.cases.title} items={t.cases.items} lang={lang} />
         </div>
 
-        <Process title={t.process.title} steps={t.process.steps} />
+        <Process
+          title={t.process.title}
+          intro={t.process.intro}
+          cta={t.process.cta}
+          telegramUrl={brand.telegram}
+          onTelegramClick={() => trackEvent("telegram_click", { locale: lang })}
+          onSecondaryClick={() => scrollToSection("cases")}
+          steps={t.process.steps}
+        />
 
         <ContactForm t={t.form} lang={lang} />
 

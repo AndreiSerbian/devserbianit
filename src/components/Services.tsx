@@ -3,20 +3,26 @@ import { ShoppingCart, Globe, Workflow, Send } from "lucide-react";
 
 interface ServicesProps {
   title: string;
+  intro?: string;
   items: readonly { readonly title: string; readonly desc: string }[];
 }
 
 const icons = [ShoppingCart, Globe, Workflow, Send];
 
-export const Services = ({ title, items }: ServicesProps) => (
+export const Services = ({ title, intro, items }: ServicesProps) => (
   <section className="py-16 md:py-24 border-b border-border">
     <div className="container px-4 sm:px-6">
-      <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight mb-10 md:mb-14">
+      <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight">
         <span className="text-primary mr-3">01</span>
         {title}
       </h2>
+      {intro && (
+        <p className="mt-4 max-w-2xl text-sm md:text-base leading-relaxed text-muted-foreground">
+          {intro}
+        </p>
+      )}
 
-      <div className="grid sm:grid-cols-2 gap-px bg-border border border-border">
+      <div className="mt-10 md:mt-14 grid sm:grid-cols-2 gap-px bg-border border border-border">
         {items.map((item, idx) => {
           const Icon = icons[idx % icons.length];
           return (
@@ -32,7 +38,7 @@ export const Services = ({ title, items }: ServicesProps) => (
               <h3 className="font-display text-lg md:text-xl font-medium tracking-wide mb-3">
                 {item.title}
               </h3>
-              <p className="text-sm md:text-base text-muted-foreground leading-relaxed">{item.desc}</p>
+              <p className="text-sm md:text-base text-foreground/75 leading-relaxed">{item.desc}</p>
             </motion.article>
           );
         })}
