@@ -43,44 +43,54 @@ export const translations = {
       },
     },
     services: {
-      title: "Услуги",
+      title: "Чем я могу помочь",
+      intro:
+        "Разрабатываю сайты и внутренние инструменты для малого бизнеса, интернет-магазинов и НКО. Сначала разбираюсь, как устроена работа компании, а уже потом предлагаю техническое решение.",
       items: [
         {
           title: "Интернет-магазины",
-          desc: "Собираю магазины для B2B и розницы: каталог, заявки, предзаказы, оплата и удобная работа с заказами.",
+          desc: "Делаю интернет-магазины для B2B и розницы: каталоги, заявки, предзаказы, оплату и учёт заказов. Продумываю не только витрину, но и то, как заказ проходит дальше внутри бизнеса.",
         },
         {
-          title: "Сайты компаний и НКО",
-          desc: "Делаю сайты, которые понятно объясняют, чем вы занимаетесь, вызывают доверие и приводят обращения.",
+          title: "Сайты для бизнеса и НКО",
+          desc: "Создаю корпоративные сайты и лендинги, которые понятно объясняют, чем вы занимаетесь и почему к вам стоит обратиться. Сайт должен не просто выглядеть аккуратно, а помогать человеку принять решение и связаться с вами.",
         },
         {
           title: "CRM и интеграции",
-          desc: "Соединяю сайт, CRM, таблицы, почту и Telegram так, чтобы заявки не терялись, а данные не дублировались.",
+          desc: "Связываю сайт, CRM, таблицы, почту и Telegram в одну рабочую систему. Чтобы заявки не терялись, данные не приходилось переносить вручную, а процессы было проще контролировать.",
         },
         {
           title: "Telegram-боты",
-          desc: "Разрабатываю ботов для заявок, уведомлений, поддержки и внутренних задач команды.",
+          desc: "Разрабатываю ботов для заявок, уведомлений, поддержки и внутренних задач команды. Использую их там, где они действительно экономят время и убирают повторяющуюся ручную работу.",
         },
       ],
     },
     process: {
-      title: "Как я работаю",
+      title: "От задачи бизнеса до работающего продукта",
+      intro:
+        "Я беру на себя весь процесс: погружаюсь в задачу, собираю концепцию, проектирую решение, разрабатываю, проверяю и помогаю с запуском.",
+      cta: {
+        title: "Есть задача, которую нужно разобрать?",
+        text: "Коротко опишите проект в Telegram. Я задам несколько вопросов, оценю масштаб работы и скажу, какое решение здесь имеет смысл.",
+        primary: "Обсудить проект в Telegram",
+        secondary: "Посмотреть проекты",
+      },
       steps: [
         {
-          title: "Разбор задачи",
-          desc: "Выясняю, что должно измениться в работе компании и как сейчас проходят заявки, продажи и взаимодействие с клиентами.",
+          title: "Сначала разбираюсь",
+          desc: "Не начинаю работу с дизайна или кода. Сначала выясняю, как устроен ваш бизнес: что вы предлагаете, кто ваши клиенты, откуда приходят заявки и где сейчас возникают сложности.",
         },
         {
-          title: "Оценка и план",
-          desc: "Определяю состав работ, приоритеты, этапы, сроки и предварительную стоимость проекта.",
+          title: "Собираю концепцию и план",
+          desc: "Фиксирую требования, изучаю рынок и конкурентов, определяю приоритеты, риски и объём работ. После этого предлагаю структуру проекта, техническое решение, этапы, сроки и предварительную стоимость.",
         },
         {
-          title: "Разработка с демо",
-          desc: "Собираю продукт по этапам и показываю промежуточный результат, чтобы решения можно было проверить до финального запуска.",
+          title: "Делаю и показываю",
+          desc: "Собираю визуальную концепцию и прототип, выбираю технологии под реальный масштаб проекта и начинаю разработку. Показываю промежуточные версии, чтобы важные решения можно было проверить до финального запуска.",
         },
         {
-          title: "Запуск и поддержка",
-          desc: "Проверяю основные сценарии, запускаю продукт, передаю документацию и при необходимости продолжаю техническую поддержку.",
+          title: "Проверяю и запускаю",
+          desc: "Проверяю основные сценарии, формы, интеграции, безопасность и работу на разных устройствах. После запуска передаю документацию, объясняю логику продукта и при необходимости продолжаю техническую поддержку.",
         },
       ],
     },
@@ -220,6 +230,8 @@ export const translations = {
     },
     services: {
       title: "Services",
+      intro:
+        "I build websites and internal tools for small business, online stores and NGOs. First I look into how the company actually works, and only then propose a technical solution.",
       items: [
         {
           title: "Online stores",
@@ -241,6 +253,14 @@ export const translations = {
     },
     process: {
       title: "How I work",
+      intro:
+        "I take on the whole process: understanding the task, shaping the concept, designing the solution, building, testing and helping with launch.",
+      cta: {
+        title: "Got a task worth looking into?",
+        text: "Describe the project briefly on Telegram. I will ask a few questions, estimate the scope and tell you which solution makes sense here.",
+        primary: "Discuss the project on Telegram",
+        secondary: "See projects",
+      },
       steps: [
         {
           title: "Understanding the task",
@@ -394,6 +414,8 @@ export const translations = {
     },
     services: {
       title: "Servicii",
+      intro:
+        "Dezvolt site-uri și instrumente interne pentru afaceri mici, magazine online și ONG-uri. Întâi înțeleg cum funcționează compania, abia apoi propun soluția tehnică.",
       items: [
         {
           title: "Magazine online",
@@ -415,6 +437,14 @@ export const translations = {
     },
     process: {
       title: "Cum lucrez",
+      intro:
+        "Preiau tot procesul: înțeleg sarcina, construiesc conceptul, proiectez soluția, dezvolt, verific și ajut la lansare.",
+      cta: {
+        title: "Aveți o sarcină de analizat?",
+        text: "Descrieți scurt proiectul pe Telegram. Voi pune câteva întrebări, voi estima volumul și voi spune ce soluție are sens aici.",
+        primary: "Discutăm proiectul pe Telegram",
+        secondary: "Vedeți proiectele",
+      },
       steps: [
         {
           title: "Analiza sarcinii",
