@@ -123,7 +123,7 @@ export const RevolverHeroDiagram = ({
                 y1={s.hy}
                 x2={s.cx}
                 y2={s.cy}
-                stroke={isActive ? "hsl(var(--lime))" : "hsl(var(--teal-bright))"}
+                stroke="hsl(var(--teal-bright))"
                 strokeWidth={isActive ? 1.8 : 1}
                 initial={still || !play ? undefined : { pathLength: 0, opacity: 0 }}
                 animate={
@@ -151,7 +151,7 @@ export const RevolverHeroDiagram = ({
               width={g.cardW}
               height={g.cardH}
               fill="hsl(var(--surface-raised))"
-              stroke={s.index === activeSlot ? "hsl(var(--lime))" : "hsl(var(--border))"}
+              stroke="hsl(var(--border))"
               strokeWidth="1"
               initial={still || !play ? undefined : { opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -177,7 +177,7 @@ export const RevolverHeroDiagram = ({
                 y={0}
                 textAnchor="middle"
                 dominantBaseline="middle"
-                fill={isActive ? "hsl(var(--lime))" : "hsl(var(--foreground))"}
+                fill="hsl(var(--foreground))"
                 fontFamily={OSWALD}
                 fontSize={g.fontSize}
                 fontWeight={500}
@@ -303,7 +303,7 @@ export const RevolverHeroDiagram = ({
             aria-hidden
             key={`signal-${step}`}
             r={3.5}
-            fill="hsl(var(--lime))"
+            fill="hsl(var(--teal-bright))"
             initial={{
               cx: g.slots[activeSlot].cx,
               cy: g.slots[activeSlot].cy,
