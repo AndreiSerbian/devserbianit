@@ -116,7 +116,7 @@ export const ASMonogram = ({
       {/* A — centre bar / active connection node */}
       <path
         d={micro ? BAR_PATH_MICRO : BAR_PATH}
-        stroke={micro ? p.archShade : p.bar}
+        stroke={micro ? p.arch : p.bar}
         strokeWidth={barWidth}
         strokeLinecap="butt"
       />
