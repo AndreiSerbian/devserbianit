@@ -1,5 +1,7 @@
 export type MonogramVariant = "full" | "compact" | "micro";
 export type MonogramTone = "brand" | "light" | "dark" | "mono";
+/** PRD-facing alias of tone */
+export type MonogramTheme = "auto" | "light" | "dark" | "monochrome";
 
 export interface ASMonogramProps {
   /** full = most detail, compact = header sizes, micro = 16-32px / favicon */
@@ -7,6 +9,8 @@ export interface ASMonogramProps {
   /** rendered box size; number = px */
   size?: number | string;
   tone?: MonogramTone;
+  /** alias for tone: auto -> brand, monochrome -> mono */
+  theme?: MonogramTheme;
   className?: string;
   /** accessible name — used only when decorative is false */
   title?: string;
@@ -20,6 +24,13 @@ interface Palette {
   bar: string;
   cable: string;
 }
+
+const themeToTone: Record<MonogramTheme, MonogramTone> = {
+  auto: "brand",
+  light: "light",
+  dark: "dark",
+  monochrome: "mono",
+};
 
 const palettes: Record<MonogramTone, Palette> = {
   brand: {
@@ -48,25 +59,39 @@ const palettes: Record<MonogramTone, Palette> = {
   },
 };
 
+/** A — inverted-U magnet arch: two separated poles, open negative space inside. */
+export const ARCH_PATH = "M9 56V27c0-6.6 5.4-12 12-12s12 5.4 12 12v29";
+/** A — restrained centre bar; it reaches past the right pole to meet the wire. */
+export const BAR_PATH = "M11.5 39H39.5";
+export const BAR_PATH_MICRO = "M11 39H34";
+/** S — one continuous wire: exits top right, folds through the mark, meets the bar. */
+export const WIRE_PATH =
+  "M55 27c0-6-7.6-8.7-12.3-4.9-4.4 3.6-3.5 10 1.6 13 5.6 3.3 6.5 10.2 1.2 12.9-3.5 1.8-6.5.6-6.5-3.4";
+export const WIRE_PATH_MICRO =
+  "M55 27.5c0-5.6-7.4-8.2-11.9-4.6-4.2 3.4-3.3 9.6 1.6 12.6 5.4 3.2 6.3 9.8 1.2 12.4-3.3 1.7-6.2.6-6.2-3.2";
+
 /**
  * AS monogram.
- * A — an inverted U arch with a centre bar: a field that holds things together.
- * S — a dense routed cable line: connection between systems.
+ * A — an inverted-U magnet arch with a restrained centre bar: business structure.
+ * S — one continuous wire routed through that structure: integration and data flow.
  * Both letters carry a comparable visual weight on the same 64x64 grid.
  */
 export const ASMonogram = ({
   variant = "full",
   size,
-  tone = "brand",
+  tone,
+  theme,
   className,
   title,
   decorative = false,
 }: ASMonogramProps) => {
-  const p = palettes[tone];
+  const resolvedTone: MonogramTone = tone ?? (theme ? themeToTone[theme] : "brand");
+  const p = palettes[resolvedTone];
   const micro = variant === "micro";
-  const archWidth = micro ? 9 : variant === "compact" ? 7.5 : 6.5;
-  const cableWidth = micro ? 9 : variant === "compact" ? 7.5 : 6.5;
-  const barWidth = micro ? 9 : variant === "compact" ? 7.5 : 7;
+  const full = variant === "full";
+  const archWidth = micro ? 8.5 : variant === "compact" ? 7 : 6.5;
+  const wireWidth = micro ? 8.5 : variant === "compact" ? 7 : 6.5;
+  const barWidth = micro ? 8.5 : variant === "compact" ? 5.5 : 5;
 
   return (
     <svg
@@ -80,38 +105,34 @@ export const ASMonogram = ({
       aria-hidden={decorative ? true : undefined}
       focusable="false"
     >
-      {/* A — arch (left leg, crown, right leg) */}
+      {/* A — magnet arch */}
       <path
-        d="M11 55V25c0-7.7 5.6-13 12.5-13S36 17.3 36 25v30"
+        d={ARCH_PATH}
         stroke={p.arch}
         strokeWidth={archWidth}
-        strokeLinecap={micro ? "butt" : "square"}
-        strokeLinejoin="miter"
+        strokeLinecap="butt"
+        strokeLinejoin="round"
       />
-      {/* A — centre bar, part of the letter */}
+      {/* A — centre bar / active connection node */}
       <path
-        d="M11 38.5h25"
-        stroke={variant === "full" ? p.bar : p.archShade}
+        d={micro ? BAR_PATH_MICRO : BAR_PATH}
+        stroke={micro ? p.arch : p.bar}
         strokeWidth={barWidth}
         strokeLinecap="butt"
       />
-      {/* S — cable */}
+      {/* S — wire */}
       <path
-        d={
-          micro
-            ? "M55 20.5c-3.2-3.6-9-4.4-12.3-1.6-3.9 3.3-2.9 8.6 1.3 11 2.9 1.7 7 2.5 9.4 4.9 3.7 3.7 2.4 10-2.6 12.2-3.6 1.6-8 .6-10.8-2.5"
-            : "M55 19c-3.1-3.4-8.7-4.3-12-1.8-4.1 3.1-3.6 8.9.6 11.5 2.8 1.7 6.7 2.5 9.1 4.7 3.8 3.5 2.7 9.9-2.2 12.2-3.6 1.7-8.2.8-11.1-2.3"
-        }
+        d={micro ? WIRE_PATH_MICRO : WIRE_PATH}
         stroke={p.cable}
-        strokeWidth={cableWidth}
+        strokeWidth={wireWidth}
         strokeLinecap={micro ? "butt" : "round"}
         strokeLinejoin="round"
       />
-      {/* simplified cable terminals — full variant only */}
-      {variant === "full" && (
+      {/* minimal geometric connectors — full variant only */}
+      {full && (
         <>
-          <path d="M55 19l3.5-3.5" stroke={p.cable} strokeWidth="4" strokeLinecap="round" />
-          <path d="M39.4 43.3l-3.6 3.6" stroke={p.cable} strokeWidth="4" strokeLinecap="round" />
+          <circle cx="55" cy="27" r="3.3" fill={p.cable} />
+          <circle cx="39" cy="44.6" r="3.3" fill={p.cable} />
         </>
       )}
     </svg>

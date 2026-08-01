@@ -25,21 +25,27 @@ export const BrandLockup = ({
   return (
     <span
       className={`flex min-w-0 ${
-        stacked ? "flex-col items-center gap-3 text-center" : "items-center gap-2.5"
+        stacked ? "flex-col items-center gap-3 text-center" : "items-center gap-2"
       } ${className}`}
     >
-      <ASMonogram
-        variant={compact ? "compact" : "full"}
-        tone={tone}
-        decorative
-        className={compact ? "h-7 w-7 shrink-0" : stacked ? "h-14 w-14" : "h-9 w-9 shrink-0"}
-      />
-
-      {!stacked && !compact && (
-        <span
-          aria-hidden="true"
-          className="h-7 w-px shrink-0 bg-border opacity-70"
-        />
+      {compact ? (
+        <ASMonogram variant="compact" tone={tone} decorative className="h-9 w-9 shrink-0" />
+      ) : (
+        <>
+          {/* mobile: compact mark, desktop: full mark — same construction, fewer details */}
+          <ASMonogram
+            variant="compact"
+            tone={tone}
+            decorative
+            className={`shrink-0 sm:hidden ${stacked ? "h-12 w-12" : "h-9 w-9"}`}
+          />
+          <ASMonogram
+            variant="full"
+            tone={tone}
+            decorative
+            className={`hidden shrink-0 sm:block ${stacked ? "h-14 w-14" : "h-10 w-10"}`}
+          />
+        </>
       )}
 
       <span className={`flex flex-col leading-none min-w-0 ${stacked ? "items-center" : ""}`}>
