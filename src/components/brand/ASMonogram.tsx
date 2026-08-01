@@ -60,15 +60,15 @@ const palettes: Record<MonogramTone, Palette> = {
 };
 
 /** A — inverted-U magnet arch: two separated poles, open negative space inside. */
-export const ARCH_PATH = "M11 56V27c0-7.2 5.8-13 13-13s13 5.8 13 13v29";
+export const ARCH_PATH = "M9 56V27c0-6.6 5.4-12 12-12s12 5.4 12 12v29";
 /** A — restrained centre bar; it reaches past the right pole to meet the wire. */
-export const BAR_PATH = "M13.5 38H40";
-export const BAR_PATH_MICRO = "M13 38H37";
-/** S — one continuous wire that enters low, crosses the bar and exits top right. */
+export const BAR_PATH = "M11.5 39H39.5";
+export const BAR_PATH_MICRO = "M11 39H34";
+/** S — one continuous wire: exits top right, folds through the mark, meets the bar. */
 export const WIRE_PATH =
-  "M54.5 25.5c0-7-9.5-10-15-5.5-5 4.1-4 11.5 2 15 6.5 3.8 7.5 11.8 1.5 14.8-5.5 2.7-11 0-12-5";
+  "M55 27c0-6-7.6-8.7-12.3-4.9-4.4 3.6-3.5 10 1.6 13 5.6 3.3 6.5 10.2 1.2 12.9-3.5 1.8-6.5.6-6.5-3.4";
 export const WIRE_PATH_MICRO =
-  "M54 26c0-6.6-9-9.4-14.2-5.2-4.7 3.9-3.7 10.9 1.9 14.2 6.1 3.6 7.1 11.2 1.4 14-5.2 2.6-10.4 0-11.3-4.7";
+  "M55 27.5c0-5.6-7.4-8.2-11.9-4.6-4.2 3.4-3.3 9.6 1.6 12.6 5.4 3.2 6.3 9.8 1.2 12.4-3.3 1.7-6.2.6-6.2-3.2";
 
 /**
  * AS monogram.
@@ -131,8 +131,8 @@ export const ASMonogram = ({
       {/* minimal geometric connectors — full variant only */}
       {full && (
         <>
-          <circle cx="54.5" cy="25.5" r="3.4" fill={p.cable} />
-          <circle cx="31" cy="45.7" r="3.4" fill={p.cable} />
+          <circle cx="55" cy="27" r="3.3" fill={p.cable} />
+          <circle cx="39" cy="44.6" r="3.3" fill={p.cable} />
         </>
       )}
     </svg>
