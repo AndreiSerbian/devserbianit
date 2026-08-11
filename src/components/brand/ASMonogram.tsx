@@ -70,7 +70,7 @@ const palettes: Record<MonogramTone, Palette> = {
  * Outer contour + slot subpath, cut with fill-rule="evenodd".
  */
 export const ARCH_PATH =
-  "M3 58V21C3 12.2 9.3 5 17 5s14 7.2 14 16v37h-10V32a4 4 0 0 0-8 0v26H3z" +
+  "M3 58V21C3 12.2 9.3 5 17 5s14 7.2 14 16v37H3z" +
   "M13 32a4 4 0 0 1 8 0v26h-8V32z";
 
 /** A — crossbar; it bridges the slot and reads as an active contact. */
