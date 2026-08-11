@@ -1,10 +1,12 @@
+import { useId } from "react";
+
 export type MonogramVariant = "full" | "compact" | "micro";
 export type MonogramTone = "brand" | "light" | "dark" | "mono";
 /** PRD-facing alias of tone */
 export type MonogramTheme = "auto" | "light" | "dark" | "monochrome";
 
 export interface ASMonogramProps {
-  /** full = most detail, compact = header sizes, micro = 16-32px / favicon */
+  /** full = layered ribbon S, compact = single ribbon, micro = 16-32px / favicon */
   variant?: MonogramVariant;
   /** rendered box size; number = px */
   size?: number | string;
@@ -18,13 +20,6 @@ export interface ASMonogramProps {
   decorative?: boolean;
 }
 
-interface Palette {
-  arch: string;
-  archShade: string;
-  bar: string;
-  cable: string;
-}
-
 const themeToTone: Record<MonogramTheme, MonogramTone> = {
   auto: "brand",
   light: "light",
@@ -32,49 +27,61 @@ const themeToTone: Record<MonogramTheme, MonogramTone> = {
   monochrome: "mono",
 };
 
+interface Palette {
+  /** gradient stops for the filled A arch */
+  archFrom: string;
+  archTo: string;
+  /** crossbar cutting through the A slot */
+  bar: string;
+  /** S ribbon */
+  wire: string;
+}
+
 const palettes: Record<MonogramTone, Palette> = {
   brand: {
-    arch: "hsl(var(--teal-bright))",
-    archShade: "hsl(var(--primary))",
-    bar: "hsl(var(--lime))",
-    cable: "hsl(var(--cream))",
+    archFrom: "hsl(var(--teal-bright))",
+    archTo: "hsl(var(--primary))",
+    bar: "hsl(var(--cream))",
+    wire: "hsl(var(--cream))",
   },
   light: {
-    arch: "hsl(var(--cream))",
-    archShade: "hsl(var(--cream))",
-    bar: "hsl(var(--lime))",
-    cable: "hsl(var(--teal-bright))",
+    archFrom: "hsl(var(--cream))",
+    archTo: "hsl(var(--cream))",
+    bar: "hsl(var(--graphite))",
+    wire: "hsl(var(--cream))",
   },
   dark: {
-    arch: "hsl(var(--graphite))",
-    archShade: "hsl(var(--graphite))",
-    bar: "hsl(var(--primary))",
-    cable: "hsl(var(--graphite))",
+    archFrom: "hsl(var(--graphite))",
+    archTo: "hsl(var(--graphite))",
+    bar: "hsl(var(--cream))",
+    wire: "hsl(var(--graphite))",
   },
   mono: {
-    arch: "currentColor",
-    archShade: "currentColor",
+    archFrom: "currentColor",
+    archTo: "currentColor",
     bar: "currentColor",
-    cable: "currentColor",
+    wire: "currentColor",
   },
 };
 
-/** A — inverted-U magnet arch: two separated poles, open negative space inside. */
-export const ARCH_PATH = "M9 56V27c0-6.6 5.4-12 12-12s12 5.4 12 12v29";
-/** A — restrained centre bar; it reaches past the right pole to meet the wire. */
-export const BAR_PATH = "M11.5 39H39.5";
-export const BAR_PATH_MICRO = "M11 39H34";
-/** S — one continuous wire: exits top right, folds through the mark, meets the bar. */
-export const WIRE_PATH =
-  "M55 27c0-6-7.6-8.7-12.3-4.9-4.4 3.6-3.5 10 1.6 13 5.6 3.3 6.5 10.2 1.2 12.9-3.5 1.8-6.5.6-6.5-3.4";
-export const WIRE_PATH_MICRO =
-  "M55 27.5c0-5.6-7.4-8.2-11.9-4.6-4.2 3.4-3.3 9.6 1.6 12.6 5.4 3.2 6.3 9.8 1.2 12.4-3.3 1.7-6.2.6-6.2-3.2";
+/**
+ * A — one solid arch (business structure): filled inverted-U with an open slot
+ * carved from the baseline and a crossbar locking the slot.
+ * Outer contour + slot subpath, cut with fill-rule="evenodd".
+ */
+export const ARCH_PATH =
+  "M3 58V21C3 12.2 9.3 5 17 5s14 7.2 14 16v37h-10V32a4 4 0 0 0-8 0v26H3z" +
+  "M13 32a4 4 0 0 1 8 0v26h-8V32z";
+
+/** A — crossbar; it bridges the slot and reads as an active contact. */
+export const BAR_PATH = "M9.5 40h15v5.5h-15z";
+
+/** S — one rounded ribbon routed with square shoulders (IT / data path). */
+export const WIRE_PATH = "M59 14H46a10 10 0 0 0 0 20h6a10 10 0 0 1 0 20H38";
 
 /**
- * AS monogram.
- * A — an inverted-U magnet arch with a restrained centre bar: business structure.
- * S — one continuous wire routed through that structure: integration and data flow.
- * Both letters carry a comparable visual weight on the same 64x64 grid.
+ * AS monogram — rebuilt from the brand sketch.
+ * A = filled magnet arch, S = layered rounded ribbon, no divider rule.
  */
 export const ASMonogram = ({
   variant = "full",
@@ -85,13 +92,14 @@ export const ASMonogram = ({
   title,
   decorative = false,
 }: ASMonogramProps) => {
+  const uid = useId().replace(/[^a-zA-Z0-9]/g, "");
+  const gradientId = `as-arch-${uid}`;
   const resolvedTone: MonogramTone = tone ?? (theme ? themeToTone[theme] : "brand");
   const p = palettes[resolvedTone];
+
   const micro = variant === "micro";
   const full = variant === "full";
-  const archWidth = micro ? 8.5 : variant === "compact" ? 7 : 6.5;
-  const wireWidth = micro ? 8.5 : variant === "compact" ? 7 : 6.5;
-  const barWidth = micro ? 8.5 : variant === "compact" ? 5.5 : 5;
+  const wireWidth = micro ? 8.5 : variant === "compact" ? 7 : 5.5;
 
   return (
     <svg
@@ -105,34 +113,38 @@ export const ASMonogram = ({
       aria-hidden={decorative ? true : undefined}
       focusable="false"
     >
-      {/* A — magnet arch */}
+      <defs>
+        <linearGradient id={gradientId} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor={p.archFrom} />
+          <stop offset="100%" stopColor={p.archTo} />
+        </linearGradient>
+      </defs>
+
+      {/* A — filled arch with open slot */}
+      <path d={ARCH_PATH} fill={`url(#${gradientId})`} fillRule="evenodd" clipRule="evenodd" />
+      {/* A — crossbar */}
+      <path d={BAR_PATH} fill={p.bar} />
+
+      {/* S — layered ribbon (full) / single ribbon (compact, micro) */}
+      {full && (
+        <g stroke={p.wire} strokeWidth={wireWidth} strokeLinecap="round" strokeLinejoin="round">
+          <path d={WIRE_PATH} transform="translate(-4.5 -4.5)" opacity="0.3" />
+          <path d={WIRE_PATH} transform="translate(-2.25 -2.25)" opacity="0.55" />
+        </g>
+      )}
       <path
-        d={ARCH_PATH}
-        stroke={p.arch}
-        strokeWidth={archWidth}
-        strokeLinecap="butt"
-        strokeLinejoin="round"
-      />
-      {/* A — centre bar / active connection node */}
-      <path
-        d={micro ? BAR_PATH_MICRO : BAR_PATH}
-        stroke={micro ? p.arch : p.bar}
-        strokeWidth={barWidth}
-        strokeLinecap="butt"
-      />
-      {/* S — wire */}
-      <path
-        d={micro ? WIRE_PATH_MICRO : WIRE_PATH}
-        stroke={p.cable}
+        d={WIRE_PATH}
+        stroke={p.wire}
         strokeWidth={wireWidth}
         strokeLinecap={micro ? "butt" : "round"}
         strokeLinejoin="round"
       />
-      {/* minimal geometric connectors — full variant only */}
-      {full && (
+
+      {/* terminals — full and compact only */}
+      {!micro && (
         <>
-          <circle cx="55" cy="27" r="3.3" fill={p.cable} />
-          <circle cx="39" cy="44.6" r="3.3" fill={p.cable} />
+          <rect x="55.5" y="8" width="7" height="8" rx="2" fill={p.wire} />
+          <rect x="34.5" y="48" width="7" height="8" rx="2" fill={p.wire} />
         </>
       )}
     </svg>
