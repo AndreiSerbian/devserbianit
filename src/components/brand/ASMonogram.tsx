@@ -127,9 +127,9 @@ export const ASMonogram = ({
 
       {/* S — layered ribbon (full) / single ribbon (compact, micro) */}
       {full && (
-        <g stroke={p.wire} strokeWidth={wireWidth} strokeLinecap="round" strokeLinejoin="round">
-          <path d={WIRE_PATH} transform="translate(-4.5 -4.5)" opacity="0.3" />
-          <path d={WIRE_PATH} transform="translate(-2.25 -2.25)" opacity="0.55" />
+        <g stroke={p.wire} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d={WIRE_PATH} transform="translate(-3.2 -3.2)" opacity="0.55" />
+          <path d={WIRE_PATH} transform="translate(-6 -6)" opacity="0.3" />
         </g>
       )}
       <path
