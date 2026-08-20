@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.track-event]
 verify_jwt = false
+
+[functions.consent-receipt]
+verify_jwt = false
