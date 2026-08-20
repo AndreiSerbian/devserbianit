@@ -169,9 +169,12 @@ export const translations = {
       rights: "Все права защищены.",
     },
     seo: {
-      title: "ANDREI SERBIAN — IT SOLUTIONS",
+      title: "ANDREI SERBIAN — сайты, интернет-магазины, CRM и Telegram-боты",
       description:
         "Сайты, интернет-магазины, CRM и Telegram-боты для малого бизнеса, e-commerce и социальных проектов. Связываю сайт, CRM и сервисы в одну рабочую систему.",
+      caseSuffix: "кейс ANDREI SERBIAN",
+      notFoundTitle: "Страница не найдена — ANDREI SERBIAN",
+      notFoundDescription: "Такой страницы нет. Вернитесь на главную, чтобы посмотреть услуги и кейсы.",
     },
     calculator: {
       title: "Калькулятор стоимости",
