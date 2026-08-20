@@ -87,7 +87,6 @@ export const legalRo: LegalBundle = {
           "Telegram Messenger — livrarea notificării despre o cerere nouă către operator.",
           "Google (Gmail) — destinatar / prestator de servicii pentru livrarea notificărilor prin e-mail.",
         ],
-        paragraphs2: undefined,
       },
       {
         heading: "5. Fonturi și resurse externe",
