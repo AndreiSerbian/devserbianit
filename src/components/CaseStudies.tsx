@@ -103,6 +103,10 @@ export const CaseStudies = ({ title, items, lang = "ru" }: CaseStudiesProps) => 
                         <motion.img 
                           src={caseImages[item.image]} 
                           alt={item.name}
+                          width={1200}
+                          height={630}
+                          loading="lazy"
+                          decoding="async"
                           className="w-full h-full object-cover object-top"
                           whileHover={{ scale: 1.08 }}
                           transition={{ duration: 0.4 }}

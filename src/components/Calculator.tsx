@@ -257,7 +257,7 @@ Serbian IT Development
   return (
     <section id="calculator" className="py-16 md:py-24 bg-background">
       <div className="container max-w-5xl px-4 sm:px-6">
-        <motion.h2 
+        <motion.h1 
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -266,7 +266,7 @@ Serbian IT Development
         >
           <CalculatorIcon className="h-5 w-5 md:h-7 md:w-7 lg:h-8 lg:w-8 text-primary" />
           {t.title}
-        </motion.h2>
+        </motion.h1>
         <div className="grid lg:grid-cols-2 gap-4 md:gap-6">
           {/* Configuration */}
           <motion.div
