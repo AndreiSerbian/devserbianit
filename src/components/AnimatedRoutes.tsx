@@ -5,15 +5,24 @@ import CaseStudyDetail from "@/pages/CaseStudyDetail";
 import CalculatorPage from "@/pages/CalculatorPage";
 import NotFound from "@/pages/NotFound";
 import BrandCheck from "@/pages/BrandCheck";
+import LegalPage from "@/pages/LegalPage";
 import { PageTransition } from "./PageTransition";
 import { SUPPORTED_LANGS, type Lang } from "@/data/translations";
+import { readPreference } from "@/lib/preferences";
+import { LEGAL_DOCS, LEGAL_SLUGS } from "@/lib/legalRoutes";
+import { LOCALES } from "@/lib/siteConfig";
 
 const preferredLang = (): Lang => {
-  const stored = typeof window !== "undefined" ? localStorage.getItem("lang") : null;
+  const stored = typeof window !== "undefined" ? readPreference("lang") : null;
   if (stored && SUPPORTED_LANGS.includes(stored as Lang)) return stored as Lang;
   const nav = typeof navigator !== "undefined" ? navigator.language.slice(0, 2) : "ru";
   return SUPPORTED_LANGS.includes(nav as Lang) ? (nav as Lang) : "ru";
 };
+
+/** One route per locale + document, because legal slugs are localized. */
+const LEGAL_ROUTES = LOCALES.flatMap((lang) =>
+  LEGAL_DOCS.map((doc) => ({ path: `/${lang}/${LEGAL_SLUGS[doc][lang]}`, lang, doc })),
+);
 
 export const AnimatedRoutes = () => {
   const location = useLocation();
@@ -49,6 +58,17 @@ export const AnimatedRoutes = () => {
             </PageTransition>
           }
         />
+        {LEGAL_ROUTES.map(({ path, doc }) => (
+          <Route
+            key={path}
+            path={path}
+            element={
+              <PageTransition>
+                <LegalPage doc={doc} />
+              </PageTransition>
+            }
+          />
+        ))}
         <Route
           path="*"
           element={
