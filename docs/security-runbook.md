@@ -24,7 +24,9 @@ for tracking.
 1. Disable the public entry point: set `verify_jwt = true` for the affected function in
    `supabase/config.toml` and redeploy, or temporarily return 503 from the handler.
 2. If abuse is rate-limit related, lower `p_max_hits` / raise `p_window_seconds` in the
-   `check_rate_limit` call in `submit-lead`.
+   `check_rate_limit` call in `submit-lead` (scope `submit-lead`, 5/hour) or in
+   `track-event` (scope `track-event`, 120/hour). Both limits are server-controlled
+   constants in the function source; they are never read from the request payload.
 3. If data exposure is suspected, verify grants and RLS:
    - `public.leads` and `public.analytics_events` must have no privileges for
      `anon`/`authenticated`, and deny-all RLS policies.
@@ -34,7 +36,10 @@ for tracking.
 
 - `leads`: contact data and request text (the sensitive set).
 - `analytics_events`: event name, page path, locale, anonymous session id.
-- `rate_limit_hits`: keyed HMAC of client IP only, retention 24h. No raw IP.
+- `rate_limit_hits`: keyed HMAC of client IP only. No raw IP. Records older than 24h
+  are purged hourly by the `purge-rate-limit-hits` cron job, so the actual maximum
+  retention is about 25 hours (24h threshold + up to one hour until the next run).
+  There is no hard 24h guarantee with an hourly schedule.
 
 ## 5. Logs to inspect
 
