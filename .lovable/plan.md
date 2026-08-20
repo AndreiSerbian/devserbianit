@@ -50,11 +50,31 @@ consent_decisions: id uuid PK, consent_id FK → consent_receipts,
                    preferences_allowed bool, decided_at timestamptz (server)
 ```
 
+Индекс `(consent_id, decided_at desc, id desc)` для выборки последней decision; порядок детерминирован (tie-break по `id`). Все UUID и timestamps генерируются на сервере.
+
 Каждое изменение Analytics или Preferences создаёт новую immutable decision row. Отзыв — это тоже новая decision со `false` в соответствующей категории, а не UPDATE предыдущей. Обычное изменение согласия никогда не делает UPDATE или DELETE существующих decisions, поэтому последовательность allow → withdraw → allow сохраняется полностью. Никаких IP, имён, email, user-agent и контактных данных. RLS включена на обеих таблицах, политик для `anon`/`authenticated` нет, GRANT только `service_role` — запись исключительно через edge-функцию.
 
 Функция `consent-receipt` (verify_jwt = false, CORS-allowlist, лимит размера тела, strict schema, rate limit по HMAC-identity со scope `consent`, нейтральные ошибки): операции create и record-decision. Клиент передаёт только фактический выбор категорий (`analytics`, `preferences` — booleans) и, для последующих решений, существующий `consent_id`. Сервер сам генерирует UUID, сам ставит все timestamps и сам подставляет текущую policy version из серверного allowlist; соответствующие значения из payload игнорируются. Ни payload, ни PII в логи не пишутся.
 
 `analytics_events` получает nullable колонку `consent_id` с FK на `consent_receipts`. `track-event` читает последнюю по `decided_at` decision для переданного `consent_id` и отклоняет событие, если `consent_id` отсутствует, receipt не найден или в последней decision `analytics_allowed = false` — ответ остаётся нейтральным `200 { ok: false }`.
+
+### Привязка события к фактической decision (без race window)
+
+`analytics_events` дополнительно получает `consent_decision_id` с FK на `consent_decisions.id` — идентификатор именно той decision, которая разрешила событие. Никакого «SELECT согласия, потом отдельный INSERT»: `track-event` вызывает одну SQL-функцию, которая внутри транзакции берёт advisory lock по `consent_id`, определяет последнюю decision в детерминированном порядке, проверяет соответствие текущей material policy version и `analytics_allowed = true`, и в той же транзакции вставляет событие с `consent_decision_id`. Иначе событие не пишется, ответ нейтральный. `record-decision` использует тот же lock per `consent_id`, поэтому при конкурентных revoke и event порядок однозначен: событие либо предшествует отзыву, либо отклоняется.
+
+### Policy version и re-consent
+
+Функция `consent-receipt` получает операцию `status`: по `consent_id` возвращает текущую material consent policy version (серверную), последнюю decision, её `analytics_allowed`, `preferences_allowed` и `policy_version`.
+
+На старте приложения analytics = false и `anon_session_id` не создаётся, пока сервер не подтвердил статус. Если последняя decision относится к текущей material version — состояние восстанавливается. Если version устарела — analytics остаётся off, новый `anon_session_id` не создаётся, баннер показывается повторно.
+
+Material version повышается только при изменении целей, категорий, состава данных или получателей/обработки, связанных с согласием. Редакционные правки текста версию согласия не повышают (у документов отдельная own version/date).
+
+### Поведение при сетевых сбоях
+
+GRANT и re-consent: analytics не включается и `anon_session_id` не создаётся до успешного подтверждения разрешающей decision сервером; при ошибке сервера analytics остаётся off. То же для persistent Preferences — постоянное сохранение `theme`/`lang` начинается только после подтверждённого grant.
+
+WITHDRAW: локально аналитика выключается немедленно, `anon_session_id` удаляется немедленно, новые события не отправляются; если `record-decision` не сохранился, в localStorage остаётся минимальный pending-sync флаг, и отзыв повторяется при восстановлении сети или при следующем запуске. До подтверждения серверного состояния analytics остаётся off. Отзыв Preferences также применяется локально сразу (ключи удаляются).
 
 Отзыв согласия на клиенте: аналитика прекращается немедленно (в том же тике, до сетевых вызовов), `anon_session_id` удаляется из sessionStorage, записывается новая decision, новые события сервером не принимаются. При отзыве Preferences ключи `theme`/`lang` удаляются. Retention истории решений — `[OWNER/LEGAL REVIEW REQUIRED]`.
 
@@ -82,7 +102,7 @@ consent_decisions: id uuid PK, consent_id FK → consent_receipts,
 - **Правовой режим**: Закон №195/2024 вступает в силу 23.08.2026. Тексты проектируются под новый режим; конкретная формулировка выбирается по фактической дате публикации — если деплой 23.08.2026 или позже, №195/2024 указывается как действующий; если раньше, документы ссылаются на действующий до перехода Закон №133/2011 и отдельно указывают, что с 23.08.2026 применяется №195/2024. Утверждения «уже вступил в силу» до этой даты не делаем.
 - **Данные** — только фактические, по таблице выше.
 - **Основания**: заявка — преддоговорные шаги по инициативе самого пользователя (без обязательного чекбокса «согласен с политикой»); rate limiting и защита от абьюза — легитимный интерес с приложенным balancing assessment; псевдонимная аналитика — согласие; постоянное сохранение preferences — согласие. Обоснование каждого основания фиксирую в отчёте.
-- **Получатели и трансферы**: хостинг, Cloud/Supabase, Telegram, Gmail-коннектор — с указанием, что именно получает каждый и что данные обрабатываются за пределами Молдовы. Никаких заявлений «данные не покидают Молдову» и «полностью соответствуем» без проверки: конкретный регион БД и договорные механизмы трансфера помечаю как нерешённые для юриста.
+- **Получатели и трансферы**: хостинг, Cloud/Supabase, Telegram, Gmail-коннектор — с указанием, что именно получает каждый и что данные обрабатываются за пределами Молдовы. В публичном тексте используется нейтральное «получатель / поставщик услуг»: роль processor не утверждается автоматически до проверки договоров/DPA/условий. Во внутренней transfer map для каждого сервиса отдельно фиксируется роль — processor, subprocessor, independent controller или unresolved. Механизм международной передачи и фактический регион БД остаются `LEGAL REVIEW REQUIRED` до подтверждения. Заявлений «данные не покидают Молдову» и «полностью соответствуем» нет.
 - **Retention** — матрица с пометкой `[OWNER/LEGAL REVIEW REQUIRED]`: незаконвертированные заявки (предлагаю 12 мес), активная переписка (срок проекта + 12 мес), `rate_limit_hits` (записи старше 24 ч удаляются ежечасно, фактический максимум ~25 ч), псевдонимная аналитика (предлагаю 12 мес), consent receipts, логи функций (срок платформы). Возможность удаления уже есть: `delete_expired_leads(retain_months)`.
 - **Права**: информация, доступ, исправление, а также удаление, ограничение, переносимость и возражение — в предусмотренных законом случаях, а не безусловно; отзыв согласия там, где основанием является согласие; жалоба в надзорный орган. Формулировки без обещаний, которых закон не даёт. Один канал обращения — тот же email. DPO не заявляем.
 - **Безопасность** — высокоуровнево: серверная валидация, RLS и закрытый доступ к БД, серверные секреты, минимизация, rate limiting, мониторинг. Без «гарантируем абсолютную безопасность» и без инфраструктурных деталей.
@@ -116,7 +136,7 @@ consent_decisions: id uuid PK, consent_id FK → consent_receipts,
 
 Storage & cookie audit проводится на production и охватывает не только `document.cookie`: browser cookie jar через Playwright (`context.cookies()`, включая HttpOnly, которые `document.cookie` не показывает), `Set-Cookie` в заголовках ответов, `document.cookie`, localStorage, sessionStorage, ответы первичной загрузки страниц и ответы задействованных edge-функций.
 
-Тесты consent: create → change → withdraw → re-consent, с проверкой, что каждая операция добавляет decision row, старые строки не изменяются и не удаляются, а `track-event` следует последней decision.
+Тесты consent: create → change → withdraw → re-consent, с проверкой, что каждая операция добавляет decision row, старые строки не изменяются и не удаляются, а `track-event` следует последней decision и пишет корректный `consent_decision_id`. Дополнительно Playwright/network-тесты: сбой grant-endpoint (analytics остаётся off, session id не создан), сбой withdraw-endpoint, повтор отзыва после reload, устаревшая policy version (баннер снова показан, analytics off), одновременные track-event и withdrawal, повторное согласие после отзыва.
 
 Плюс матрица REQUIREMENT / PURPOSE / IMPLEMENTATION / ROUTE-FILE / STATUS / OWNER INPUT / LEGAL REVIEW, карта оснований с balancing assessment, скриншоты consent UI, все маршруты документов, процедура по правам, список нерешённых OWNER/LEGAL пунктов и результаты build / typecheck / Playwright / CSP / SEO.
 
@@ -126,5 +146,5 @@ Storage & cookie audit проводится на production и охватыва�
 
 - Меняются: `index.html` (CSP, шрифты), `src/index.css`, `public/fonts/*`, `src/lib/analytics.ts`, `src/lib/seoRoutes.ts`, `src/components/AnimatedRoutes.tsx`, `src/components/ContactForm.tsx`, футер в `src/pages/Index.tsx`, `src/data/translations.ts`, `scripts/generate-sitemap.ts`.
 - Новое: `ConsentContext`, `CookieBanner`, панель настроек, `pages/legal/LegalPage.tsx`, `src/data/legal/{ro,ru,en}.ts`, `public/fonts/OFL.txt`, `docs/data-rights-procedure.md`.
-- Backend: миграции — `consent_receipts` и `consent_decisions` (GRANT только `service_role`, RLS без политик для anon/authenticated), nullable `consent_id` в `analytics_events` с FK, контролируемое удаление 12 legacy строк аналитики. Новая функция `consent-receipt`, правка `track-event` (проверка последней decision). `submit-lead`, `_shared/http.ts`, существующие права и cron не меняются. Бэкфилла и fake receipts нет.
+- Backend: миграции — `consent_receipts` и `consent_decisions` (GRANT только `service_role`, RLS без политик для anon/authenticated, индекс для latest decision), nullable `consent_id` и `consent_decision_id` в `analytics_events` с FK, SQL-функция атомарной вставки события с advisory lock per `consent_id`, контролируемое удаление 12 legacy строк аналитики (data operation, не миграция). Новая функция `consent-receipt` (create / record-decision / status), правка `track-event`. `submit-lead`, `_shared/http.ts`, существующие права и cron не меняются. Бэкфилла и fake receipts нет.
 - Проверки: build + typecheck, Playwright-прогон трёх локалей (нет событий в `analytics_events` до согласия, есть после, после отзыва снова нет и `anon_session_id` удалён), поведение theme/lang при выключенных Preferences, CSP без violations после удаления Google Fonts, hreflang/canonical на legal-маршрутах, anon не читает `consent_receipts`.
