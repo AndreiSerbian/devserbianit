@@ -19,7 +19,12 @@ export const useTheme = () => {
   }, [theme]);
 
   // Re-apply the stored value when consent for preferences changes.
-  useEffect(() => onPreferencesChange(() => writePreference("theme", theme)), [theme]);
+  useEffect(() => {
+    const unsubscribe = onPreferencesChange(() => writePreference("theme", theme));
+    return () => {
+      unsubscribe();
+    };
+  }, [theme]);
 
   const setTheme = useCallback((next: Theme) => setThemeState(next), []);
   const toggleTheme = useCallback(
