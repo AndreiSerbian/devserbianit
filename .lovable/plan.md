@@ -1,96 +1,68 @@
-# Security Hardening — ANDREI SERBIAN / IT SOLUTIONS
+# Security Hardening — финальные правки перед production
 
-Цель: усилить безопасность и приватность без изменения бизнес-логики и дизайна. Никаких абсолютных формулировок вида «100% secure» на сайте не появится.
+Scope строго по вашим 5 пунктам. Архитектуру не пересобираю.
 
-## Что уже в порядке (проверено)
+## 1. Убрать SECURITY DEFINER (миграция)
 
-- В браузерный код попадают только публичные значения: `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, `VITE_SUPABASE_PROJECT_ID`. Service role, Telegram-токен, Gmail-ключ живут только в серверном окружении функций.
-- Таблицы `leads` и `analytics_events`: RLS включён, политики `using false / check false` для `anon` и `authenticated` — клиент не может ни читать, ни писать, ни удалять.
-- Заявка идёт по схеме Browser → Edge Function `submit-lead` → валидация → БД → Telegram/Email. Прямых INSERT из браузера нет.
-- Заявка сохраняется до отправки уведомлений, сбой Telegram/почты её не теряет.
-- `track-event` принимает только allowlist из 9 имён событий; персональные поля не передаются.
-- Внешние ссылки с `target="_blank"` уже имеют `rel="noopener noreferrer"`.
-- Пользовательский текст экранируется перед Telegram/Email; `dangerouslySetInnerHTML` есть только в служебном chart-компоненте shadcn, без пользовательского ввода.
+Новая миграция пересоздаёт три функции через `CREATE OR REPLACE`:
 
-## Найденные проблемы и что исправим
+- `public.check_rate_limit(p_ip_hmac, p_scope, p_max_hits, p_window_seconds)`
+- `public.purge_rate_limit_hits()`
+- `public.delete_expired_leads(retain_months int)`
 
-### High — устаревшая публичная функция `send-telegram-notification`
-Функция задеплоена с `verify_jwt = false`, но клиент её больше не вызывает (осталась от старой анкеты). Она принимает произвольные `answers`/`questions`, не имеет rate limit, honeypot и лимита размера, шлёт всё в Telegram и на почту, а в ответе отдаёт `error.message` и логирует полное тело ответа Telegram. Это открытый спам-канал и утечка внутренних деталей.
-Решение: удалить полностью — каталог исходников, запись в `supabase/config.toml` и задеплоенную функцию; отдельно перепроверить отсутствие клиентских вызовов и любых упоминаний URL этой функции в старом коде.
+Изменения в каждой:
+- убрать `SECURITY DEFINER` (то есть `SECURITY INVOKER` по умолчанию);
+- `SET search_path = ''`;
+- все объекты полностью schema-qualified: `public.rate_limit_hits`, `public.leads`, а также функции — `pg_catalog.now()`, `pg_catalog.count(*)`, `pg_catalog.make_interval(...)`, `pg_catalog.pg_advisory_xact_lock(...)`, `pg_catalog.hashtextextended(...)`, `pg_catalog.extract(...)`. При `search_path = ''` неквалифицированные вызовы падают, поэтому квалифицирую всё;
+- тела и логика остаются идентичными (advisory lock → count в окне → отказ с `retry_after` или insert hit).
 
-### High — rate limit: слабый идентификатор, неатомарный, бессрочное хранение
-Сейчас лимит 5 заявок в час считается двумя отдельными запросами (SELECT count + INSERT) по `sha256(ip)`, а `ip_hash` хранится в `leads` бессрочно.
-Решение:
-- Идентификатор — keyed HMAC: `HMAC-SHA-256(RATE_LIMIT_SECRET, normalized_ip)`. Секрет запрошу через хранилище секретов: только серверная среда функций, не `VITE_*`, не во фронтенде, не в таблице БД. Сырой IP не сохраняется в application layer — БД приложения (`leads`, `rate_limit_hits`), логи приложения и отчёты. Про инфраструктурные логи Supabase/хостинга ничего не утверждаем: они вне нашего контроля.
-- Источник IP — provider-controlled trusted header в hosted Supabase environment: сначала определяю и проверяю, какой заголовок фактически проставляет инфраструктура, и использую только его. Первый адрес произвольного пользовательского `x-forwarded-for` автоматически доверенным не считаем; парсинг (в том числе «первый валидный адрес») применяем только к подтверждённому provider-controlled заголовку. IP из body/query не принимаем. Значение нормализуем как IPv4/IPv6.
-- Приватность при проверке trusted IP source: наличие и формат заголовков проверяю разовым собственным тестовым запросом; реальные значения `x-forwarded-for`, `x-real-ip` и других заголовков с IP не сохраняю, не коммичу и не вывожу в отчёт. В документации и отчёте фиксирую только имя выбранного заголовка и алгоритм парсинга (например: `trusted client IP source: x-forwarded-for, first valid address`). Dump всех request headers в постоянные логи приложения не добавляем.
-- Логи production не содержат ни raw IP, ни `x-forwarded-for`/`x-real-ip`, ни полный `ip_hmac` — ни при успехе, ни при ошибке. В логах только: request/correlation ID, результат (`allowed` / `rate_limited`), нейтральный error code и `retry_after`. `ip_hmac` существует только как значение в `rate_limit_hits` с retention 24 часа.
-- Если доверенный IP определить невозможно: общий fallback-bucket для всех пользователей не используем (он превратился бы в глобальный DoS-рычаг), фиксируем это как limitation в отчёте и опираемся на остальные anti-abuse меры (honeypot, cooldown по сессии, strict schema, лимит размера тела).
-- Конкурентность: `public.check_rate_limit(...)` сериализует запросы одной rate-limit identity через `pg_advisory_xact_lock(...)` с детерминированным ключом из `ip_hmac`. Порядок внутри транзакции: acquire lock → check cooldown → count hits в окне → либо отказ с `retry_after`, либо insert hit → конец транзакции снимает lock. Публичным ролям (`PUBLIC`, `anon`, `authenticated`) EXECUTE не даём — только серверной роли.
-- Retention: `rate_limit_hits` живут 24 часа. Механизм очистки — cron-джоб (`pg_cron`), вызывающий идемпотентную `public.purge_rate_limit_hits()`; удаление внутри `check_rate_limit` остаётся только страховкой, а не единственным механизмом. Перед планированием проверяю доступность `pg_cron`; миграция корректно работает и там, где расширение недоступно (тогда джоб не создаётся, а limitation фиксируется в отчёте).
-- pg_cron execution model: не исходим из того, что джоб исполняется как `service_role` — pg_cron выполняет job правами той database role, которая его запланировала. Поэтому: определяю фактического owner/username джоба, проверяю, что именно эта роль имеет права на выполнение функции и на нужную таблицу, и не расширяю права других ролей без необходимости. `PUBLIC`, `anon`, `authenticated` EXECUTE не получают. После деплоя проверяю `cron.job` (существование, `active`, расписание, `username`) и успешные запуски в `cron.job_run_details`, а также что записи старше 24 часов реально удаляются. В отчёте фиксирую: cron job owner, function owner, фактические GRANT/REVOKE и execution model.
-- `leads.ip_hash` больше не заполняем, существующие значения обнуляем; затем проверяем все ссылки на поле (функции, код, отчёты) и, если оно нигде не требуется, готовим его удаление из схемы отдельным шагом после проверки совместимости.
+GRANT/REVOKE после `CREATE OR REPLACE` не сбрасываются, но миграция всё равно повторит их идемпотентно, чтобы состояние было явным:
+```
+REVOKE ALL ON FUNCTION public.check_rate_limit(text,text,int,int) FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION public.delete_expired_leads(int) FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION public.purge_rate_limit_hits() FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.check_rate_limit(text,text,int,int) TO service_role;
+GRANT EXECUTE ON FUNCTION public.delete_expired_leads(int) TO service_role;
+```
+`purge_rate_limit_hits` вызывается cron-джобом от роли `postgres` (owner объектов), ей отдельный GRANT не нужен. Проверю, что при INVOKER эта роль действительно проходит по правам на `public.rate_limit_hits`; если нет — остановлюсь и покажу конкретную ошибку до расширения прав.
 
-### Medium — CORS audit
-Обе функции сейчас отвечают `Access-Control-Allow-Origin: *`.
-Решение: для `submit-lead` и `track-event` вводим allowlist конкретных origins — production-домен, конкретный preview-домен и localhost/dev как отдельные записи; шаблон `*.lovable.app` не разрешаем. Для разрешённого запроса возвращаем ровно запрошенный `Origin` (никогда несколько значений) плюс `Vary: Origin`; для неразрешённого — без CORS-разрешения. Приводим в порядок OPTIONS-preflight, methods и headers. Фиксирую честно: CORS — браузерное ограничение и не защищает от server-to-server запросов и ботов; реальная защита — rate limit, honeypot, strict schema, лимит размера тела.
+QA: RPC от `service_role` работает; `anon`/`authenticated` получают permission denied; cron purge выполняется; параллельный rate-limit тест остаётся PASS.
 
-### Medium — allowlist полей и нормализация в `submit-lead`
-Сейчас лишние поля просто игнорируются, но нет строгой схемы и явного отказа. Валидация написана вручную.
-Решение: zod-схема со `strict()`-поведением (неизвестные поля → 400), нормализация строк (trim, сжатие пробелов, удаление управляющих символов), разумные максимумы, проверка контакта под каждый способ связи (email/telegram/whatsapp/other), белый список locale.
+## 2. Rate limit для track-event
 
-### Medium — `page_url` пишется целиком
-В заявку попадает полный URL с любыми query-параметрами и хешем.
-Решение: сохранять только `URL.pathname` (например `/ru`). Query/search не сохраняем. `location.hash` не сохраняем вовсе — allowlist известных технических section identifiers вводим только если это реально потребуется и будет отдельно утверждено. Значение нормализуем на сервере (обрезаем всё после `?` и `#`, ограничиваем длину).
+Переиспользую существующую инфраструктуру: `trustedClientIp` → `ipHmac(RATE_LIMIT_SECRET)` → RPC `check_rate_limit` со scope `'track-event'`.
 
-### Medium — широкие табличные GRANT
-`anon` и `authenticated` имеют полный набор привилегий на `leads` и `analytics_events`; сейчас их держит только RLS.
-Решение: отозвать привилегии у `anon` и `authenticated`, оставить `service_role` (функции работают через него). Защита в два слоя вместо одного.
+- Лимит задан константой в коде функции (server-controlled), из payload ничего не читается. Предлагаю 120 событий в час на identity — существенно мягче, чем 5/час у submit-lead, и заведомо выше нормальной навигации (обычная сессия даёт единицы событий).
+- При превышении: событие не пишется в БД, ответ `200 { ok: false }` — silently drop, как уже устроено в текущем catch-блоке, чтобы аналитика никогда не ломала клиент.
+- Если доверенный IP отсутствует — глобального fallback-бакета нет (как в submit-lead): событие обрабатывается обычным путём, ограничение фиксируется в отчёте.
+- Порядок: CORS → метод → размер тела → strict allowlist полей → allowlist имён событий → rate limit → insert. Rate-limit проверка после валидации, чтобы мусорные запросы не расходовали бюджет легитимного пользователя.
 
-### Medium — security-заголовки: что реально доступно
-Проверил ответ production-хостинга: он уже отдаёт `strict-transport-security`, `referrer-policy: strict-origin-when-cross-origin` и `x-content-type-options: nosniff`. Управления собственными HTTP-заголовками у статичного SPA на этом хостинге нет, поэтому:
-- В `index.html` добавляем только meta `Content-Security-Policy`, и только директивы, поддерживаемые в meta.
-- `frame-ancestors` в meta CSP не помещаем (в meta игнорируется).
-- Фиктивные `meta http-equiv` для `X-Content-Type-Options`, `Permissions-Policy`, HSTS не создаём.
-- Фиксируем как hosting-level limitation: `Permissions-Policy` и защита от фрейминга (`frame-ancestors` / `X-Frame-Options`) на этом хостинге недоступны; при появлении своего edge/proxy — перенести CSP на уровень HTTP и добавить эти два заголовка.
+QA: массовая отправка валидных allowlisted events — первые N проходят, дальше drop без записей в `analytics_events`; обычная навигация по сайту события пишет.
 
-Политику собираем из фактически используемых origins, без расширения «на всякий случай»: точный origin backend-проекта (он же для Edge Functions), `fonts.googleapis.com`, `fonts.gstatic.com`, собственный origin. Проверяем необходимость и совместимость каждой директивы: `default-src`, `script-src`, `style-src`, `font-src`, `img-src`, `connect-src`, `object-src 'none'`, `base-uri 'self'`, `form-action`. `frame-ancestors` в meta CSP не добавляем.
+## 3. Sequence privileges
 
-CSP сначала тестируем в браузере: Google Fonts, backend Supabase, вызовы Edge Functions, анимации Framer Motion, PDF-экспорт калькулятора (jsPDF + html2canvas, `blob:`/`data:`) и остальные внешние ресурсы. `unsafe-eval` не используем; `unsafe-inline` — только для стилей, если без него ломаются Tailwind/Framer Motion.
+Проверю фактические ACL через `information_schema` / `pg_class.relacl` для `public.rate_limit_hits_id_seq`. Если у `PUBLIC`/`anon`/`authenticated` есть `USAGE`/`SELECT`/`UPDATE`:
+```
+REVOKE ALL ON SEQUENCE public.rate_limit_hits_id_seq FROM PUBLIC, anon, authenticated;
+GRANT USAGE, SELECT ON SEQUENCE public.rate_limit_hits_id_seq TO service_role;
+```
+`service_role` оставляю только `USAGE, SELECT` (нужно для INSERT через `nextval`), без `UPDATE`. Фактические до/после ACL покажу в отчёте.
 
-### Low — retention для заявок
-Механизма удаления старых заявок нет.
-Решение: функция `public.delete_expired_leads(retain_months int)` — schema-qualified имена объектов, фиксированный безопасный `search_path`, `SECURITY DEFINER` только если без него не обойтись; `REVOKE EXECUTE FROM PUBLIC, anon, authenticated`, `GRANT EXECUTE` только нужной серверной роли. Срок хранения как утверждённый default не задаём — параметр обязателен, конкретный срок подтверждается отдельно; автозапуск по расписанию — только после вашего подтверждения.
+## 4. Retention wording
 
-### Low — внутренний runbook на случай инцидента
-Решение: файл `docs/security-runbook.md` в репозитории (не в `public/`, на сайте не публикуется): как распознать инцидент, что ограничить, какие данные затронуты, какие логи смотреть, какие credentials ротировать, кто решает про уведомление органа по защите данных.
+В `docs/security-runbook.md` и `docs/security-audit-report.md` заменяю формулировку про жёсткие 24 часа на фактическую: `rate_limit_hits` — «записи старше 24 часов удаляются ежечасным cron-джобом; фактический максимум хранения около 25 часов». Никаких обещаний строгого 24h-максимума при hourly cron.
 
-## Секреты, требующие ротации
+## 5. cf-connecting-ip spoof test
 
-По коду и истории репозитория утечек приватных ключей не найдено: в git лежит только `.env` с публичными VITE-значениями, приватные ключи в исходниках отсутствуют. Ротация не требуется. Если Telegram-токен когда-либо вставлялся в чат, скриншот или сторонний сервис — скажите, и я опишу порядок отзыва (значение секрета в отчёте не выводим).
+Контролируемый тест: два запроса к задеплоенной функции — один без заголовка, один с caller-supplied `cf-connecting-ip: <произвольное значение>` — и проверка, что identity в `rate_limit_hits` не меняется (то есть провайдер перезаписывает заголовок и подмена невозможна). В отчёте — только PASS/FAIL и вывод; реальные IP, значения заголовков и полные `ip_hmac` не показываю и не сохраняю.
 
-## Технические детали
+## Файлы и проверки
 
-Файлы:
-- Удалить: `supabase/functions/send-telegram-notification/`, блок в `supabase/config.toml`.
-- `supabase/functions/submit-lead/index.ts` — zod-схема, allowlist полей, нормализация, лимит размера тела, новый rate limit, honeypot + min-fill-time, нейтральные коды ошибок (`invalid_payload` / `rate_limited` / `unexpected`) без внутренних деталей, логи без контактов и текста заявки.
-- `supabase/functions/track-event/index.ts` — оставить allowlist, добавить лимит размера тела и отбраковку неизвестных полей.
-- `src/components/ContactForm.tsx` — `form_started_at` как вспомогательная anti-bot эвристика (не security boundary: значение контролируется клиентом; основные меры — серверный rate limit, лимит размера тела, strict schema, honeypot, cooldown), в заявку отправляем только `pathname` (без query и hash), поля очищаются после успеха и не сохраняются в storage.
-- `index.html` — security meta-заголовки.
-- `docs/security-runbook.md`, `docs/security-audit-report.md` — новые внутренние документы.
+Изменяются:
+- новая миграция в `supabase/migrations/` (пункты 1 и 3);
+- `supabase/functions/track-event/index.ts` (пункт 2);
+- `docs/security-runbook.md`, `docs/security-audit-report.md` (пункт 4).
 
-Миграция БД (одной миграцией, с GRANT-блоком):
-- `create table public.rate_limit_hits (id, ip_hmac text, created_at)`; RLS on, deny-all для `anon`/`authenticated`, `grant all` только `service_role`; индекс по `(ip_hmac, created_at)`.
-- `create function public.purge_rate_limit_hits()` (идемпотентная) + cron-джоб `pg_cron`, если расширение доступно; EXECUTE только серверной роли.
-- `create function public.check_rate_limit(...)` — `pg_advisory_xact_lock` по ключу из `ip_hmac`, затем cooldown, подсчёт окна и запись hit; возвращает `allowed`/`retry_after`; EXECUTE отозван у `PUBLIC`, `anon`, `authenticated`.
-- `update public.leads set ip_hash = null` и прекращение записи этого поля; удаление колонки — отдельным шагом после проверки ссылок.
-- `revoke all on public.leads, public.analytics_events from anon, authenticated;`
-- `create function public.delete_expired_leads(retain_months int)` — schema-qualified объекты, фиксированный `search_path`, EXECUTE только серверной роли.
+Не меняются: `submit-lead`, `_shared/http.ts`, `ContactForm.tsx`, `index.html`, CSP, CORS-allowlist.
 
-Browser storage после правок: `theme`, `lang`, `anon_session_id` (sessionStorage), служебный ключ сессии Supabase-клиента. Персональных данных формы в storage нет.
-
-Проверки после изменений: Lovable Basic security scan, Deep scan (если доступен), dependency audit (`jspdf` уже 4.2.1; major-обновления без вашего согласия не делаю — только отчёт о риске и влиянии), production build, QA консоли и сети в браузере.
-
-QA после правок: спам через honeypot, мгновенная отправка (min-fill-time), oversized input, HTML/script-подобный ввод, неизвестное поле в теле, битый email, некорректный Telegram-контакт, серия повторных запросов (rate limit), несколько одновременных параллельных запросов для одной identity (проверка сериализации через advisory lock), попытка прямого чтения `leads` из браузера, прямой вызов функций, CORS с разрешённого и неразрешённого origin, неизвестное событие аналитики, отсутствующее обязательное поле, сетевая ошибка, сбой уведомления, работа cron-очистки. Тестирую на тестовых данных, продовые заявки не трогаю.
-
-Итоговый отчёт с severity, риском, исправлениями и остаточными рисками сохраню в `docs/security-audit-report.md` и покажу в чате — публиковать автоматически не буду.
+После правок: production build; Security Advisor / linter; submit-lead sequential + parallel; track-event abuse test; cron test; anon permission tests; browser CSP test. Ничего не публикую. В финале — только diff новых правок и таблица PASS/FAIL.
