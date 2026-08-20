@@ -19,10 +19,17 @@ const SESSION_KEY = "anon_session_id";
  * until a consent decision that allows analytics has been confirmed.
  */
 let activeConsentId: string | null = null;
+let consentResolved = false;
+/** Events fired before the consent state is known wait here (max a few). */
+let pending: Array<{ event: AnalyticsEvent; meta: { locale?: string; caseId?: string } }> = [];
 
 export const setAnalyticsConsent = (consentId: string | null) => {
   activeConsentId = consentId;
+  consentResolved = true;
   if (!consentId) clearAnalyticsSession();
+  const queued = pending;
+  pending = [];
+  if (consentId) queued.forEach(({ event, meta }) => trackEvent(event, meta));
 };
 
 /** Withdrawal must stop tracking immediately and drop the session identifier. */
@@ -52,7 +59,11 @@ export const trackEvent = (
   event: AnalyticsEvent,
   meta: { locale?: string; caseId?: string } = {},
 ) => {
-  if (!activeConsentId) return;
+  if (!activeConsentId) {
+    // Consent may still be loading on a fresh page load: hold, never drop silently.
+    if (!consentResolved && pending.length < 10) pending.push({ event, meta });
+    return;
+  }
   try {
     void supabase.functions.invoke("track-event", {
       body: {
