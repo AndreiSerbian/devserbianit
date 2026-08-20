@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,10 +8,11 @@ import { BrandLockup } from "@/components/brand";
 import { useLanguage } from "@/context/LanguageContext";
 import { brand } from "@/data/translations";
 import { trackEvent } from "@/lib/analytics";
+import { useTheme } from "@/hooks/useTheme";
 
 const CalculatorPage = () => {
   const { lang, t } = useLanguage();
-  const [theme] = useState(() => localStorage.getItem("theme") || "dark");
+  const { theme } = useTheme();
 
   useEffect(() => {
     trackEvent("calculator_open", { locale: lang });

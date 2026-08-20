@@ -1,5 +1,5 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Seo } from "@/components/Seo";
 import { useLanguage } from "@/context/LanguageContext";
 import { brand, type Lang } from "@/data/translations";
@@ -20,31 +20,15 @@ import {
 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { getCaseStudyById, caseStudiesData } from "@/data/caseStudiesData";
+import { useTheme } from "@/hooks/useTheme";
 
 const CaseStudyDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { lang, setLang, t } = useLanguage();
-  const [theme, setTheme] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('theme');
-      if (saved) return saved;
-      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    }
-    return 'dark';
-  });
+  const { theme, toggleTheme } = useTheme();
   
   const caseStudy = id ? getCaseStudyById(id) : undefined;
-
-  useEffect(() => {
-    document.documentElement.classList.remove('dark', 'light');
-    document.documentElement.classList.add(theme);
-    localStorage.setItem('theme', theme);
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme(prev => prev === "dark" ? "light" : "dark");
-  };
 
   if (!caseStudy) {
     return (
