@@ -16,6 +16,7 @@ export interface ConsentCopy {
   preferencesTitle: string;
   preferencesBody: string;
   save: string;
+  withdraw: string;
   cancel: string;
   error: string;
   footerSettings: string;
@@ -45,6 +46,7 @@ export const consentCopy: Record<Locale, ConsentCopy> = {
     preferencesBody:
       "Постоянное сохранение выбранной темы и языка. Тема и язык работают и без согласия — но только в текущей сессии.",
     save: "Сохранить выбор",
+    withdraw: "Отозвать согласие",
     cancel: "Отмена",
     error: "Не удалось сохранить выбор. Попробуйте ещё раз.",
     footerSettings: "Настройки cookie",
@@ -75,6 +77,7 @@ export const consentCopy: Record<Locale, ConsentCopy> = {
     preferencesBody:
       "Persistently storing your theme and language choice. Both work without consent — but only for the current session.",
     save: "Save choice",
+    withdraw: "Withdraw consent",
     cancel: "Cancel",
     error: "Could not save your choice. Please try again.",
     footerSettings: "Cookie settings",
@@ -102,6 +105,7 @@ export const consentCopy: Record<Locale, ConsentCopy> = {
     preferencesBody:
       "Păstrarea persistentă a temei și limbii alese. Ambele funcționează și fără consimțământ — dar doar în sesiunea curentă.",
     save: "Salvează alegerea",
+    withdraw: "Retrage consimțământul",
     cancel: "Anulează",
     error: "Alegerea nu a putut fi salvată. Încercați din nou.",
     footerSettings: "Setări cookie",
