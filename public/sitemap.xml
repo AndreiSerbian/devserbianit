@@ -9,9 +9,92 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://devserbianit.lovable.app/ru"/>
     <priority>1.0</priority>
   </url>
-  <url><loc>https://devserbianit.lovable.app/en</loc><priority>1.0</priority></url>
-  <url><loc>https://devserbianit.lovable.app/ro</loc><priority>1.0</priority></url>
-  <url><loc>https://devserbianit.lovable.app/ru/cases/smt-premium-box</loc><priority>0.7</priority></url>
-  <url><loc>https://devserbianit.lovable.app/ru/cases/vmeste-silnee</loc><priority>0.7</priority></url>
-  <url><loc>https://devserbianit.lovable.app/ru/cases/unit-econ-strategist</loc><priority>0.7</priority></url>
+  <url>
+    <loc>https://devserbianit.lovable.app/en</loc>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://devserbianit.lovable.app/ru"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://devserbianit.lovable.app/en"/>
+    <xhtml:link rel="alternate" hreflang="ro" href="https://devserbianit.lovable.app/ro"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://devserbianit.lovable.app/ru"/>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://devserbianit.lovable.app/ro</loc>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://devserbianit.lovable.app/ru"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://devserbianit.lovable.app/en"/>
+    <xhtml:link rel="alternate" hreflang="ro" href="https://devserbianit.lovable.app/ro"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://devserbianit.lovable.app/ru"/>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://devserbianit.lovable.app/ru/cases/smt-premium-box</loc>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://devserbianit.lovable.app/ru/cases/smt-premium-box"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://devserbianit.lovable.app/en/cases/smt-premium-box"/>
+    <xhtml:link rel="alternate" hreflang="ro" href="https://devserbianit.lovable.app/ro/cases/smt-premium-box"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://devserbianit.lovable.app/ru/cases/smt-premium-box"/>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://devserbianit.lovable.app/en/cases/smt-premium-box</loc>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://devserbianit.lovable.app/ru/cases/smt-premium-box"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://devserbianit.lovable.app/en/cases/smt-premium-box"/>
+    <xhtml:link rel="alternate" hreflang="ro" href="https://devserbianit.lovable.app/ro/cases/smt-premium-box"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://devserbianit.lovable.app/ru/cases/smt-premium-box"/>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://devserbianit.lovable.app/ro/cases/smt-premium-box</loc>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://devserbianit.lovable.app/ru/cases/smt-premium-box"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://devserbianit.lovable.app/en/cases/smt-premium-box"/>
+    <xhtml:link rel="alternate" hreflang="ro" href="https://devserbianit.lovable.app/ro/cases/smt-premium-box"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://devserbianit.lovable.app/ru/cases/smt-premium-box"/>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://devserbianit.lovable.app/ru/cases/vmeste-silnee</loc>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://devserbianit.lovable.app/ru/cases/vmeste-silnee"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://devserbianit.lovable.app/en/cases/vmeste-silnee"/>
+    <xhtml:link rel="alternate" hreflang="ro" href="https://devserbianit.lovable.app/ro/cases/vmeste-silnee"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://devserbianit.lovable.app/ru/cases/vmeste-silnee"/>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://devserbianit.lovable.app/en/cases/vmeste-silnee</loc>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://devserbianit.lovable.app/ru/cases/vmeste-silnee"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://devserbianit.lovable.app/en/cases/vmeste-silnee"/>
+    <xhtml:link rel="alternate" hreflang="ro" href="https://devserbianit.lovable.app/ro/cases/vmeste-silnee"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://devserbianit.lovable.app/ru/cases/vmeste-silnee"/>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://devserbianit.lovable.app/ro/cases/vmeste-silnee</loc>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://devserbianit.lovable.app/ru/cases/vmeste-silnee"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://devserbianit.lovable.app/en/cases/vmeste-silnee"/>
+    <xhtml:link rel="alternate" hreflang="ro" href="https://devserbianit.lovable.app/ro/cases/vmeste-silnee"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://devserbianit.lovable.app/ru/cases/vmeste-silnee"/>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://devserbianit.lovable.app/ru/cases/unit-econ-strategist</loc>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://devserbianit.lovable.app/ru/cases/unit-econ-strategist"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://devserbianit.lovable.app/en/cases/unit-econ-strategist"/>
+    <xhtml:link rel="alternate" hreflang="ro" href="https://devserbianit.lovable.app/ro/cases/unit-econ-strategist"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://devserbianit.lovable.app/ru/cases/unit-econ-strategist"/>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://devserbianit.lovable.app/en/cases/unit-econ-strategist</loc>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://devserbianit.lovable.app/ru/cases/unit-econ-strategist"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://devserbianit.lovable.app/en/cases/unit-econ-strategist"/>
+    <xhtml:link rel="alternate" hreflang="ro" href="https://devserbianit.lovable.app/ro/cases/unit-econ-strategist"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://devserbianit.lovable.app/ru/cases/unit-econ-strategist"/>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://devserbianit.lovable.app/ro/cases/unit-econ-strategist</loc>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://devserbianit.lovable.app/ru/cases/unit-econ-strategist"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://devserbianit.lovable.app/en/cases/unit-econ-strategist"/>
+    <xhtml:link rel="alternate" hreflang="ro" href="https://devserbianit.lovable.app/ro/cases/unit-econ-strategist"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://devserbianit.lovable.app/ru/cases/unit-econ-strategist"/>
+    <priority>0.7</priority>
+  </url>
 </urlset>
