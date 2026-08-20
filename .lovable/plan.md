@@ -76,3 +76,34 @@
 - Подтвердить финальные тексты title/description на EN и RO (машинный RO нуждается в проверке носителем).
 - Решить по брендовой social-preview картинке 1200×630.
 - Подключить Google Search Console и пройти checklist выше.
+
+## Финальное требование к базовому URL
+
+Не хардкодить `https://devserbianit.lovable.app` отдельно в компонентах, sitemap generator и structured data.
+
+Создать единый источник canonical base URL, например `src/lib/siteConfig.ts`:
+
+```ts
+SITE_URL = production canonical origin
+siteConfig.siteUrl
+siteConfig.personId = `${siteConfig.siteUrl}/#person`
+siteConfig.websiteId = `${siteConfig.siteUrl}/#website`
+```
+
+Все следующие элементы должны строиться только через этот источник:
+
+- canonical;
+- hreflang;
+- x-default;
+- JSON-LD `@id`;
+- WebSite.url;
+- Person `@id`;
+- Service URLs;
+- CreativeWork URLs;
+- BreadcrumbList item URLs;
+- sitemap `<loc>`;
+- Open Graph URL.
+
+В development/preview не допускать случайного попадания preview URL в production sitemap или canonical. Если позже будет подключён собственный домен, смена canonical origin должна требовать изменения только одной конфигурации / environment value, а не десятков файлов.
+
+На текущем production использовать: `https://devserbianit.lovable.app`.
