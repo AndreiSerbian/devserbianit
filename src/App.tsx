@@ -5,6 +5,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { LanguageProvider } from "@/context/LanguageContext";
+import { ConsentProvider } from "@/context/ConsentContext";
+import { ConsentManager } from "@/components/consent/ConsentManager";
 import { AnimatedRoutes } from "./components/AnimatedRoutes";
 
 const queryClient = new QueryClient();
@@ -17,7 +19,10 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <LanguageProvider>
-            <AnimatedRoutes />
+            <ConsentProvider>
+              <AnimatedRoutes />
+              <ConsentManager />
+            </ConsentProvider>
           </LanguageProvider>
         </BrowserRouter>
       </TooltipProvider>
