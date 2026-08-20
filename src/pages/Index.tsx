@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -17,18 +17,14 @@ import { ProgressIndicator } from "@/components/ProgressIndicator";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { trackEvent } from "@/lib/analytics";
 import { siteConfig } from "@/lib/siteConfig";
+import { useTheme } from "@/hooks/useTheme";
+import { LegalFooterLinks } from "@/components/consent/LegalFooterLinks";
 
 const Index = () => {
   const { lang, setLang, t } = useLanguage();
-  const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "dark");
+  const { theme, setTheme } = useTheme();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    document.documentElement.classList.remove("dark", "light");
-    document.documentElement.classList.add(theme);
-    localStorage.setItem("theme", theme);
-  }, [theme]);
 
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 40);
@@ -279,11 +275,14 @@ const Index = () => {
       </main>
 
       <footer className="border-t border-border py-8">
-        <div className="container px-4 sm:px-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <BrandLockup name={brand.name} descriptor={brand.descriptor} />
-          <p className="text-xs text-muted-foreground">
-            © {new Date().getFullYear()} {brand.name}. {t.footer.rights}
-          </p>
+        <div className="container px-4 sm:px-6 flex flex-col gap-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <BrandLockup name={brand.name} descriptor={brand.descriptor} />
+            <p className="text-xs text-muted-foreground">
+              © {new Date().getFullYear()} {brand.name}. {t.footer.rights}
+            </p>
+          </div>
+          <LegalFooterLinks />
         </div>
       </footer>
     </div>
