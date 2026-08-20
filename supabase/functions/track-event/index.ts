@@ -1,10 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
+import { corsFor, jsonResponse, readJsonBody } from "../_shared/http.ts";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-};
+const MAX_BODY_BYTES = 2 * 1024;
 
 const ALLOWED_EVENTS = new Set([
   "cta_hero_click",
@@ -18,22 +15,36 @@ const ALLOWED_EVENTS = new Set([
   "calculator_open",
 ]);
 
-const clean = (v: unknown, max = 200) =>
-  typeof v === "string" && v.trim() ? v.trim().slice(0, max) : null;
+const ALLOWED_FIELDS = new Set(["event_name", "page", "locale", "case_id", "session_id"]);
+const LOCALES = new Set(["ru", "en", "ro"]);
+
+const clean = (v: unknown, max: number) =>
+  typeof v === "string" && v.trim()
+    ? v.trim().replace(/[\u0000-\u001F\u007F]/g, "").slice(0, max)
+    : null;
 
 Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  const cors = corsFor(req);
+
+  if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
+  if (req.method !== "POST") return jsonResponse({ ok: false }, 405, cors);
 
   try {
-    const body = await req.json();
-    const eventName = clean(body.event_name, 60);
-
-    if (!eventName || !ALLOWED_EVENTS.has(eventName)) {
-      return new Response(JSON.stringify({ ok: false }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+    const body = await readJsonBody(req, MAX_BODY_BYTES) as Record<string, unknown>;
+    if (!body || typeof body !== "object" || Array.isArray(body)) {
+      return jsonResponse({ ok: false }, 400, cors);
     }
+    if (Object.keys(body).some((k) => !ALLOWED_FIELDS.has(k))) {
+      return jsonResponse({ ok: false }, 400, cors);
+    }
+
+    const eventName = clean(body.event_name, 60);
+    if (!eventName || !ALLOWED_EVENTS.has(eventName)) {
+      return jsonResponse({ ok: false }, 400, cors);
+    }
+
+    const locale = clean(body.locale, 5);
+    const page = clean(body.page, 120);
 
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
@@ -42,20 +53,15 @@ Deno.serve(async (req) => {
 
     await supabase.from("analytics_events").insert({
       event_name: eventName,
-      page: clean(body.page, 300),
-      locale: clean(body.locale, 5),
+      page: page ? page.split("?")[0].split("#")[0].slice(0, 120) : null,
+      locale: locale && LOCALES.has(locale) ? locale : null,
       case_id: clean(body.case_id, 80),
       session_id: clean(body.session_id, 64),
     });
 
-    return new Response(JSON.stringify({ ok: true }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return jsonResponse({ ok: true }, 200, cors);
   } catch (_e) {
     // analytics must never break the client
-    return new Response(JSON.stringify({ ok: false }), {
-      status: 200,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return jsonResponse({ ok: false }, 200, cors);
   }
 });
