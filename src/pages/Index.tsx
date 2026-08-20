@@ -16,6 +16,7 @@ import { CaseStudies } from "@/components/CaseStudies";
 import { ProgressIndicator } from "@/components/ProgressIndicator";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { trackEvent } from "@/lib/analytics";
+import { siteConfig } from "@/lib/siteConfig";
 
 const Index = () => {
   const { lang, setLang, t } = useLanguage();
@@ -53,15 +54,33 @@ const Index = () => {
         title={t.seo.title}
         description={t.seo.description}
         lang={lang}
-        jsonLd={{
-          "@context": "https://schema.org",
-          "@type": "ProfessionalService",
-          name: "Andrei Serbian — IT Solutions",
-          description: t.seo.description,
-          areaServed: ["MD", "EU"],
-          email: brand.email,
-          sameAs: [brand.telegram],
-        }}
+        jsonLd={[
+          {
+            "@type": "Person",
+            "@id": siteConfig.personId,
+            name: "Andrei Serbian",
+            jobTitle: siteConfig.brandDescriptor,
+            url: `${siteConfig.siteUrl}/${lang}`,
+            email: `mailto:${brand.email}`,
+            sameAs: [brand.telegram],
+          },
+          {
+            "@type": "WebSite",
+            "@id": siteConfig.websiteId,
+            url: siteConfig.siteUrl,
+            name: `${siteConfig.brandName} — ${siteConfig.brandDescriptor}`,
+            description: t.seo.description,
+            inLanguage: lang,
+            publisher: { "@id": siteConfig.personId },
+          },
+          ...t.services.items.map((item) => ({
+            "@type": "Service",
+            name: item.title,
+            description: item.desc,
+            provider: { "@id": siteConfig.personId },
+            areaServed: ["MD", "EU"],
+          })),
+        ]}
       />
       <ProgressIndicator />
       <ScrollToTop />
