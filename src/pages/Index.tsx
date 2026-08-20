@@ -22,7 +22,7 @@ import { LegalFooterLinks } from "@/components/consent/LegalFooterLinks";
 
 const Index = () => {
   const { lang, setLang, t } = useLanguage();
-  const { theme, setTheme } = useTheme();
+  const { theme, toggleTheme } = useTheme();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -137,7 +137,7 @@ const Index = () => {
               variant="ghost"
               size="icon"
               className="h-9 w-9"
-              onClick={() => setTheme((p) => (p === "dark" ? "light" : "dark"))}
+              onClick={toggleTheme}
               aria-label="Toggle theme"
             >
               {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
