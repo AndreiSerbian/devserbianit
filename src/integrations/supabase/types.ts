@@ -17,6 +17,8 @@ export type Database = {
       analytics_events: {
         Row: {
           case_id: string | null
+          consent_decision_id: string | null
+          consent_id: string | null
           created_at: string
           event_name: string
           id: string
@@ -26,6 +28,8 @@ export type Database = {
         }
         Insert: {
           case_id?: string | null
+          consent_decision_id?: string | null
+          consent_id?: string | null
           created_at?: string
           event_name: string
           id?: string
@@ -35,12 +39,82 @@ export type Database = {
         }
         Update: {
           case_id?: string | null
+          consent_decision_id?: string | null
+          consent_id?: string | null
           created_at?: string
           event_name?: string
           id?: string
           locale?: string | null
           page?: string | null
           session_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "analytics_events_consent_decision_id_fkey"
+            columns: ["consent_decision_id"]
+            isOneToOne: false
+            referencedRelation: "consent_decisions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "analytics_events_consent_id_fkey"
+            columns: ["consent_id"]
+            isOneToOne: false
+            referencedRelation: "consent_receipts"
+            referencedColumns: ["consent_id"]
+          },
+        ]
+      }
+      consent_decisions: {
+        Row: {
+          analytics_allowed: boolean
+          consent_id: string
+          decided_at: string
+          decision_seq: number
+          id: string
+          policy_version: string
+          preferences_allowed: boolean
+        }
+        Insert: {
+          analytics_allowed: boolean
+          consent_id: string
+          decided_at?: string
+          decision_seq?: never
+          id?: string
+          policy_version: string
+          preferences_allowed: boolean
+        }
+        Update: {
+          analytics_allowed?: boolean
+          consent_id?: string
+          decided_at?: string
+          decision_seq?: never
+          id?: string
+          policy_version?: string
+          preferences_allowed?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consent_decisions_consent_id_fkey"
+            columns: ["consent_id"]
+            isOneToOne: false
+            referencedRelation: "consent_receipts"
+            referencedColumns: ["consent_id"]
+          },
+        ]
+      }
+      consent_receipts: {
+        Row: {
+          consent_id: string
+          created_at: string
+        }
+        Insert: {
+          consent_id?: string
+          created_at?: string
+        }
+        Update: {
+          consent_id?: string
+          created_at?: string
         }
         Relationships: []
       }
@@ -130,8 +204,48 @@ export type Database = {
           retry_after: number
         }[]
       }
+      consent_policy_version: { Args: never; Returns: string }
+      consent_status: {
+        Args: { p_consent_id: string }
+        Returns: {
+          analytics_allowed: boolean
+          current_policy_version: string
+          decided_at: string
+          decision_id: string
+          decision_seq: number
+          policy_version: string
+          preferences_allowed: boolean
+        }[]
+      }
       delete_expired_leads: { Args: { retain_months: number }; Returns: number }
+      insert_analytics_event: {
+        Args: {
+          p_case_id: string
+          p_consent_id: string
+          p_event_name: string
+          p_locale: string
+          p_page: string
+          p_session_id: string
+        }
+        Returns: boolean
+      }
       purge_rate_limit_hits: { Args: never; Returns: number }
+      record_consent_decision: {
+        Args: {
+          p_analytics_allowed: boolean
+          p_consent_id: string
+          p_preferences_allowed: boolean
+        }
+        Returns: {
+          analytics_allowed: boolean
+          consent_id: string
+          decided_at: string
+          decision_id: string
+          decision_seq: number
+          policy_version: string
+          preferences_allowed: boolean
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never

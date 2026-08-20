@@ -1,6 +1,7 @@
 import { createContext, useContext, useCallback, ReactNode } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { translations, SUPPORTED_LANGS, type Lang } from "@/data/translations";
+import { readPreference, writePreference } from "@/lib/preferences";
 
 interface LanguageContextValue {
   lang: Lang;
@@ -9,8 +10,6 @@ interface LanguageContextValue {
 }
 
 const LanguageContext = createContext<LanguageContextValue | null>(null);
-
-const STORAGE_KEY = "lang";
 
 export const getLangFromPath = (pathname: string): Lang | null => {
   const first = pathname.split("/").filter(Boolean)[0];
@@ -22,14 +21,14 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate();
 
   const fromPath = getLangFromPath(location.pathname);
-  const stored =
-    typeof window !== "undefined" ? (localStorage.getItem(STORAGE_KEY) as Lang | null) : null;
+  // Language always works; only persisting the choice is consent-gated.
+  const stored = typeof window !== "undefined" ? (readPreference("lang") as Lang | null) : null;
   const lang: Lang =
     fromPath ?? (stored && SUPPORTED_LANGS.includes(stored) ? stored : "ru");
 
   const setLang = useCallback(
     (next: Lang) => {
-      localStorage.setItem(STORAGE_KEY, next);
+      writePreference("lang", next);
       document.documentElement.lang = next;
 
       const segments = location.pathname.split("/").filter(Boolean);

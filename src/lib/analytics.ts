@@ -13,6 +13,27 @@ export type AnalyticsEvent =
 
 const SESSION_KEY = "anon_session_id";
 
+/**
+ * Analytics is consent-gated and pseudonymous: a session identifier and the
+ * consent receipt id are attached to every event. Nothing is created or sent
+ * until a consent decision that allows analytics has been confirmed.
+ */
+let activeConsentId: string | null = null;
+
+export const setAnalyticsConsent = (consentId: string | null) => {
+  activeConsentId = consentId;
+  if (!consentId) clearAnalyticsSession();
+};
+
+/** Withdrawal must stop tracking immediately and drop the session identifier. */
+export const clearAnalyticsSession = () => {
+  try {
+    sessionStorage.removeItem(SESSION_KEY);
+  } catch {
+    /* ignore */
+  }
+};
+
 const getSessionId = () => {
   try {
     let id = sessionStorage.getItem(SESSION_KEY);
@@ -26,11 +47,12 @@ const getSessionId = () => {
   }
 };
 
-/** Fire-and-forget, never blocks or breaks the UI. */
+/** Fire-and-forget, never blocks or breaks the UI. No consent — no request. */
 export const trackEvent = (
   event: AnalyticsEvent,
   meta: { locale?: string; caseId?: string } = {},
 ) => {
+  if (!activeConsentId) return;
   try {
     void supabase.functions.invoke("track-event", {
       body: {
@@ -39,6 +61,7 @@ export const trackEvent = (
         locale: meta.locale ?? null,
         case_id: meta.caseId ?? null,
         session_id: getSessionId(),
+        consent_id: activeConsentId,
       },
     });
   } catch {

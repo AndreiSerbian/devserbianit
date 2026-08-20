@@ -29,8 +29,16 @@ const ALLOWED_EVENTS = new Set([
   "calculator_open",
 ]);
 
-const ALLOWED_FIELDS = new Set(["event_name", "page", "locale", "case_id", "session_id"]);
+const ALLOWED_FIELDS = new Set([
+  "event_name",
+  "page",
+  "locale",
+  "case_id",
+  "session_id",
+  "consent_id",
+]);
 const LOCALES = new Set(["ru", "en", "ro"]);
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 const clean = (v: unknown, max: number) =>
   typeof v === "string" && v.trim()
@@ -60,6 +68,12 @@ Deno.serve(async (req) => {
 
     const locale = clean(body.locale, 5);
     const page = clean(body.page, 120);
+
+    // Consent is mandatory: without a valid receipt the event is never stored.
+    const consentId = typeof body.consent_id === "string" && UUID_RE.test(body.consent_id)
+      ? body.consent_id
+      : null;
+    if (!consentId) return jsonResponse({ ok: false }, 200, cors);
 
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
@@ -91,15 +105,24 @@ Deno.serve(async (req) => {
       }
     }
 
-    await supabase.from("analytics_events").insert({
-      event_name: eventName,
-      page: page ? page.split("?")[0].split("#")[0].slice(0, 120) : null,
-      locale: locale && LOCALES.has(locale) ? locale : null,
-      case_id: clean(body.case_id, 80),
-      session_id: clean(body.session_id, 64),
+    // Single atomic call: the DB resolves the latest consent decision under an
+    // advisory lock, validates the material policy version and analytics_allowed,
+    // and binds the inserted row to that exact decision. No read-then-write race.
+    const { data: stored, error: insertError } = await supabase.rpc("insert_analytics_event", {
+      p_consent_id: consentId,
+      p_event_name: eventName,
+      p_page: page ? page.split("?")[0].split("#")[0].slice(0, 120) : null,
+      p_locale: locale && LOCALES.has(locale) ? locale : null,
+      p_case_id: clean(body.case_id, 80),
+      p_session_id: clean(body.session_id, 64),
     });
 
-    return jsonResponse({ ok: true }, 200, cors);
+    if (insertError) {
+      console.error(JSON.stringify({ rid, event: "analytics_insert_failed" }));
+      return jsonResponse({ ok: false }, 200, cors);
+    }
+
+    return jsonResponse({ ok: stored === true }, 200, cors);
   } catch (_e) {
     // analytics must never break the client
     return jsonResponse({ ok: false }, 200, cors);
