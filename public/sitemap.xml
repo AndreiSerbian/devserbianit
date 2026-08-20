@@ -97,4 +97,76 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://devserbianit.lovable.app/ru/cases/unit-econ-strategist"/>
     <priority>0.7</priority>
   </url>
+  <url>
+    <loc>https://devserbianit.lovable.app/ru/konfidencialnost</loc>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://devserbianit.lovable.app/ru/konfidencialnost"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://devserbianit.lovable.app/en/privacy"/>
+    <xhtml:link rel="alternate" hreflang="ro" href="https://devserbianit.lovable.app/ro/confidentialitate"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://devserbianit.lovable.app/ru/konfidencialnost"/>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://devserbianit.lovable.app/en/privacy</loc>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://devserbianit.lovable.app/ru/konfidencialnost"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://devserbianit.lovable.app/en/privacy"/>
+    <xhtml:link rel="alternate" hreflang="ro" href="https://devserbianit.lovable.app/ro/confidentialitate"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://devserbianit.lovable.app/ru/konfidencialnost"/>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://devserbianit.lovable.app/ro/confidentialitate</loc>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://devserbianit.lovable.app/ru/konfidencialnost"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://devserbianit.lovable.app/en/privacy"/>
+    <xhtml:link rel="alternate" hreflang="ro" href="https://devserbianit.lovable.app/ro/confidentialitate"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://devserbianit.lovable.app/ru/konfidencialnost"/>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://devserbianit.lovable.app/ru/cookie</loc>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://devserbianit.lovable.app/ru/cookie"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://devserbianit.lovable.app/en/cookies"/>
+    <xhtml:link rel="alternate" hreflang="ro" href="https://devserbianit.lovable.app/ro/cookies"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://devserbianit.lovable.app/ru/cookie"/>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://devserbianit.lovable.app/en/cookies</loc>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://devserbianit.lovable.app/ru/cookie"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://devserbianit.lovable.app/en/cookies"/>
+    <xhtml:link rel="alternate" hreflang="ro" href="https://devserbianit.lovable.app/ro/cookies"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://devserbianit.lovable.app/ru/cookie"/>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://devserbianit.lovable.app/ro/cookies</loc>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://devserbianit.lovable.app/ru/cookie"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://devserbianit.lovable.app/en/cookies"/>
+    <xhtml:link rel="alternate" hreflang="ro" href="https://devserbianit.lovable.app/ro/cookies"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://devserbianit.lovable.app/ru/cookie"/>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://devserbianit.lovable.app/ru/usloviya</loc>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://devserbianit.lovable.app/ru/usloviya"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://devserbianit.lovable.app/en/terms"/>
+    <xhtml:link rel="alternate" hreflang="ro" href="https://devserbianit.lovable.app/ro/termeni"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://devserbianit.lovable.app/ru/usloviya"/>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://devserbianit.lovable.app/en/terms</loc>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://devserbianit.lovable.app/ru/usloviya"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://devserbianit.lovable.app/en/terms"/>
+    <xhtml:link rel="alternate" hreflang="ro" href="https://devserbianit.lovable.app/ro/termeni"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://devserbianit.lovable.app/ru/usloviya"/>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://devserbianit.lovable.app/ro/termeni</loc>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://devserbianit.lovable.app/ru/usloviya"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://devserbianit.lovable.app/en/terms"/>
+    <xhtml:link rel="alternate" hreflang="ro" href="https://devserbianit.lovable.app/ro/termeni"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://devserbianit.lovable.app/ru/usloviya"/>
+    <priority>0.3</priority>
+  </url>
 </urlset>
