@@ -4,23 +4,22 @@
 
 ## Что показал аудит (факты из кода, не предположения)
 
-Реальные cookie-файлы отсутствуют. Единственный `document.cookie` — в неиспользуемом shadcn-компоненте `ui/sidebar.tsx`. Хранилище браузера:
+Application code не устанавливает собственных cookies: единственный `document.cookie` — в неиспользуемом shadcn-компоненте `ui/sidebar.tsx`. Окончательное утверждение о фактическом отсутствии cookies делается только после production audit (см. п. 9). Хранилище браузера:
 
 | Ключ | Тип | Назначение | Категория |
 | --- | --- | --- | --- |
-| `theme` | localStorage | тема оформления | preferences |
-| `lang` | localStorage | выбранный язык | preferences |
+| `theme` | localStorage | сохранение темы между визитами | preferences — согласие |
+| `lang` | localStorage | сохранение языка между визитами | preferences — согласие |
 | `anon_session_id` | sessionStorage (UUID) | псевдонимный идентификатор аналитической сессии | analytics — согласие |
-| `theme`, `lang` | localStorage | сохранение выбора между визитами | preferences — согласие |
-| `consent` | localStorage | выбор категорий, версия политики, дата решения, `consent_id` | necessary |
+| `consent` | localStorage | `consent_id` и текущее состояние UI-переключателей | necessary |
 
-Ключ `sb-*-auth-token` в инвентаре не заявляется: аутентификации на сайте нет, SDK его не создаёт. Собственных browser cookies сайт не устанавливает — это будет прямо сказано в Cookie Policy.
+Ключ `sb-*-auth-token` в инвентаре не заявляется: аутентификации на сайте нет, SDK его не создаёт.
 
 Персональные данные: форма заявки (имя, способ связи, контакт, текст запроса, опционально бюджет/сроки) → таблица `leads`; путь страницы и локаль. Аналитика: `event_name`, `page` (только pathname), `locale`, `case_id`, `session_id` (случайный идентификатор аналитической сессии), `consent_id` (случайный идентификатор consent receipt). Поскольку присутствуют эти идентификаторы, аналитика описывается как псевдонимная (pseudonymous / pseudonymized technical analytics); формулировки «анонимная аналитика» и «обезличенные метрики» не используются нигде — ни в политике, ни в UI.
 
 Rate limiting: только keyed HMAC от IP (`rate_limit_hits`), raw IP не хранится и не логируется, чистка ежечасным cron (запись живёт до ~25 ч).
 
-**Legacy analytics (проверено до миграции):** в `analytics_events` сейчас 12 строк, 10 сессий, 5 типов событий, период 30.07.2026 — 20.08.2026 (часть — QA-события периода разработки). Фиктивное consent evidence для них не создаём и `consent_id` не бэкфиллим. На ревью показываю разбивку по `event_name`/датам и два варианта: контролируемое удаление исторических строк или оставить `consent_id NULL` как legacy до отдельного OWNER/LEGAL решения. Все новые события требуют действительный receipt.
+**Legacy analytics (проверено до миграции):** в `analytics_events` 12 строк, 10 сессий, 5 типов событий, период 30.07.2026 — 20.08.2026. По вашему решению: после финальной идентификации все 12 строк удаляются контролируемой data operation (миграцией) до запуска consent-аналитики. Fake receipts не создаём, `consent_id` не бэкфиллим. В отчёте фиксирую `legacy rows found = 12`, `legacy rows deleted = 12`, `reason = minimization / migration to consent-based analytics`. Таблица `leads` не затрагивается.
 
 **Balancing assessment для rate limiting (легитимный интерес)** — короткий документированный блок: *purpose* — защита формы и публичных функций от спама и абьюза; *necessity* — без ограничения по идентичности endpoint открыт для автоматизированного флуда, менее интрузивного средства (без какой-либо привязки к отправителю) не существует; *impact* — обрабатывается только keyed HMAC, raw IP не хранится и не логируется, повторная идентификация без секрета невозможна, срок жизни ~25 ч, влияния на нормальную навигацию нет; *safeguards* — серверные лимиты, отдельный секрет, автоматическая чистка cron, закрытый доступ (RLS + без grant для anon).
 
@@ -28,27 +27,36 @@ Rate limiting: только keyed HMAC от IP (`rate_limit_hits`), raw IP не 
 
 ## 1. Self-host шрифтов (убирает трансфер до согласия)
 
-Загрузить Oswald (500, 600) и Golos Text (400, 500, 600), latin + cyrillic, woff2 в `public/fonts/`, описать `@font-face` с `font-display: swap` в `src/index.css`, убрать `<link>` и `preconnect` на Google из `index.html`, сузить CSP: удалить `https://fonts.googleapis.com` и `https://fonts.gstatic.com` из `style-src`/`font-src`. Google перестаёт быть получателем.
+Загрузить Oswald (500, 600) и Golos Text (400, 500, 600), latin + cyrillic, woff2 в `public/fonts/`, описать `@font-face` с `font-display: swap` в `src/index.css`, убрать `<link>` и `preconnect` на Google из `index.html`, сузить CSP: удалить `https://fonts.googleapis.com` и `https://fonts.gstatic.com` из `style-src`/`font-src`. После этого Google Fonts перестаёт получать данные при загрузке страниц. При этом Google остаётся отдельным получателем/процессором на другом пути: отправка уведомления о заявке через Gmail-коннектор. Recipient/transfer map отражает оба случая раздельно.
 
 Оба шрифта под SIL OFL 1.1, поэтому рядом с font-ассетами кладу `public/fonts/OFL.txt` с полным текстом лицензии и copyright-notice каждой гарнитуры, без переименования и без удаления notices.
 
 ## 2. Consent-слой (аналитика off by default)
 
-- `src/context/ConsentContext.tsx`: состояние `{ consent_id, version, analytics, preferences, decidedAt }` в localStorage под `consent`. До решения — analytics выключена.
+- `src/context/ConsentContext.tsx`: в localStorage под `consent` хранится только `consent_id` и текущее состояние UI-переключателей — никаких authoritative timestamps и policy version на клиенте. До решения analytics выключена.
 - `src/lib/analytics.ts`: `trackEvent` ничего не отправляет и не создаёт `anon_session_id`, пока `analytics !== true`. Никакой буферизации «на потом» — события до согласия просто не существуют.
 - Баннер `src/components/CookieBanner.tsx`: три равнозначные кнопки «Принять» / «Отклонить» / «Настроить», без предвыбранных необязательных категорий, скролл и бездействие согласием не считаются, отказ не блокирует сайт и баннер после отказа не возвращается.
 - Панель настроек: Необходимые (всегда вкл, выключить нельзя), Предпочтения (сохранение темы/языка) и Аналитика — две независимые опциональные категории, обе выключены по умолчанию, каждая переключается отдельно. Постоянная ссылка в футере «Настройки cookie» открывает ту же панель — выбор можно изменить и отозвать в любой момент.
 - Текст отказа формулируется точно: сайт остаётся полностью функциональным; аналитические события не отправляются; при выключенных Preferences тема и язык работают, но не сохраняются между посещениями.
 
-### Server-side consent receipt
+### Server-authoritative consent history
 
-localStorage не единственное доказательство. Новая таблица `public.consent_receipts`: `consent_id uuid primary key default gen_random_uuid()`, `policy_version text`, `analytics_allowed boolean`, `preferences_allowed boolean`, `decided_at timestamptz`, `withdrawn_at timestamptz null`. Никаких IP, имён, email, user-agent и контактных данных. RLS включена, политик для `anon`/`authenticated` нет, GRANT только `service_role` — запись идёт исключительно через edge-функцию.
+localStorage не единственное доказательство, и история решений не перезаписывается. Две таблицы:
 
-Receipt server-authoritative. Новая функция `consent-receipt` (verify_jwt = false, тот же CORS-allowlist, лимит размера тела, rate limit по HMAC-identity со scope `consent`, нейтральные ошибки) принимает три операции: create, update, withdraw. Клиент передаёт только фактический выбор категорий (`analytics`, `preferences` — booleans) и при update/withdraw существующий `consent_id`. Сервер сам генерирует UUID, сам ставит `decided_at` / `withdrawn_at` и сам подставляет текущую policy version из серверного allowlist — значения из payload для этих полей игнорируются. В логи не пишутся ни payload, ни какие-либо PII.
+```text
+consent_receipts:  consent_id uuid PK default gen_random_uuid(), created_at timestamptz (server)
+consent_decisions: id uuid PK, consent_id FK → consent_receipts,
+                   policy_version text, analytics_allowed bool,
+                   preferences_allowed bool, decided_at timestamptz (server)
+```
 
-`analytics_events` получает колонку `consent_id` с FK на `consent_receipts`; `track-event` отклоняет событие, если `consent_id` отсутствует, receipt не найден, `analytics_allowed = false` или `withdrawn_at` не null — ответ остаётся нейтральным `200 { ok: false }`.
+Каждое изменение Analytics или Preferences создаёт новую immutable decision row. Отзыв — это тоже новая decision со `false` в соответствующей категории, а не UPDATE предыдущей. Обычное изменение согласия никогда не делает UPDATE или DELETE существующих decisions, поэтому последовательность allow → withdraw → allow сохраняется полностью. Никаких IP, имён, email, user-agent и контактных данных. RLS включена на обеих таблицах, политик для `anon`/`authenticated` нет, GRANT только `service_role` — запись исключительно через edge-функцию.
 
-Отзыв согласия: аналитика прекращается немедленно (в том же тике, до сетевых вызовов), `anon_session_id` удаляется из sessionStorage, receipt помечается `withdrawn_at`, новые события сервером не принимаются. При отзыве Preferences ключи `theme`/`lang` удаляются. Retention consent receipts — `[OWNER/LEGAL REVIEW REQUIRED]`.
+Функция `consent-receipt` (verify_jwt = false, CORS-allowlist, лимит размера тела, strict schema, rate limit по HMAC-identity со scope `consent`, нейтральные ошибки): операции create и record-decision. Клиент передаёт только фактический выбор категорий (`analytics`, `preferences` — booleans) и, для последующих решений, существующий `consent_id`. Сервер сам генерирует UUID, сам ставит все timestamps и сам подставляет текущую policy version из серверного allowlist; соответствующие значения из payload игнорируются. Ни payload, ни PII в логи не пишутся.
+
+`analytics_events` получает nullable колонку `consent_id` с FK на `consent_receipts`. `track-event` читает последнюю по `decided_at` decision для переданного `consent_id` и отклоняет событие, если `consent_id` отсутствует, receipt не найден или в последней decision `analytics_allowed = false` — ответ остаётся нейтральным `200 { ok: false }`.
+
+Отзыв согласия на клиенте: аналитика прекращается немедленно (в том же тике, до сетевых вызовов), `anon_session_id` удаляется из sessionStorage, записывается новая decision, новые события сервером не принимаются. При отзыве Preferences ключи `theme`/`lang` удаляются. Retention истории решений — `[OWNER/LEGAL REVIEW REQUIRED]`.
 
 ### Preferences — поведение однозначно
 
@@ -83,7 +91,9 @@ Receipt server-authoritative. Новая функция `consent-receipt` (verif
 
 ## 5. Политика cookie и аналогичных технологий
 
-Публичное название документа — «Политика cookie и аналогичных технологий» с эквивалентами на RO и EN. Содержание: что такое cookie и эквивалентные технологии, прямое указание, что в текущей реализации сайт не устанавливает собственных browser cookies, но использует localStorage и sessionStorage; полная таблица всех записей инвентаря (провайдер, тип, назначение, данные, срок, first/third party, необходимость, требуется ли согласие, блокируется ли до согласия); как работает и как отзывается согласие; что даёт отказ (сайт работает полностью, теряются только обезличенные метрики); третьи стороны; дата обновления. Фейкового «Accept all» на пустом месте не будет: баннер существует именно потому, что аналитика реально требует согласия.
+Публичное название документа — «Политика cookie и аналогичных технологий» с эквивалентами на RO и EN. Содержание: что такое cookie и эквивалентные технологии; указание, что application code сайта не устанавливает собственных cookies, а использует localStorage и sessionStorage (формулировка уточняется по результатам production audit); полная таблица всех записей инвентаря (провайдер, тип, назначение, данные, срок, first/third party, необходимость, требуется ли согласие, блокируется ли до согласия); как работает и как отзывается согласие; последствия отказа — сайт остаётся полностью функциональным, псевдонимные аналитические события не создаются и не отправляются, при выключенных Preferences тема и язык не сохраняются между посещениями; третьи стороны; дата обновления. Фейкового «Accept all» на пустом месте не будет: баннер существует именно потому, что аналитика реально требует согласия.
+
+Перед сдачей прогоняю поиск по всем RU/RO/EN текстам и UI на слова anonymous / anonymized / анонимн / обезличен применительно к `analytics_events` — таких формулировок быть не должно.
 
 ## 6. Terms of Use
 
@@ -102,7 +112,13 @@ Receipt server-authoritative. Новая функция `consent-receipt` (verif
 
 ## 9. Отчёт перед публикацией
 
-После реализации пересобираю на фактическом состоянии кода: processing map, consent schema и flow, storage inventory (повторный аудит `document.cookie` / localStorage / sessionStorage в браузере), recipient/transfer map, legacy analytics audit. Плюс матрица REQUIREMENT / PURPOSE / IMPLEMENTATION / ROUTE-FILE / STATUS / OWNER INPUT / LEGAL REVIEW, карта оснований с balancing assessment, retention matrix (включая consent receipts), скриншоты consent UI, все маршруты документов, процедура по правам, список нерешённых OWNER/LEGAL пунктов и результаты build / typecheck / Playwright / CSP / SEO.
+После реализации пересобираю на фактическом состоянии кода: processing map, фактическую consent DB schema и flow, recipient/transfer map (с раздельным указанием Google Fonts и Gmail), legacy analytics result, retention matrix.
+
+Storage & cookie audit проводится на production и охватывает не только `document.cookie`: browser cookie jar через Playwright (`context.cookies()`, включая HttpOnly, которые `document.cookie` не показывает), `Set-Cookie` в заголовках ответов, `document.cookie`, localStorage, sessionStorage, ответы первичной загрузки страниц и ответы задействованных edge-функций.
+
+Тесты consent: create → change → withdraw → re-consent, с проверкой, что каждая операция добавляет decision row, старые строки не изменяются и не удаляются, а `track-event` следует последней decision.
+
+Плюс матрица REQUIREMENT / PURPOSE / IMPLEMENTATION / ROUTE-FILE / STATUS / OWNER INPUT / LEGAL REVIEW, карта оснований с balancing assessment, скриншоты consent UI, все маршруты документов, процедура по правам, список нерешённых OWNER/LEGAL пунктов и результаты build / typecheck / Playwright / CSP / SEO.
 
 Полные тексты RO / RU / EN показываю на ревью до любой публикации. Публикации в этом шаге нет.
 
@@ -110,5 +126,5 @@ Receipt server-authoritative. Новая функция `consent-receipt` (verif
 
 - Меняются: `index.html` (CSP, шрифты), `src/index.css`, `public/fonts/*`, `src/lib/analytics.ts`, `src/lib/seoRoutes.ts`, `src/components/AnimatedRoutes.tsx`, `src/components/ContactForm.tsx`, футер в `src/pages/Index.tsx`, `src/data/translations.ts`, `scripts/generate-sitemap.ts`.
 - Новое: `ConsentContext`, `CookieBanner`, панель настроек, `pages/legal/LegalPage.tsx`, `src/data/legal/{ro,ru,en}.ts`, `public/fonts/OFL.txt`, `docs/data-rights-procedure.md`.
-- Backend: одна миграция (`consent_receipts` + GRANT только `service_role` + RLS без политик для anon/authenticated, nullable колонка `consent_id` в `analytics_events` с FK), новая функция `consent-receipt`, правка `track-event` (проверка receipt). `submit-lead`, `_shared/http.ts`, существующие права и cron не меняются. Бэкфилла исторических событий нет.
+- Backend: миграции — `consent_receipts` и `consent_decisions` (GRANT только `service_role`, RLS без политик для anon/authenticated), nullable `consent_id` в `analytics_events` с FK, контролируемое удаление 12 legacy строк аналитики. Новая функция `consent-receipt`, правка `track-event` (проверка последней decision). `submit-lead`, `_shared/http.ts`, существующие права и cron не меняются. Бэкфилла и fake receipts нет.
 - Проверки: build + typecheck, Playwright-прогон трёх локалей (нет событий в `analytics_events` до согласия, есть после, после отзыва снова нет и `anon_session_id` удалён), поведение theme/lang при выключенных Preferences, CSP без violations после удаления Google Fonts, hreflang/canonical на legal-маршрутах, anon не читает `consent_receipts`.
