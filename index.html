@@ -26,19 +26,31 @@
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://devserbianit.lovable.app/" />
 
-    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content="ANDREI SERBIAN — IT SOLUTIONS" />
     <meta name="twitter:description" content="Сайты, интернет-магазины, CRM и Telegram-боты для бизнеса." />
 
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "Person",
-        "name": "Andrei Serbian",
-        "jobTitle": "IT Solutions Developer",
-        "url": "https://devserbianit.lovable.app/",
-        "sameAs": ["https://t.me/public_serb"],
-        "email": "mailto:serbiyan012@gmail.com"
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://devserbianit.lovable.app/#person",
+            "name": "Andrei Serbian",
+            "jobTitle": "IT SOLUTIONS",
+            "url": "https://devserbianit.lovable.app/",
+            "sameAs": ["https://t.me/public_serb"],
+            "email": "mailto:serbiyan012@gmail.com"
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://devserbianit.lovable.app/#website",
+            "url": "https://devserbianit.lovable.app/",
+            "name": "ANDREI SERBIAN — IT SOLUTIONS",
+            "publisher": { "@id": "https://devserbianit.lovable.app/#person" }
+          }
+        ]
       }
     </script>
   </head>
