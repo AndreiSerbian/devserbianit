@@ -5,10 +5,8 @@
  */
 const FALLBACK_SITE_URL = "https://devserbianit.lovable.app";
 
-const fromEnv =
-  typeof process !== "undefined" && process.env?.SITE_URL
-    ? process.env.SITE_URL
-    : typeof import.meta !== "undefined" && (import.meta as { env?: Record<string, string> }).env?.VITE_SITE_URL;
+const fromEnv = (import.meta as unknown as { env?: Record<string, string | undefined> }).env
+  ?.VITE_SITE_URL;
 
 export const SITE_URL = (fromEnv || FALLBACK_SITE_URL).replace(/\/+$/, "");
 
