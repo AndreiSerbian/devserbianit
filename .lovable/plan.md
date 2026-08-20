@@ -22,13 +22,14 @@
 Сейчас лимит 5 заявок в час считается двумя отдельными запросами (SELECT count + INSERT) по `sha256(ip)`, а `ip_hash` хранится в `leads` бессрочно.
 Решение:
 - Идентификатор — keyed HMAC: `HMAC-SHA-256(RATE_LIMIT_SECRET, normalized_ip)`. Секрет запрошу через хранилище секретов: только серверная среда функций, не `VITE_*`, не во фронтенде, не в таблице БД. Сырой IP не сохраняем нигде.
+- Источник IP — только Edge-инфраструктура Supabase (заголовки запроса); IP из body/query не принимаем. При `x-forwarded-for` берём первый адрес, нормализуем как IPv4/IPv6; при отсутствии валидного адреса — консервативный fallback-ключ.
 - Атомарность: одна серверная DB-функция (RPC), которая в одной транзакции проверяет cooldown, считает hits в окне, при успехе пишет hit и возвращает `allowed` + `retry_after`. Публичным ролям (`PUBLIC`, `anon`, `authenticated`) EXECUTE не даём — только серверной роли.
-- Retention: `rate_limit_hits` — короткий технический срок (24 часа) с механизмом удаления устаревших записей.
-- `leads.ip_hash` больше не заполняем; существующие значения обнуляем.
+- Retention: `rate_limit_hits` живут 24 часа. Механизм очистки — регулярный cron-джоб (`pg_cron`), вызывающий `public.purge_rate_limit_hits()`; удаление внутри `check_rate_limit` остаётся только как дополнительная страховка, а не единственный механизм. Точный механизм и расписание зафиксирую в отчёте.
+- `leads.ip_hash` больше не заполняем, существующие значения обнуляем; затем проверяем все ссылки на поле (функции, код, отчёты) и, если оно нигде не требуется, готовим его удаление из схемы отдельным шагом после проверки совместимости.
 
 ### Medium — CORS audit
 Обе функции сейчас отвечают `Access-Control-Allow-Origin: *`.
-Решение: проверить и привести в порядок OPTIONS-preflight, allowed origins, methods и headers для `submit-lead` и `track-event`. Production origin берём из общей конфигурации (домен проекта + preview-домен), wildcard в проде без необходимости не оставляем. Фиксирую честно: CORS — браузерное ограничение и не защищает от server-to-server запросов и ботов; реальная защита — rate limit, honeypot, strict schema, лимит размера тела.
+Решение: для `submit-lead` и `track-event` вводим allowlist конкретных origins — production-домен, конкретный preview-домен и localhost/dev как отдельные записи; шаблон `*.lovable.app` не разрешаем. Для разрешённого запроса возвращаем ровно запрошенный `Origin` (никогда несколько значений) плюс `Vary: Origin`; для неразрешённого — без CORS-разрешения. Приводим в порядок OPTIONS-preflight, methods и headers. Фиксирую честно: CORS — браузерное ограничение и не защищает от server-to-server запросов и ботов; реальная защита — rate limit, honeypot, strict schema, лимит размера тела.
 
 ### Medium — allowlist полей и нормализация в `submit-lead`
 Сейчас лишние поля просто игнорируются, но нет строгой схемы и явного отказа. Валидация написана вручную.
@@ -73,9 +74,10 @@ CSP сначала тестируем в браузере: Google Fonts (`fonts.
 - `docs/security-runbook.md`, `docs/security-audit-report.md` — новые внутренние документы.
 
 Миграция БД (одной миграцией, с GRANT-блоком):
-- `create table public.rate_limit_hits (id, ip_hmac text, created_at)`; RLS on, deny-all для `anon`/`authenticated`, `grant all` только `service_role`; индекс по `(ip_hmac, created_at)`; удаление записей старше 24 часов.
+- `create table public.rate_limit_hits (id, ip_hmac text, created_at)`; RLS on, deny-all для `anon`/`authenticated`, `grant all` только `service_role`; индекс по `(ip_hmac, created_at)`.
+- `create function public.purge_rate_limit_hits()` + cron-джоб (`pg_cron`) для удаления записей старше 24 часов; EXECUTE только серверной роли.
 - `create function public.check_rate_limit(...)` — атомарная проверка cooldown + окна и запись hit, возвращает `allowed`/`retry_after`; EXECUTE отозван у `PUBLIC`, `anon`, `authenticated`.
-- `update public.leads set ip_hash = null` и прекращение записи этого поля.
+- `update public.leads set ip_hash = null` и прекращение записи этого поля; удаление колонки — отдельным шагом после проверки ссылок.
 - `revoke all on public.leads, public.analytics_events from anon, authenticated;`
 - `create function public.delete_expired_leads(retain_months int)` — schema-qualified объекты, фиксированный `search_path`, EXECUTE только серверной роли.
 
