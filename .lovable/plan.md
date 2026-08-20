@@ -22,22 +22,26 @@
 ### Страницы кейсов
 - Подключить `useLanguage()` вместо локального state; всё содержимое рендерится на языке из URL.
 - Добавить `<Seo>`: уникальный title и description на основе реального `name`/`desc` кейса, self-canonical `/{lang}/cases/{slug}`, hreflang ru/en/ro + x-default → `/ru/...`.
-- JSON-LD: `WebPage` с `BreadcrumbList` (по требованиям Google) и `mainEntity` → `CreativeWork` только с подтверждёнными полями (name, description, author → Person «Andrei Serbian», url при наличии). Rich result не гарантируется — это не цель. Все сущности внутри `@graph` с `@id`, чтобы не дублировать Person.
+- JSON-LD: `WebPage` с `BreadcrumbList` (по требованиям Google) и `mainEntity` → `CreativeWork` только с подтверждёнными полями (name, description, author → Person «Andrei Serbian», url при наличии). Rich result не гарантируется — это не цель. Все сущности внутри `@graph` с абсолютными `@id` вида `https://devserbianit.lovable.app/#person`, чтобы не дублировать Person и не было неоднозначности.
 - Заголовки: один основной H1 в каждом отрендеренном состоянии (название кейса), разделы — H2, подпункты — H3.
 - Все внутренние ссылки — с префиксом языка; в конце страницы блок «Следующий кейс» со ссылкой на соседний кейс.
 
 ### Главная
 - Уникальные title/description на RU/EN/RO по фактическому позиционированию (сайты, интернет-магазины, CRM и интеграции, Telegram-боты, автоматизация) — без «best/№1/leading».
-- Убрать deprecated `ProfessionalService`. Схема: `Person` (Andrei Serbian) как основная сущность с `@id` = `#person`, `WebSite` отдельной сущностью с `@id` = `#website`, и `Service` для фактически оказываемых услуг (сайты, e-commerce, CRM-интеграции, Telegram-боты/автоматизация) с `provider` → `#person`. Всё собрано в одном `@graph`.
+- Убрать deprecated `ProfessionalService`. Схема в одном `@graph`: `Person` (Andrei Serbian) с `@id` = `https://devserbianit.lovable.app/#person`, `WebSite` с `@id` = `https://devserbianit.lovable.app/#website`, и `Service` для фактически оказываемых услуг (сайты, e-commerce, CRM-интеграции, Telegram-боты/автоматизация) с `provider` → абсолютный `@id` Person.
 - В блоке услуг — осмысленные ссылки на релевантные кейсы (без искусственных футер-ссылок).
 
 ### 404
 - `<Seo index={false}>` с корректным title, один H1, ссылка на `/{lang}`.
-- Проверить HTTP-статус произвольного несуществующего URL (`/ru/this-page-does-not-exist-12345`). Если хостинг отдаёт 404 — оставляем как есть. Если 200 — фиксируем SPA soft-404 как ограничение и гарантируем client-side `noindex` на NotFound.
+- Проверить HTTP-статус произвольного несуществующего URL (`/ru/this-page-does-not-exist-12345`). В отчёте зафиксировать:
+  - HTTP response for unknown route: `404` / `200`;
+  - if 200: SPA soft-404 limitation;
+  - client-side noindex verified in rendered DOM: `YES` / `NO`.
+- Если хостинг отдаёт 404 — оставляем как есть. Если 200 — гарантируем client-side `noindex` для NotFound.
 
 ### Sitemap и robots
 - Заменить ручной `public/sitemap.xml` на генератор `scripts/generate-sitemap.ts` (вызывается через `npm run generate:sitemap` и `prebuild`), который выводит `/ru`, `/en`, `/ro` и 9 локализованных URL кейсов с hreflang-альтернативами (ru, en, ro, self-reference, x-default → RU). Итого 12 индексируемых URL. Без calculator, `__brand-check`, 404.
-- hreflang в HTML (`Seo.tsx`) и в sitemap строятся из **одного** общего модуля конфигурации маршрутов/локалей, чтобы две карты не могли разойтись.
+- hreflang в HTML (`Seo.tsx`) и в sitemap строятся из **одного** общего модуля конфигурации маршрутов/локалей, чтобы две карты не могли разойтись. Взаимность проверяется: для каждой группы RU ↔ EN ↔ RO + self-reference + x-default.
 - `robots.txt`: оставить `Allow: /` и `Sitemap:`. `Disallow: /__brand-check` не добавляем — маршрут уже ограничен `import.meta.env.DEV` и в production-сборку не попадает; robots.txt как средство контроля доступа не используем.
 
 ### index.html / Open Graph / Twitter
@@ -52,7 +56,7 @@
 - Отчёт по рискам LCP/CLS/INP без изменения дизайна.
 
 ### Проверка
-Прогон через браузер: `/ru`, `/en`, `/ro`, все 9 case-routes, 404 — проверка title/description/canonical/hreflang/`html lang`/иерархии заголовков/битых ссылок/мобильного рендера.
+Прогон через браузер: `/ru`, `/en`, `/ro`, все 9 case-routes, 404 — проверка title/description/canonical/hreflang/`html lang`/иерархии заголовков/битых ссылок/мобильного рендера. Проверить взаимность hreflang: для каждой группы RU ↔ EN ↔ RO + self-reference + x-default.
 
 ## Технические детали
 
@@ -66,7 +70,7 @@
 - URL Inspection в Google Search Console: rendered HTML, canonical, title/description.
 - Rich Results Test для BreadcrumbList.
 - Отправка sitemap и проверка отчёта Page Indexing.
-- Проверка hreflang-групп на всех трёх локалях.
+- Проверка hreflang-групп на всех трёх локалях (взаимность: RU ↔ EN ↔ RO + self-reference + x-default).
 
 ## Что останется владельцу
 - Подтвердить финальные тексты title/description на EN и RO (машинный RO нуждается в проверке носителем).
