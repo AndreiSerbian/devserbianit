@@ -16,11 +16,19 @@
 
 ### High — устаревшая публичная функция `send-telegram-notification`
 Функция задеплоена с `verify_jwt = false`, но клиент её больше не вызывает (осталась от старой анкеты). Она принимает произвольные `answers`/`questions`, не имеет rate limit, honeypot и лимита размера, шлёт всё в Telegram и на почту, а в ответе отдаёт `error.message` и логирует полное тело ответа Telegram. Это открытый спам-канал и утечка внутренних деталей.
-Решение: удалить функцию и её запись в конфиге.
+Решение: удалить полностью — каталог исходников, запись в `supabase/config.toml` и задеплоенную функцию; отдельно перепроверить отсутствие клиентских вызовов и любых упоминаний URL этой функции в старом коде.
 
-### High — rate limit слабый и держит хеш IP бессрочно
-Лимит 5 заявок в час считается по `ip_hash` в таблице `leads`, а сам `ip_hash` хранится вместе с заявкой неограниченно долго.
-Решение: отдельная таблица `rate_limit_hits` (хеш IP + время, без сырого IP), лимит считается по ней; добавляем per-request проверки: минимальное время заполнения формы, лимит размера тела запроса, короткий cooldown между отправками. `ip_hash` в `leads` перестаём писать — он больше не нужен для лимита.
+### High — rate limit: слабый идентификатор, неатомарный, бессрочное хранение
+Сейчас лимит 5 заявок в час считается двумя отдельными запросами (SELECT count + INSERT) по `sha256(ip)`, а `ip_hash` хранится в `leads` бессрочно.
+Решение:
+- Идентификатор — keyed HMAC: `HMAC-SHA-256(RATE_LIMIT_SECRET, normalized_ip)`. Секрет запрошу через хранилище секретов: только серверная среда функций, не `VITE_*`, не во фронтенде, не в таблице БД. Сырой IP не сохраняем нигде.
+- Атомарность: одна серверная DB-функция (RPC), которая в одной транзакции проверяет cooldown, считает hits в окне, при успехе пишет hit и возвращает `allowed` + `retry_after`. Публичным ролям (`PUBLIC`, `anon`, `authenticated`) EXECUTE не даём — только серверной роли.
+- Retention: `rate_limit_hits` — короткий технический срок (24 часа) с механизмом удаления устаревших записей.
+- `leads.ip_hash` больше не заполняем; существующие значения обнуляем.
+
+### Medium — CORS audit
+Обе функции сейчас отвечают `Access-Control-Allow-Origin: *`.
+Решение: проверить и привести в порядок OPTIONS-preflight, allowed origins, methods и headers для `submit-lead` и `track-event`. Production origin берём из общей конфигурации (домен проекта + preview-домен), wildcard в проде без необходимости не оставляем. Фиксирую честно: CORS — браузерное ограничение и не защищает от server-to-server запросов и ботов; реальная защита — rate limit, honeypot, strict schema, лимит размера тела.
 
 ### Medium — allowlist полей и нормализация в `submit-lead`
 Сейчас лишние поля просто игнорируются, но нет строгой схемы и явного отказа. Валидация написана вручную.
@@ -34,13 +42,18 @@
 `anon` и `authenticated` имеют полный набор привилегий на `leads` и `analytics_events`; сейчас их держит только RLS.
 Решение: отозвать привилегии у `anon` и `authenticated`, оставить `service_role` (функции работают через него). Защита в два слоя вместо одного.
 
-### Medium — нет security-заголовков
-Заголовки уровня хостинга (HSTS, CSP через HTTP) в статичном SPA не настраиваются, но часть можно задать в `index.html`.
-Решение: добавить в `<head>` `Content-Security-Policy` через meta (с `frame-ancestors 'self'`, разрешёнными Google Fonts и домом backend), `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`. `unsafe-eval` не используем, `unsafe-inline` только для стилей (Tailwind/Framer Motion требуют). CSP сначала проверяем в браузере: шрифты, backend-запросы, анимации, PDF-экспорт калькулятора.
+### Medium — security-заголовки: что реально доступно
+Проверил ответ production-хостинга: он уже отдаёт `strict-transport-security`, `referrer-policy: strict-origin-when-cross-origin` и `x-content-type-options: nosniff`. Управления собственными HTTP-заголовками у статичного SPA на этом хостинге нет, поэтому:
+- В `index.html` добавляем только meta `Content-Security-Policy`, и только директивы, поддерживаемые в meta.
+- `frame-ancestors` в meta CSP не помещаем (в meta игнорируется).
+- Фиктивные `meta http-equiv` для `X-Content-Type-Options`, `Permissions-Policy`, HSTS не создаём.
+- Фиксируем как hosting-level limitation: `Permissions-Policy` и защита от фрейминга (`frame-ancestors` / `X-Frame-Options`) на этом хостинге недоступны; при появлении своего edge/proxy — перенести CSP на уровень HTTP и добавить эти два заголовка.
+
+CSP сначала тестируем в браузере: Google Fonts (`fonts.googleapis.com`, `fonts.gstatic.com`), backend Supabase, вызовы Edge Functions, анимации Framer Motion, PDF-экспорт калькулятора (jsPDF + html2canvas, `blob:`/`data:`) и все остальные внешние ресурсы. `unsafe-eval` не используем; `unsafe-inline` — только для стилей, если без него ломаются Tailwind/Framer Motion.
 
 ### Low — retention для заявок
 Механизма удаления старых заявок нет.
-Решение: функция `delete_expired_leads()` (по умолчанию 24 месяца, значение согласуем) и запись политики в внутреннем документе. Автозапуск по расписанию — только если вы подтвердите срок.
+Решение: функция `public.delete_expired_leads(retain_months int)` — schema-qualified имена объектов, фиксированный безопасный `search_path`, `SECURITY DEFINER` только если без него не обойтись; `REVOKE EXECUTE FROM PUBLIC, anon, authenticated`, `GRANT EXECUTE` только нужной серверной роли. Срок хранения как утверждённый default не задаём — параметр обязателен, конкретный срок подтверждается отдельно; автозапуск по расписанию — только после вашего подтверждения.
 
 ### Low — внутренний runbook на случай инцидента
 Решение: файл `docs/security-runbook.md` в репозитории (не в `public/`, на сайте не публикуется): как распознать инцидент, что ограничить, какие данные затронуты, какие логи смотреть, какие credentials ротировать, кто решает про уведомление органа по защите данных.
@@ -55,18 +68,20 @@
 - Удалить: `supabase/functions/send-telegram-notification/`, блок в `supabase/config.toml`.
 - `supabase/functions/submit-lead/index.ts` — zod-схема, allowlist полей, нормализация, лимит размера тела, новый rate limit, honeypot + min-fill-time, нейтральные коды ошибок (`invalid_payload` / `rate_limited` / `unexpected`) без внутренних деталей, логи без контактов и текста заявки.
 - `supabase/functions/track-event/index.ts` — оставить allowlist, добавить лимит размера тела и отбраковку неизвестных полей.
-- `src/components/ContactForm.tsx` — отправлять `form_started_at` для min-fill-time, `page_url` без query, очищать поля формы после успеха (уже есть) и не сохранять их в storage.
+- `src/components/ContactForm.tsx` — `form_started_at` как вспомогательная anti-bot эвристика (не security boundary: значение контролируется клиентом; основные меры — серверный rate limit, лимит размера тела, strict schema, honeypot, cooldown), `page_url` без query, поля очищаются после успеха и не сохраняются в storage.
 - `index.html` — security meta-заголовки.
 - `docs/security-runbook.md`, `docs/security-audit-report.md` — новые внутренние документы.
 
 Миграция БД (одной миграцией, с GRANT-блоком):
-- `create table public.rate_limit_hits (id, ip_hash text, created_at)`; RLS on, deny-all для `anon`/`authenticated`, `grant all` только `service_role`; индекс по `(ip_hash, created_at)`.
+- `create table public.rate_limit_hits (id, ip_hmac text, created_at)`; RLS on, deny-all для `anon`/`authenticated`, `grant all` только `service_role`; индекс по `(ip_hmac, created_at)`; удаление записей старше 24 часов.
+- `create function public.check_rate_limit(...)` — атомарная проверка cooldown + окна и запись hit, возвращает `allowed`/`retry_after`; EXECUTE отозван у `PUBLIC`, `anon`, `authenticated`.
+- `update public.leads set ip_hash = null` и прекращение записи этого поля.
 - `revoke all on public.leads, public.analytics_events from anon, authenticated;`
-- `create function public.delete_expired_leads(retain_months int default 24)` — security definer, `search_path = public`.
+- `create function public.delete_expired_leads(retain_months int)` — schema-qualified объекты, фиксированный `search_path`, EXECUTE только серверной роли.
 
 Browser storage после правок: `theme`, `lang`, `anon_session_id` (sessionStorage), служебный ключ сессии Supabase-клиента. Персональных данных формы в storage нет.
 
-Зависимости: `jspdf` уже поднят до 4.2.1. Проведу свежий dependency scan и опишу найденное с оценкой риска; major-обновления без вашего согласия делать не буду.
+Проверки после изменений: Lovable Basic security scan, Deep scan (если доступен), dependency audit (`jspdf` уже 4.2.1; major-обновления без вашего согласия не делаю — только отчёт о риске и влиянии), production build, QA консоли и сети в браузере.
 
 QA после правок: спам через honeypot, мгновенная отправка (min-fill-time), oversized input, HTML/script-подобный ввод, неизвестное поле в теле, битый email, некорректный Telegram-контакт, серия повторных запросов (rate limit), попытка прямого чтения `leads` из браузера, прямой вызов функций, неизвестное событие аналитики, отсутствующее обязательное поле, сетевая ошибка, сбой уведомления. Тестирую на тестовых данных, продовые заявки не трогаю.
 
