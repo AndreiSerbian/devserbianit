@@ -75,7 +75,7 @@ CSP сначала тестируем в браузере: Google Fonts, backend
 - Удалить: `supabase/functions/send-telegram-notification/`, блок в `supabase/config.toml`.
 - `supabase/functions/submit-lead/index.ts` — zod-схема, allowlist полей, нормализация, лимит размера тела, новый rate limit, honeypot + min-fill-time, нейтральные коды ошибок (`invalid_payload` / `rate_limited` / `unexpected`) без внутренних деталей, логи без контактов и текста заявки.
 - `supabase/functions/track-event/index.ts` — оставить allowlist, добавить лимит размера тела и отбраковку неизвестных полей.
-- `src/components/ContactForm.tsx` — `form_started_at` как вспомогательная anti-bot эвристика (не security boundary: значение контролируется клиентом; основные меры — серверный rate limit, лимит размера тела, strict schema, honeypot, cooldown), `page_url` без query, поля очищаются после успеха и не сохраняются в storage.
+- `src/components/ContactForm.tsx` — `form_started_at` как вспомогательная anti-bot эвристика (не security boundary: значение контролируется клиентом; основные меры — серверный rate limit, лимит размера тела, strict schema, honeypot, cooldown), в заявку отправляем только `pathname` (без query и hash), поля очищаются после успеха и не сохраняются в storage.
 - `index.html` — security meta-заголовки.
 - `docs/security-runbook.md`, `docs/security-audit-report.md` — новые внутренние документы.
 
