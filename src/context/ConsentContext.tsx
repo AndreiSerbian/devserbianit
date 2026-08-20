@@ -27,6 +27,8 @@ interface LocalConsentState extends ConsentChoices {
 }
 
 interface ConsentContextValue extends ConsentChoices {
+  /** Receipt id of the current decision, null when no decision exists yet. */
+  consentId: string | null;
   /** True once the server status (or its absence) has been resolved. */
   ready: boolean;
   /** Banner is shown when there is no decision, or the material version changed. */
@@ -212,6 +214,7 @@ export const ConsentProvider = ({ children }: { children: ReactNode }) => {
     () => ({
       analytics: state.analytics,
       preferences: state.preferences,
+      consentId: state.consentId,
       ready,
       bannerOpen: ready && needsDecision && !settingsOpen,
       settingsOpen,
@@ -221,7 +224,15 @@ export const ConsentProvider = ({ children }: { children: ReactNode }) => {
       acceptAll: () => save({ analytics: true, preferences: true }),
       rejectAll: () => save({ analytics: false, preferences: false }),
     }),
-    [needsDecision, ready, save, settingsOpen, state.analytics, state.preferences],
+    [
+      needsDecision,
+      ready,
+      save,
+      settingsOpen,
+      state.analytics,
+      state.consentId,
+      state.preferences,
+    ],
   );
 
   return <ConsentContext.Provider value={value}>{children}</ConsentContext.Provider>;
