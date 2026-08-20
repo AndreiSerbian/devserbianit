@@ -22,9 +22,10 @@
 Сейчас лимит 5 заявок в час считается двумя отдельными запросами (SELECT count + INSERT) по `sha256(ip)`, а `ip_hash` хранится в `leads` бессрочно.
 Решение:
 - Идентификатор — keyed HMAC: `HMAC-SHA-256(RATE_LIMIT_SECRET, normalized_ip)`. Секрет запрошу через хранилище секретов: только серверная среда функций, не `VITE_*`, не во фронтенде, не в таблице БД. Сырой IP не сохраняем нигде.
-- Источник IP — только Edge-инфраструктура Supabase (заголовки запроса); IP из body/query не принимаем. При `x-forwarded-for` берём первый адрес, нормализуем как IPv4/IPv6; при отсутствии валидного адреса — консервативный fallback-ключ.
-- Атомарность: одна серверная DB-функция (RPC), которая в одной транзакции проверяет cooldown, считает hits в окне, при успехе пишет hit и возвращает `allowed` + `retry_after`. Публичным ролям (`PUBLIC`, `anon`, `authenticated`) EXECUTE не даём — только серверной роли.
-- Retention: `rate_limit_hits` живут 24 часа. Механизм очистки — регулярный cron-джоб (`pg_cron`), вызывающий `public.purge_rate_limit_hits()`; удаление внутри `check_rate_limit` остаётся только как дополнительная страховка, а не единственный механизм. Точный механизм и расписание зафиксирую в отчёте.
+- Источник IP — только заголовки, которые фактически проставляет hosted Supabase Edge-инфраструктура; сначала логирую и документирую реальный набор заголовков и выбранный trusted source. IP из body/query не принимаем. При `x-forwarded-for` берём первый адрес и нормализуем как IPv4/IPv6.
+- Если доверенный IP определить невозможно: общий fallback-bucket для всех пользователей не используем (он превратился бы в глобальный DoS-рычаг), фиксируем это как limitation в отчёте и опираемся на остальные anti-abuse меры (honeypot, cooldown по сессии, strict schema, лимит размера тела).
+- Конкурентность: `public.check_rate_limit(...)` сериализует запросы одной rate-limit identity через `pg_advisory_xact_lock(...)` с детерминированным ключом из `ip_hmac`. Порядок внутри транзакции: acquire lock → check cooldown → count hits в окне → либо отказ с `retry_after`, либо insert hit → конец транзакции снимает lock. Публичным ролям (`PUBLIC`, `anon`, `authenticated`) EXECUTE не даём — только серверной роли.
+- Retention: `rate_limit_hits` живут 24 часа. Механизм очистки — cron-джоб (`pg_cron`), вызывающий идемпотентную `public.purge_rate_limit_hits()`; удаление внутри `check_rate_limit` остаётся только страховкой, а не единственным механизмом. Перед планированием проверяю доступность `pg_cron`; миграция корректно работает и там, где расширение недоступно (тогда джоб не создаётся, а limitation фиксируется в отчёте). После деплоя проверяю: джоб существует и включён, расписание верное, `cron.job_run_details` содержит успешные запуски, записи старше 24 часов реально удаляются. Точный механизм и расписание — в отчёте.
 - `leads.ip_hash` больше не заполняем, существующие значения обнуляем; затем проверяем все ссылки на поле (функции, код, отчёты) и, если оно нигде не требуется, готовим его удаление из схемы отдельным шагом после проверки совместимости.
 
 ### Medium — CORS audit
@@ -50,7 +51,9 @@
 - Фиктивные `meta http-equiv` для `X-Content-Type-Options`, `Permissions-Policy`, HSTS не создаём.
 - Фиксируем как hosting-level limitation: `Permissions-Policy` и защита от фрейминга (`frame-ancestors` / `X-Frame-Options`) на этом хостинге недоступны; при появлении своего edge/proxy — перенести CSP на уровень HTTP и добавить эти два заголовка.
 
-CSP сначала тестируем в браузере: Google Fonts (`fonts.googleapis.com`, `fonts.gstatic.com`), backend Supabase, вызовы Edge Functions, анимации Framer Motion, PDF-экспорт калькулятора (jsPDF + html2canvas, `blob:`/`data:`) и все остальные внешние ресурсы. `unsafe-eval` не используем; `unsafe-inline` — только для стилей, если без него ломаются Tailwind/Framer Motion.
+Политику собираем из фактически используемых origins, без расширения «на всякий случай»: точный origin backend-проекта (он же для Edge Functions), `fonts.googleapis.com`, `fonts.gstatic.com`, собственный origin. Проверяем необходимость и совместимость каждой директивы: `default-src`, `script-src`, `style-src`, `font-src`, `img-src`, `connect-src`, `object-src 'none'`, `base-uri 'self'`, `form-action`. `frame-ancestors` в meta CSP не добавляем.
+
+CSP сначала тестируем в браузере: Google Fonts, backend Supabase, вызовы Edge Functions, анимации Framer Motion, PDF-экспорт калькулятора (jsPDF + html2canvas, `blob:`/`data:`) и остальные внешние ресурсы. `unsafe-eval` не используем; `unsafe-inline` — только для стилей, если без него ломаются Tailwind/Framer Motion.
 
 ### Low — retention для заявок
 Механизма удаления старых заявок нет.
@@ -75,8 +78,8 @@ CSP сначала тестируем в браузере: Google Fonts (`fonts.
 
 Миграция БД (одной миграцией, с GRANT-блоком):
 - `create table public.rate_limit_hits (id, ip_hmac text, created_at)`; RLS on, deny-all для `anon`/`authenticated`, `grant all` только `service_role`; индекс по `(ip_hmac, created_at)`.
-- `create function public.purge_rate_limit_hits()` + cron-джоб (`pg_cron`) для удаления записей старше 24 часов; EXECUTE только серверной роли.
-- `create function public.check_rate_limit(...)` — атомарная проверка cooldown + окна и запись hit, возвращает `allowed`/`retry_after`; EXECUTE отозван у `PUBLIC`, `anon`, `authenticated`.
+- `create function public.purge_rate_limit_hits()` (идемпотентная) + cron-джоб `pg_cron`, если расширение доступно; EXECUTE только серверной роли.
+- `create function public.check_rate_limit(...)` — `pg_advisory_xact_lock` по ключу из `ip_hmac`, затем cooldown, подсчёт окна и запись hit; возвращает `allowed`/`retry_after`; EXECUTE отозван у `PUBLIC`, `anon`, `authenticated`.
 - `update public.leads set ip_hash = null` и прекращение записи этого поля; удаление колонки — отдельным шагом после проверки ссылок.
 - `revoke all on public.leads, public.analytics_events from anon, authenticated;`
 - `create function public.delete_expired_leads(retain_months int)` — schema-qualified объекты, фиксированный `search_path`, EXECUTE только серверной роли.
@@ -85,6 +88,6 @@ Browser storage после правок: `theme`, `lang`, `anon_session_id` (ses
 
 Проверки после изменений: Lovable Basic security scan, Deep scan (если доступен), dependency audit (`jspdf` уже 4.2.1; major-обновления без вашего согласия не делаю — только отчёт о риске и влиянии), production build, QA консоли и сети в браузере.
 
-QA после правок: спам через honeypot, мгновенная отправка (min-fill-time), oversized input, HTML/script-подобный ввод, неизвестное поле в теле, битый email, некорректный Telegram-контакт, серия повторных запросов (rate limit), попытка прямого чтения `leads` из браузера, прямой вызов функций, неизвестное событие аналитики, отсутствующее обязательное поле, сетевая ошибка, сбой уведомления. Тестирую на тестовых данных, продовые заявки не трогаю.
+QA после правок: спам через honeypot, мгновенная отправка (min-fill-time), oversized input, HTML/script-подобный ввод, неизвестное поле в теле, битый email, некорректный Telegram-контакт, серия повторных запросов (rate limit), несколько одновременных параллельных запросов для одной identity (проверка сериализации через advisory lock), попытка прямого чтения `leads` из браузера, прямой вызов функций, CORS с разрешённого и неразрешённого origin, неизвестное событие аналитики, отсутствующее обязательное поле, сетевая ошибка, сбой уведомления, работа cron-очистки. Тестирую на тестовых данных, продовые заявки не трогаю.
 
 Итоговый отчёт с severity, риском, исправлениями и остаточными рисками сохраню в `docs/security-audit-report.md` и покажу в чате — публиковать автоматически не буду.
