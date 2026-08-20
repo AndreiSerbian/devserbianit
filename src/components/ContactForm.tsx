@@ -26,13 +26,13 @@ export const ContactForm = ({ t, lang }: ContactFormProps) => {
   const [request, setRequest] = useState("");
   const [budget, setBudget] = useState("");
   const [company, setCompany] = useState(""); // honeypot
-  const [started, setStarted] = useState(false);
+  const [startedAt, setStartedAt] = useState<number | null>(null);
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
 
   const markStart = () => {
-    if (!started) {
-      setStarted(true);
+    if (startedAt === null) {
+      setStartedAt(Date.now());
       trackEvent("form_start", { locale: lang });
     }
   };
@@ -66,8 +66,10 @@ export const ContactForm = ({ t, lang }: ContactFormProps) => {
           request: request.trim(),
           budget_and_timeline: budget.trim() || null,
           locale: lang,
-          page_url: window.location.href,
+          // pathname only — no query string, no hash
+          page_path: window.location.pathname,
           company, // honeypot — must stay empty
+          form_started_at: startedAt ?? undefined,
         },
       });
       if (error || (data && (data as { error?: string }).error)) throw error ?? new Error("failed");

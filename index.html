@@ -7,6 +7,17 @@
     <meta data-rh="true" name="description" content="Сайты, интернет-магазины, CRM и Telegram-боты для малого бизнеса, e-commerce и социальных проектов. Связываю сайт, CRM и сервисы в одну рабочую систему." />
     <meta name="author" content="Andrei Serbian" />
 
+    <!--
+      CSP via meta: only directives supported in meta are used.
+      frame-ancestors is intentionally omitted (ignored in meta); framing
+      protection and Permissions-Policy require HTTP headers, which this static
+      hosting does not expose.
+    -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; connect-src 'self' https://qxgklcxlqtnhifwsrdww.supabase.co wss://qxgklcxlqtnhifwsrdww.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'"
+    />
+
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="alternate icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />

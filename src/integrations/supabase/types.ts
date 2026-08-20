@@ -51,7 +51,6 @@ export type Database = {
           created_at: string
           email_delivery_status: string
           id: string
-          ip_hash: string | null
           locale: string
           name: string
           overall_status: string
@@ -67,7 +66,6 @@ export type Database = {
           created_at?: string
           email_delivery_status?: string
           id?: string
-          ip_hash?: string | null
           locale?: string
           name: string
           overall_status?: string
@@ -83,7 +81,6 @@ export type Database = {
           created_at?: string
           email_delivery_status?: string
           id?: string
-          ip_hash?: string | null
           locale?: string
           name?: string
           overall_status?: string
@@ -95,12 +92,46 @@ export type Database = {
         }
         Relationships: []
       }
+      rate_limit_hits: {
+        Row: {
+          created_at: string
+          id: number
+          ip_hmac: string
+          scope: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          ip_hmac: string
+          scope?: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          ip_hmac?: string
+          scope?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      check_rate_limit: {
+        Args: {
+          p_ip_hmac: string
+          p_max_hits?: number
+          p_scope?: string
+          p_window_seconds?: number
+        }
+        Returns: {
+          allowed: boolean
+          retry_after: number
+        }[]
+      }
+      delete_expired_leads: { Args: { retain_months: number }; Returns: number }
+      purge_rate_limit_hits: { Args: never; Returns: number }
     }
     Enums: {
       [_ in never]: never
