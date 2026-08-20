@@ -356,9 +356,12 @@ export const translations = {
     },
     footer: { rights: "All rights reserved." },
     seo: {
-      title: "ANDREI SERBIAN — IT SOLUTIONS",
+      title: "ANDREI SERBIAN — websites, online stores, CRM and Telegram bots",
       description:
         "Websites, online stores, CRM and Telegram bots for small business, e-commerce and social projects. Website, CRM and services connected into one working system.",
+      caseSuffix: "ANDREI SERBIAN case",
+      notFoundTitle: "Page not found — ANDREI SERBIAN",
+      notFoundDescription: "This page does not exist. Go back to the homepage to see services and cases.",
     },
     calculator: {
       title: "Cost Calculator",
@@ -540,9 +543,12 @@ export const translations = {
     },
     footer: { rights: "Toate drepturile rezervate." },
     seo: {
-      title: "ANDREI SERBIAN — IT SOLUTIONS",
+      title: "ANDREI SERBIAN — site-uri, magazine online, CRM și boți Telegram",
       description:
         "Site-uri, magazine online, CRM și boți Telegram pentru business mic, e-commerce și proiecte sociale.",
+      caseSuffix: "proiect ANDREI SERBIAN",
+      notFoundTitle: "Pagina nu a fost găsită — ANDREI SERBIAN",
+      notFoundDescription: "Această pagină nu există. Reveniți la pagina principală pentru servicii și proiecte.",
     },
     calculator: {
       title: "Calculator de cost",
