@@ -21,6 +21,7 @@ export const ConsentManager = () => {
   const {
     analytics,
     preferences,
+    consentId,
     bannerOpen,
     settingsOpen,
     openSettings,
@@ -159,6 +160,17 @@ export const ConsentManager = () => {
               >
                 {copy.save}
               </Button>
+              {/* Withdrawal must be as easy as giving consent. */}
+              {consentId && (analytics || preferences) && (
+                <Button
+                  variant="outline"
+                  disabled={busy}
+                  onClick={() => void run(rejectAll)}
+                  className="sm:min-w-[150px]"
+                >
+                  {copy.withdraw}
+                </Button>
+              )}
               <Button variant="ghost" disabled={busy} onClick={closeSettings}>
                 {copy.cancel}
               </Button>
