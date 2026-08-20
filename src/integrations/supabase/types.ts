@@ -51,7 +51,6 @@ export type Database = {
           created_at: string
           email_delivery_status: string
           id: string
-          ip_hash: string | null
           locale: string
           name: string
           overall_status: string
@@ -67,7 +66,6 @@ export type Database = {
           created_at?: string
           email_delivery_status?: string
           id?: string
-          ip_hash?: string | null
           locale?: string
           name: string
           overall_status?: string
@@ -83,7 +81,6 @@ export type Database = {
           created_at?: string
           email_delivery_status?: string
           id?: string
-          ip_hash?: string | null
           locale?: string
           name?: string
           overall_status?: string
