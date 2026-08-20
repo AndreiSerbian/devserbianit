@@ -1,109 +1,73 @@
-# Технический SEO: аудит и безопасные исправления
+# Security Hardening — ANDREI SERBIAN / IT SOLUTIONS
 
-Дизайн не меняем. Никаких новых фактов, цифр, клиентов и отзывов — только существующий контент.
+Цель: усилить безопасность и приватность без изменения бизнес-логики и дизайна. Никаких абсолютных формулировок вида «100% secure» на сайте не появится.
 
-## Найденные проблемы (до изменений)
+## Что уже в порядке (проверено)
 
-1. **Страница кейса без метаданных**: `CaseStudyDetail.tsx` не использует компонент `Seo` — нет title, description, canonical, hreflang и JSON-LD. Все три кейса делят метаданные из `index.html`.
-2. **Кейс не читает язык из URL**: страница держит язык в локальном state со значением `ru` вместо `LanguageContext`, поэтому `/en/cases/...` и `/ro/cases/...` показывают русский и не сохраняют язык при навигации.
-3. **Ссылки «назад» ведут на `/`** вместо `/{lang}` — язык теряется, плюс лишний redirect-хоп.
-4. **Иерархия заголовков кейса**: H1 в основной и в error-ветке рендерятся не одновременно, так что это не дефект; проверить, что в каждом реально отрендеренном состоянии есть ровно один основной H1, а разделы кейса — H2/H3.
-5. **404 без метаданных**: `NotFound.tsx` не ставит `noindex` и не имеет title. Отдельно проверить реальный HTTP-статус несуществующего URL.
-6. **Sitemap неполный и несогласованный**: только RU-кейсы, нет EN/RO-версий кейсов, файл поддерживается вручную.
-7. **Calculator**: страница уже `noindex, follow` — верно; она должна остаться crawlable (иначе Google не увидит noindex) и отсутствовать в sitemap (сейчас отсутствует — ок).
-8. **`index.html`** содержит статичный `og:url`/JSON-LD `Person`; в паре с Helmet это нормально как fallback, но `twitter:card=summary_large_image` без og:image даёт неполный превью.
-9. **Structured data**: используется deprecated тип `ProfessionalService`; нет `WebSite` и нет `BreadcrumbList` для кейсов.
-10. **Внутренняя перелинковка**: с кейса нет ссылки на следующий/связанный кейс; из блока услуг нет ссылок на кейсы.
-11. **Alt/размеры изображений** у кейсов требуют проверки; у hero-SVG нужно определить, смысловой он или декоративный.
-12. **Ограничение SPA**: Helmet работает только client-side — соцкраулеры (Telegram/WhatsApp/Facebook/LinkedIn) видят только статический `index.html`. Google поддерживает client-rendered metadata, но это нужно проверять через Search Console URL Inspection.
+- В браузерный код попадают только публичные значения: `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, `VITE_SUPABASE_PROJECT_ID`. Service role, Telegram-токен, Gmail-ключ живут только в серверном окружении функций.
+- Таблицы `leads` и `analytics_events`: RLS включён, политики `using false / check false` для `anon` и `authenticated` — клиент не может ни читать, ни писать, ни удалять.
+- Заявка идёт по схеме Browser → Edge Function `submit-lead` → валидация → БД → Telegram/Email. Прямых INSERT из браузера нет.
+- Заявка сохраняется до отправки уведомлений, сбой Telegram/почты её не теряет.
+- `track-event` принимает только allowlist из 9 имён событий; персональные поля не передаются.
+- Внешние ссылки с `target="_blank"` уже имеют `rel="noopener noreferrer"`.
+- Пользовательский текст экранируется перед Telegram/Email; `dangerouslySetInnerHTML` есть только в служебном chart-компоненте shadcn, без пользовательского ввода.
 
-## Что будет сделано
+## Найденные проблемы и что исправим
 
-### Страницы кейсов
-- Подключить `useLanguage()` вместо локального state; всё содержимое рендерится на языке из URL.
-- Добавить `<Seo>`: уникальный title и description на основе реального `name`/`desc` кейса, self-canonical `/{lang}/cases/{slug}`, hreflang ru/en/ro + x-default → `/ru/...`.
-- JSON-LD: `WebPage` с `BreadcrumbList` (по требованиям Google) и `mainEntity` → `CreativeWork` только с подтверждёнными полями (name, description, author → Person «Andrei Serbian», url при наличии). Rich result не гарантируется — это не цель. Все сущности внутри `@graph` с абсолютными `@id` вида `https://devserbianit.lovable.app/#person`, чтобы не дублировать Person и не было неоднозначности.
-- Заголовки: один основной H1 в каждом отрендеренном состоянии (название кейса), разделы — H2, подпункты — H3.
-- Все внутренние ссылки — с префиксом языка; в конце страницы блок «Следующий кейс» со ссылкой на соседний кейс.
+### High — устаревшая публичная функция `send-telegram-notification`
+Функция задеплоена с `verify_jwt = false`, но клиент её больше не вызывает (осталась от старой анкеты). Она принимает произвольные `answers`/`questions`, не имеет rate limit, honeypot и лимита размера, шлёт всё в Telegram и на почту, а в ответе отдаёт `error.message` и логирует полное тело ответа Telegram. Это открытый спам-канал и утечка внутренних деталей.
+Решение: удалить функцию и её запись в конфиге.
 
-### Главная
-- Уникальные title/description на RU/EN/RO по фактическому позиционированию (сайты, интернет-магазины, CRM и интеграции, Telegram-боты, автоматизация) — без «best/№1/leading».
-- Убрать deprecated `ProfessionalService`. Схема в одном `@graph`: `Person` (Andrei Serbian) с `@id` = `https://devserbianit.lovable.app/#person`, `WebSite` с `@id` = `https://devserbianit.lovable.app/#website`, и `Service` для фактически оказываемых услуг (сайты, e-commerce, CRM-интеграции, Telegram-боты/автоматизация) с `provider` → абсолютный `@id` Person.
-- В блоке услуг — осмысленные ссылки на релевантные кейсы (без искусственных футер-ссылок).
+### High — rate limit слабый и держит хеш IP бессрочно
+Лимит 5 заявок в час считается по `ip_hash` в таблице `leads`, а сам `ip_hash` хранится вместе с заявкой неограниченно долго.
+Решение: отдельная таблица `rate_limit_hits` (хеш IP + время, без сырого IP), лимит считается по ней; добавляем per-request проверки: минимальное время заполнения формы, лимит размера тела запроса, короткий cooldown между отправками. `ip_hash` в `leads` перестаём писать — он больше не нужен для лимита.
 
-### 404
-- `<Seo index={false}>` с корректным title, один H1, ссылка на `/{lang}`.
-- Проверить HTTP-статус произвольного несуществующего URL (`/ru/this-page-does-not-exist-12345`). В отчёте зафиксировать:
-  - HTTP response for unknown route: `404` / `200`;
-  - if 200: SPA soft-404 limitation;
-  - client-side noindex verified in rendered DOM: `YES` / `NO`.
-- Если хостинг отдаёт 404 — оставляем как есть. Если 200 — гарантируем client-side `noindex` для NotFound.
+### Medium — allowlist полей и нормализация в `submit-lead`
+Сейчас лишние поля просто игнорируются, но нет строгой схемы и явного отказа. Валидация написана вручную.
+Решение: zod-схема со `strict()`-поведением (неизвестные поля → 400), нормализация строк (trim, сжатие пробелов, удаление управляющих символов), разумные максимумы, проверка контакта под каждый способ связи (email/telegram/whatsapp/other), белый список locale.
 
-### Sitemap и robots
-- Заменить ручной `public/sitemap.xml` на генератор `scripts/generate-sitemap.ts` (вызывается через `npm run generate:sitemap` и `prebuild`), который выводит `/ru`, `/en`, `/ro` и 9 локализованных URL кейсов с hreflang-альтернативами (ru, en, ro, self-reference, x-default → RU). Итого 12 индексируемых URL. Без calculator, `__brand-check`, 404.
-- hreflang в HTML (`Seo.tsx`) и в sitemap строятся из **одного** общего модуля конфигурации маршрутов/локалей, чтобы две карты не могли разойтись. Взаимность проверяется: для каждой группы RU ↔ EN ↔ RO + self-reference + x-default.
-- `robots.txt`: оставить `Allow: /` и `Sitemap:`. `Disallow: /__brand-check` не добавляем — маршрут уже ограничен `import.meta.env.DEV` и в production-сборку не попадает; robots.txt как средство контроля доступа не используем.
+### Medium — `page_url` пишется целиком
+В заявку попадает полный URL с любыми query-параметрами и хешем.
+Решение: сохранять только путь (`/ru#contact-form`), без query-строки.
 
-### index.html / Open Graph / Twitter
-- Оставить sitewide og/twitter как fallback для соцкраулеров, убрать `<link rel="canonical">` из статического head (если появится). og:image не добавляем, пока нет реального файла.
-- Пока реальной social-preview картинки нет, использовать `twitter:card=summary` вместо `summary_large_image`. После появления настоящего 1200×630 вернуть `summary_large_image`.
-- Требования к будущей картинке 1200×630 зафиксирую в отчёте (ANDREI SERBIAN / IT SOLUTIONS / AS-логотип / короткий заголовок, без мелкого текста) — саму картинку не генерирую.
+### Medium — широкие табличные GRANT
+`anon` и `authenticated` имеют полный набор привилегий на `leads` и `analytics_events`; сейчас их держит только RLS.
+Решение: отозвать привилегии у `anon` и `authenticated`, оставить `service_role` (функции работают через него). Защита в два слоя вместо одного.
 
-### Изображения и производительность
-- Проверить и при необходимости добавить `alt`, `width`/`height` для изображений кейсов. `loading="lazy"` добавлять только изображениям ниже первого экрана; не применять к потенциальному LCP-изображению или другому above-the-fold контенту (особенно для Hero).
-- Hero SVG: решение принимаем после осмотра финальной разметки. Если схема несёт самостоятельный смысл — `role="img"` + локализованные `<title>`/`<desc>`; `aria-hidden="true"` только если весь смысл полностью продублирован доступным HTML рядом.
-- Hero headline рендерится независимо от анимации (проверить, что текст не появляется только после Framer Motion).
-- Отчёт по рискам LCP/CLS/INP без изменения дизайна.
+### Medium — нет security-заголовков
+Заголовки уровня хостинга (HSTS, CSP через HTTP) в статичном SPA не настраиваются, но часть можно задать в `index.html`.
+Решение: добавить в `<head>` `Content-Security-Policy` через meta (с `frame-ancestors 'self'`, разрешёнными Google Fonts и домом backend), `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`. `unsafe-eval` не используем, `unsafe-inline` только для стилей (Tailwind/Framer Motion требуют). CSP сначала проверяем в браузере: шрифты, backend-запросы, анимации, PDF-экспорт калькулятора.
 
-### Проверка
-Прогон через браузер: `/ru`, `/en`, `/ro`, все 9 case-routes, 404 — проверка title/description/canonical/hreflang/`html lang`/иерархии заголовков/битых ссылок/мобильного рендера. Проверить взаимность hreflang: для каждой группы RU ↔ EN ↔ RO + self-reference + x-default.
+### Low — retention для заявок
+Механизма удаления старых заявок нет.
+Решение: функция `delete_expired_leads()` (по умолчанию 24 месяца, значение согласуем) и запись политики в внутреннем документе. Автозапуск по расписанию — только если вы подтвердите срок.
+
+### Low — внутренний runbook на случай инцидента
+Решение: файл `docs/security-runbook.md` в репозитории (не в `public/`, на сайте не публикуется): как распознать инцидент, что ограничить, какие данные затронуты, какие логи смотреть, какие credentials ротировать, кто решает про уведомление органа по защите данных.
+
+## Секреты, требующие ротации
+
+По коду и истории репозитория утечек приватных ключей не найдено: в git лежит только `.env` с публичными VITE-значениями, приватные ключи в исходниках отсутствуют. Ротация не требуется. Если Telegram-токен когда-либо вставлялся в чат, скриншот или сторонний сервис — скажите, и я опишу порядок отзыва (значение секрета в отчёте не выводим).
 
 ## Технические детали
 
-Источник hreflang/локалей — один общий модуль (например `src/lib/seoRoutes.ts`), используемый и `Seo.tsx`, и генератором sitemap.
+Файлы:
+- Удалить: `supabase/functions/send-telegram-notification/`, блок в `supabase/config.toml`.
+- `supabase/functions/submit-lead/index.ts` — zod-схема, allowlist полей, нормализация, лимит размера тела, новый rate limit, honeypot + min-fill-time, нейтральные коды ошибок (`invalid_payload` / `rate_limited` / `unexpected`) без внутренних деталей, логи без контактов и текста заявки.
+- `supabase/functions/track-event/index.ts` — оставить allowlist, добавить лимит размера тела и отбраковку неизвестных полей.
+- `src/components/ContactForm.tsx` — отправлять `form_started_at` для min-fill-time, `page_url` без query, очищать поля формы после успеха (уже есть) и не сохранять их в storage.
+- `index.html` — security meta-заголовки.
+- `docs/security-runbook.md`, `docs/security-audit-report.md` — новые внутренние документы.
 
-Файлы: `src/pages/CaseStudyDetail.tsx`, `src/pages/NotFound.tsx`, `src/pages/Index.tsx`, `src/components/Seo.tsx` (поддержка типов JSON-LD массивом), `src/components/Services.tsx`, `src/data/translations.ts` (SEO-строки для кейсов и страниц), `scripts/generate-sitemap.ts` (новый), `package.json` (prebuild + `generate:sitemap`), `public/robots.txt`, `public/sitemap.xml` (генерируется).
+Миграция БД (одной миграцией, с GRANT-блоком):
+- `create table public.rate_limit_hits (id, ip_hash text, created_at)`; RLS on, deny-all для `anon`/`authenticated`, `grant all` только `service_role`; индекс по `(ip_hash, created_at)`.
+- `revoke all on public.leads, public.analytics_events from anon, authenticated;`
+- `create function public.delete_expired_leads(retain_months int default 24)` — security definer, `search_path = public`.
 
-Ограничения: Google поддерживает client-rendered title, description, canonical и structured data, но результат нужно проверять через Search Console URL Inspection после публикации. Конфликтующий статический canonical в `index.html` не создаём. Соцкраулеры (Telegram/WhatsApp/Facebook/LinkedIn) видят только статический `index.html`. Миграцию на SSR не делаем. Публикация не выполняется.
+Browser storage после правок: `theme`, `lang`, `anon_session_id` (sessionStorage), служебный ключ сессии Supabase-клиента. Персональных данных формы в storage нет.
 
-## Checklist после публикации (владелец)
-- URL Inspection в Google Search Console: rendered HTML, canonical, title/description.
-- Rich Results Test для BreadcrumbList.
-- Отправка sitemap и проверка отчёта Page Indexing.
-- Проверка hreflang-групп на всех трёх локалях (взаимность: RU ↔ EN ↔ RO + self-reference + x-default).
+Зависимости: `jspdf` уже поднят до 4.2.1. Проведу свежий dependency scan и опишу найденное с оценкой риска; major-обновления без вашего согласия делать не буду.
 
-## Что останется владельцу
-- Подтвердить финальные тексты title/description на EN и RO (машинный RO нуждается в проверке носителем).
-- Решить по брендовой social-preview картинке 1200×630.
-- Подключить Google Search Console и пройти checklist выше.
+QA после правок: спам через honeypot, мгновенная отправка (min-fill-time), oversized input, HTML/script-подобный ввод, неизвестное поле в теле, битый email, некорректный Telegram-контакт, серия повторных запросов (rate limit), попытка прямого чтения `leads` из браузера, прямой вызов функций, неизвестное событие аналитики, отсутствующее обязательное поле, сетевая ошибка, сбой уведомления. Тестирую на тестовых данных, продовые заявки не трогаю.
 
-## Финальное требование к базовому URL
-
-Не хардкодить `https://devserbianit.lovable.app` отдельно в компонентах, sitemap generator и structured data.
-
-Создать единый источник canonical base URL, например `src/lib/siteConfig.ts`:
-
-```ts
-SITE_URL = production canonical origin
-siteConfig.siteUrl
-siteConfig.personId = `${siteConfig.siteUrl}/#person`
-siteConfig.websiteId = `${siteConfig.siteUrl}/#website`
-```
-
-Все следующие элементы должны строиться только через этот источник:
-
-- canonical;
-- hreflang;
-- x-default;
-- JSON-LD `@id`;
-- WebSite.url;
-- Person `@id`;
-- Service URLs;
-- CreativeWork URLs;
-- BreadcrumbList item URLs;
-- sitemap `<loc>`;
-- Open Graph URL.
-
-В development/preview не допускать случайного попадания preview URL в production sitemap или canonical. Если позже будет подключён собственный домен, смена canonical origin должна требовать изменения только одной конфигурации / environment value, а не десятков файлов.
-
-На текущем production использовать: `https://devserbianit.lovable.app`.
+Итоговый отчёт с severity, риском, исправлениями и остаточными рисками сохраню в `docs/security-audit-report.md` и покажу в чате — публиковать автоматически не буду.
