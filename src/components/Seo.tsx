@@ -1,5 +1,5 @@
 import { Helmet } from "react-helmet-async";
-import { alternatesFor, localizedUrl } from "@/lib/seoRoutes";
+import { alternatesFor, localizedUrl, type LocalePaths } from "@/lib/seoRoutes";
 import type { Lang } from "@/data/translations";
 
 type JsonLd = Record<string, unknown>;
@@ -8,14 +8,15 @@ interface SeoProps {
   title: string;
   description: string;
   lang: Lang;
-  path?: string;
+  /** A string for shared paths, or a per-locale map for localized slugs. */
+  path?: string | LocalePaths;
   /** when false, adds noindex (e.g. utility pages, 404) */
   index?: boolean;
   jsonLd?: JsonLd | JsonLd[];
 }
 
 export const Seo = ({ title, description, lang, path = "", index = true, jsonLd }: SeoProps) => {
-  const canonical = localizedUrl(lang, path);
+  const canonical = localizedUrl(lang, typeof path === "string" ? path : path[lang]);
   const alternates = alternatesFor(path);
   const graph = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 
