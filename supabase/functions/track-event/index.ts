@@ -1,7 +1,21 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
-import { corsFor, jsonResponse, readJsonBody } from "../_shared/http.ts";
+import {
+  corsFor,
+  ipHmac,
+  jsonResponse,
+  readJsonBody,
+  requestId,
+  trustedClientIp,
+} from "../_shared/http.ts";
 
 const MAX_BODY_BYTES = 2 * 1024;
+
+// Server-controlled abuse limit for this public endpoint. Never read from the payload.
+// Deliberately far softer than submit-lead (5/h): normal browsing emits a handful of
+// events per session, so 120/h per identity cannot affect real navigation.
+const RATE_LIMIT_SCOPE = "track-event";
+const RATE_LIMIT_MAX = 120;
+const RATE_LIMIT_WINDOW_SECONDS = 3600;
 
 const ALLOWED_EVENTS = new Set([
   "cta_hero_click",
@@ -25,6 +39,7 @@ const clean = (v: unknown, max: number) =>
 
 Deno.serve(async (req) => {
   const cors = corsFor(req);
+  const rid = requestId(req);
 
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
   if (req.method !== "POST") return jsonResponse({ ok: false }, 405, cors);
@@ -50,6 +65,31 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
+
+    // Abuse limit. Identity is a keyed HMAC of the provider-controlled client IP;
+    // the raw IP is never stored or logged. No shared fallback bucket by design:
+    // when the trusted header is absent we skip the limit rather than creating a
+    // global bucket that any caller could exhaust for everyone.
+    const ip = trustedClientIp(req);
+    const secret = Deno.env.get("RATE_LIMIT_SECRET");
+    if (ip && secret) {
+      const { data: rl, error: rlError } = await supabase.rpc("check_rate_limit", {
+        p_ip_hmac: await ipHmac(ip, secret),
+        p_scope: RATE_LIMIT_SCOPE,
+        p_max_hits: RATE_LIMIT_MAX,
+        p_window_seconds: RATE_LIMIT_WINDOW_SECONDS,
+      });
+      if (rlError) {
+        console.error(JSON.stringify({ rid, event: "rate_limit_error" }));
+        return jsonResponse({ ok: false }, 200, cors);
+      }
+      const verdict = Array.isArray(rl) ? rl[0] : rl;
+      if (!verdict?.allowed) {
+        // Silently drop: analytics must never surface errors to the client.
+        console.warn(JSON.stringify({ rid, event: "rate_limited", scope: RATE_LIMIT_SCOPE }));
+        return jsonResponse({ ok: false }, 200, cors);
+      }
+    }
 
     await supabase.from("analytics_events").insert({
       event_name: eventName,
