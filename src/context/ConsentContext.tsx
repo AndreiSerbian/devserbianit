@@ -238,8 +238,27 @@ export const ConsentProvider = ({ children }: { children: ReactNode }) => {
   return <ConsentContext.Provider value={value}>{children}</ConsentContext.Provider>;
 };
 
+/** Privacy-safe fallback (nothing allowed, no UI) used if the provider is missing,
+ *  e.g. during a hot reload, so the page never blanks out. */
+const FALLBACK: ConsentContextValue = {
+  analytics: false,
+  preferences: false,
+  consentId: null,
+  ready: false,
+  bannerOpen: false,
+  settingsOpen: false,
+  openSettings: () => {},
+  closeSettings: () => {},
+  save: async () => false,
+  acceptAll: async () => false,
+  rejectAll: async () => false,
+};
+
 export const useConsent = () => {
   const ctx = useContext(ConsentContext);
-  if (!ctx) throw new Error("useConsent must be used within ConsentProvider");
+  if (!ctx) {
+    if (import.meta.env.DEV) console.warn("useConsent used outside ConsentProvider");
+    return FALLBACK;
+  }
   return ctx;
 };
