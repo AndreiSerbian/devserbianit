@@ -1,6 +1,7 @@
 import { Helmet } from "react-helmet-async";
 import { alternatesFor, localizedUrl, type LocalePaths } from "@/lib/seoRoutes";
 import type { Lang } from "@/data/translations";
+import { SITE_URL } from "@/lib/siteConfig";
 
 type JsonLd = Record<string, unknown>;
 
