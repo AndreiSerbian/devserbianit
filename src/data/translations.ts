@@ -169,9 +169,9 @@ export const translations = {
       rights: "Все права защищены.",
     },
     seo: {
-      title: "ANDREI SERBIAN — сайты, интернет-магазины, CRM и Telegram-боты",
+      title: "Andrei Serbian — IT Solutions: разработка сайтов и IT-решений для бизнеса в Молдове",
       description:
-        "Сайты, интернет-магазины, CRM и Telegram-боты для малого бизнеса, e-commerce и социальных проектов. Связываю сайт, CRM и сервисы в одну рабочую систему.",
+        "Разработка сайтов для бизнеса, интернет-магазинов, CRM-систем и Telegram-ботов, автоматизация бизнес-процессов и интеграция API. Веб-разработчик Андрей Сербиян, Кишинёв.",
       caseSuffix: "кейс ANDREI SERBIAN",
       notFoundTitle: "Страница не найдена — ANDREI SERBIAN",
       notFoundDescription: "Такой страницы нет. Вернитесь на главную, чтобы посмотреть услуги и кейсы.",
@@ -356,9 +356,9 @@ export const translations = {
     },
     footer: { rights: "All rights reserved." },
     seo: {
-      title: "ANDREI SERBIAN — websites, online stores, CRM and Telegram bots",
+      title: "Andrei Serbian — IT Solutions: web development & business software in Moldova",
       description:
-        "Websites, online stores, CRM and Telegram bots for small business, e-commerce and social projects. Website, CRM and services connected into one working system.",
+        "Custom web development, e-commerce, CRM development, Telegram bots, API integrations and business process automation for small businesses. Software developer in Chisinau.",
       caseSuffix: "ANDREI SERBIAN case",
       notFoundTitle: "Page not found — ANDREI SERBIAN",
       notFoundDescription: "This page does not exist. Go back to the homepage to see services and cases.",
@@ -543,9 +543,9 @@ export const translations = {
     },
     footer: { rights: "Toate drepturile rezervate." },
     seo: {
-      title: "ANDREI SERBIAN — site-uri, magazine online, CRM și boți Telegram",
+      title: "Andrei Serbian — IT Solutions: dezvoltare web și soluții IT pentru afaceri",
       description:
-        "Site-uri, magazine online, CRM și boți Telegram pentru business mic, e-commerce și proiecte sociale.",
+        "Creare site-uri web și magazine online, dezvoltare CRM, boți Telegram și automatizarea proceselor de afaceri. Dezvoltator web în Chișinău, Moldova.",
       caseSuffix: "proiect ANDREI SERBIAN",
       notFoundTitle: "Pagina nu a fost găsită — ANDREI SERBIAN",
       notFoundDescription: "Această pagină nu există. Reveniți la pagina principală pentru servicii și proiecte.",
