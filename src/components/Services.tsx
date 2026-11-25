@@ -49,7 +49,6 @@ export const Services = ({ title, intro, items }: ServicesProps) => (
     <div className="container px-4 sm:px-6">
       <style>{SVC_STYLE + ANIM_CSS}</style>
       <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight">
-        <span className="text-primary mr-3">01</span>
         {title}
       </h2>
       {intro && (

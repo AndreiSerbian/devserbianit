@@ -95,7 +95,6 @@ export const ContactForm = ({ t, lang }: ContactFormProps) => {
         <div className="grid lg:grid-cols-[0.9fr_1.1fr] gap-10 lg:gap-16">
           <div>
             <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight">
-              <span className="text-primary mr-3">04</span>
               {t.title}
             </h2>
             <p className="mt-4 text-sm md:text-base text-muted-foreground leading-relaxed max-w-md">

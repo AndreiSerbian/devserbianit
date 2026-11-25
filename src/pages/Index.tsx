@@ -222,7 +222,6 @@ const Index = () => {
         <section id="contact" className="py-16 md:py-24">
           <div className="container px-4 sm:px-6">
             <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight">
-              <span className="text-primary mr-3">05</span>
               {t.contact.title}
             </h2>
             <p className="mt-4 text-sm md:text-base text-muted-foreground max-w-xl">{t.contact.subtitle}</p>

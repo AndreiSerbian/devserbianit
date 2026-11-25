@@ -76,7 +76,6 @@ export const CaseStudies = ({ title, items, lang = "ru" }: CaseStudiesProps) => 
           transition={{ duration: 0.6 }}
           className="font-display text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight mb-10 md:mb-14"
         >
-          <span className="text-primary mr-3">02</span>
           {title}
         </motion.h2>
         <motion.div 
