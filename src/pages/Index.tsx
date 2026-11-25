@@ -211,6 +211,7 @@ const Index = () => {
 
         <ProcessSection
           copy={t.process.film}
+          lang={lang}
           telegramUrl={brand.telegram}
           onTelegramClick={() => trackEvent("telegram_click", { locale: lang })}
           onSecondaryClick={() => scrollToSection("cases")}

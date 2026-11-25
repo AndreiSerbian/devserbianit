@@ -1,3 +1,4 @@
+import { tr } from "./i18n";
 import { C, F_DISPLAY, F_SANS, P, L, eo, win, typed, clamp, PHONE_W, MSG1, MSG1_H, REQS, chatBottom, msg1LineY } from "./core";
 
 /* ==========================================================================
@@ -31,7 +32,7 @@ function DevChat({ t, h }: { t: number; h: number }) {
                 {req && <rect x={8} y={9 + i * 12} width={(BUBBLE_W - 16) * mark} height={11} fill={C.limeSoft} />}
                 {req && <rect x={8} y={19 + i * 12} width={(BUBBLE_W - 16) * mark} height={1.2} fill={C.lime} />}
                 <text x={9} y={18 + i * 12} fontSize="8.6" fontFamily={F_SANS} fill={C.cream}>
-                  {line}
+                  {tr(line)}
                 </text>
               </g>
             );
@@ -49,14 +50,14 @@ function DevChat({ t, h }: { t: number; h: number }) {
       render: () => (
         <>
           <text x={9} y={17} fontSize="8.6" fontFamily={F_SANS} fill={C.fg}>
-            Первая версия готова,
+            {tr("Первая версия готова,")}
           </text>
           <text x={9} y={29} fontSize="8.6" fontFamily={F_SANS} fill={C.fg}>
-            посмотрите и прокомментируйте
+            {tr("посмотрите и прокомментируйте")}
           </text>
           <rect x={8} y={36} width={BUBBLE_W - 16} height={15} fill={C.primarySoft} stroke={C.primaryLine} strokeWidth=".6" />
           <text x={14} y={46.5} fontSize="7.4" fontFamily={F_SANS} fill={C.primary}>
-            Открыть превью →
+            {tr("Открыть превью →")}
           </text>
         </>
       ),
@@ -67,7 +68,7 @@ function DevChat({ t, h }: { t: number; h: number }) {
       out: true,
       render: () => (
         <text x={9} y={16.5} fontSize="8.6" fontFamily={F_SANS} fill={C.cream}>
-          Так гораздо лучше!
+          {tr("Так гораздо лучше!")}
         </text>
       ),
     },
@@ -95,9 +96,9 @@ function BotChat({ t, h }: { t: number; h: number }) {
       render: () => (
         <>
           <text x={9} y={15} fontSize="7" fontFamily={F_DISPLAY} letterSpacing=".8" fill={C.muted}>
-            ТЕСТОВАЯ ЗАЯВКА
+            {tr("ТЕСТОВАЯ ЗАЯВКА")}
           </text>
-          {row(30, "Имя", "Тест")}
+          {row(30, tr("Имя"), tr("Тест"))}
         </>
       ),
     },
@@ -109,14 +110,14 @@ function BotChat({ t, h }: { t: number; h: number }) {
         <>
           <rect width={3} height={96} fill={C.primary} />
           <text x={9} y={16} fontSize="8" fontFamily={F_DISPLAY} letterSpacing="1" fill={C.primary}>
-            НОВАЯ ЗАЯВКА · ЗАМЕР
+            {tr("НОВАЯ ЗАЯВКА · ЗАМЕР")}
           </text>
-          {row(32, "Имя", "Ирина")}
-          {row(46, "Телефон", "+373 69 555 210", true)}
-          {row(60, "Сайт", "okna-plus.md")}
+          {row(32, tr("Имя"), tr("Ирина"))}
+          {row(46, tr("Телефон"), "+373 69 555 210", true)}
+          {row(60, tr("Сайт"), "okna-plus.md")}
           <rect x={8} y={68} width={w - 16} height={20} fill={C.primary} />
           <text x={w / 2} y={81.5} textAnchor="middle" fontSize="7.6" fontFamily={F_DISPLAY} letterSpacing="1" fill={C.primaryFg}>
-            ПОЗВОНИТЬ
+            {tr("ПОЗВОНИТЬ")}
           </text>
         </>
       ),
@@ -157,7 +158,7 @@ export default function Phone({ t, x, y, h }: { t: number; x: number; y: number;
   const appear = P(t, 0, 0.6, eo);
   const sw = P(t, 21.9, 22.5); // dev chat → bot chat
   const composing = t >= 0.35 && t < 1.2;
-  const draft = typed(MSG1[0] + " " + MSG1[1], t, 0.35, 1.1);
+  const draft = typed(tr(MSG1[0]) + " " + tr(MSG1[1]), t, 0.35, 1.1);
   const banner = win(t, 20.85, 21.75, 0.3);
   const header = (name: string, sub: string, initial: string, bot = false) => (
     <>
@@ -185,18 +186,18 @@ export default function Phone({ t, x, y, h }: { t: number; x: number; y: number;
         <rect x={4} y={4} width={W - 8} height={h - 8} fill={C.bg} />
         {/* chats slide horizontally */}
         <g id="pf-chat-dev" transform={`translate(${-W * sw}, 0)`} opacity={1 - sw * 0.6}>
-          {header("Андрей", sub(t), "А")}
+          {header(tr("Андрей"), sub(t), tr("А"))}
           <DevChat t={t} h={h} />
         </g>
         <g id="pf-chat-bot" transform={`translate(${W * (1 - sw)}, 0)`}>
-          {header("Заявки · Окна Плюс", "бот", "З", true)}
+          {header(tr("Заявки · Окна Плюс"), tr("бот"), tr("З"), true)}
           <BotChat t={t} h={h} />
         </g>
         <path d={`M4 40 H${W - 4}`} stroke={C.border} strokeWidth=".6" />
         {/* compose bar */}
         <rect x={10} y={h - 36} width={W - 44} height={24} rx={12} fill={C.raised} stroke={composing ? C.primaryLine : C.border} strokeWidth=".6" />
         <text x={20} y={h - 21} fontSize="7.6" fontFamily={F_SANS} fill={composing ? C.fg : C.muted}>
-          {composing ? (draft.length > 26 ? "…" + draft.slice(-25) : draft) : "Сообщение"}
+          {composing ? (draft.length > 26 ? "…" + draft.slice(-25) : draft) : tr("Сообщение")}
         </text>
         <circle cx={W - 22} cy={h - 24} r={11} fill={composing ? C.primary : C.raised} stroke={C.border} strokeWidth=".6" />
         <path
@@ -209,10 +210,10 @@ export default function Phone({ t, x, y, h }: { t: number; x: number; y: number;
           <rect x={8} y={9} width={20} height={20} rx={5} fill={C.primary} />
           <path d="M12.5 19 L23.5 14.5 L20.5 24.5 L18.5 20.5 Z" fill={C.primaryFg} />
           <text x={34} y={17} fontSize="7.6" fontWeight="500" fontFamily={F_SANS} fill={C.fg}>
-            Заявки · Окна Плюс
+            {tr("Заявки · Окна Плюс")}
           </text>
           <text x={34} y={28} fontSize="7" fontFamily={F_SANS} fill={C.muted}>
-            Тестовая заявка с сайта
+            {tr("Тестовая заявка с сайта")}
           </text>
         </g>
       </g>
@@ -221,8 +222,8 @@ export default function Phone({ t, x, y, h }: { t: number; x: number; y: number;
 }
 
 function sub(t: number) {
-  if ((t > 11.6 && t < 12.3) || (t > 0.2 && t < 0.35)) return "печатает…";
-  return "разработчик";
+  if ((t > 11.6 && t < 12.3) || (t > 0.2 && t < 0.35)) return tr("печатает…");
+  return tr("разработчик");
 }
 
 /** layout-space position of MSG1 line i (used by the requirement fliers) */

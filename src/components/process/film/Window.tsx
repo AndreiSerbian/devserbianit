@@ -1,6 +1,7 @@
+import { tr } from "./i18n";
 import {
   C, F_DISPLAY, F_SANS, P, L, eo, eio, lin, win, typed, clamp, lerpRect, track, caretOn,
-  WIN_W, WIN_H, REQS, FLY, BRIEF_X, BRIEF_Y, BRIEF_W, type Rect,
+  textW, WIN_W, WIN_H, REQS, FLY, BRIEF_X, BRIEF_Y, BRIEF_W, type Rect,
 } from "./core";
 
 /* ==========================================================================
@@ -56,7 +57,7 @@ const HERO_BARS: Rect[] = [
 
 /* ---------- field values (pure functions of t) ---------- */
 const nameVal = (t: number) =>
-  t >= 19.1 && t < 20.9 ? typed("Тест", t, 19.1, 19.4) : t >= 22.3 && t < 24 ? typed("Ирина", t, 22.3, 22.75) : "";
+  t >= 19.1 && t < 20.9 ? typed(tr("Тест"), t, 19.1, 19.4) : t >= 22.3 && t < 24 ? typed(tr("Ирина"), t, 22.3, 22.75) : "";
 const phoneVal = (t: number) =>
   t >= 19.6 && t < 20.9
     ? typed("+373 69 000 000", t, 19.6, 20.05)
@@ -204,7 +205,7 @@ function Field({ t, i }: { t: number; i: number }) {
       <g opacity={real}>
         <rect x={r.x} y={r.y} width={r.w} height={r.h} fill={C.bg} stroke={stroke} strokeWidth={focus || err ? 1.2 : 0.8} />
         <text x={r.x + 8} y={r.y + r.h / 2 + 3.2} fontSize="8.4" fontFamily={F_SANS} fill={val ? C.fg : C.muted}>
-          {val || f.ph}
+          {val || tr(f.ph)}
         </text>
         {focus && caretOn(t) && (
           <rect x={r.x + 8 + (val ? val.length * 4.75 : 0) + 1} y={r.y + r.h / 2 - 5} width={0.9} height={10} fill={C.primary} />
@@ -218,7 +219,7 @@ function Field({ t, i }: { t: number; i: number }) {
       </g>
       {f.id === "phone" && phoneErr(t) && (
         <text x={r.x} y={r.y + r.h + 9} fontSize="7" fontFamily={F_SANS} fill={C.danger}>
-          {nameErr(t) ? "Укажите имя и телефон" : "Номер неполный"}
+          {nameErr(t) ? tr("Укажите имя и телефон") : tr("Номер неполный")}
         </text>
       )}
     </g>
@@ -255,7 +256,7 @@ export default function Window({ t, x, y }: { t: number; x: number; y: number })
   const selShow = selDraw * (1 - P(t, 17.6, 17.95));
   const selRect = lerpRect({ x: CARD_X + 6, y: 92, w: CARD_W - 12, h: 172 }, { x: CARD_X + 6, y: 98, w: CARD_W - 12, h: 76 }, reflow);
   const note = win(t, 14.4, 17.95, 0.35);
-  const noteText = typed("Давайте сделаем форму короче", t, 14.5, 15.25);
+  const noteText = typed(tr("Давайте сделаем форму короче"), t, 14.5, 15.25);
   const resolved = P(t, 17.25, 17.5, eo);
   const reviewMode = win(t, 12.9, 17.95, 0.35);
 
@@ -264,11 +265,11 @@ export default function Window({ t, x, y }: { t: number; x: number; y: number })
   const live = P(t, 21.7, 21.95, eo);
   const success = P(t, 23.95, 24.3, eo);
   const btnPress = (t >= 18.25 && t < 18.37) || (t >= 20.24 && t < 20.36) || (t >= 23.64 && t < 23.76);
-  const btnLabel = sending(t) ? "ОТПРАВКА…" : "ЗАПИСАТЬСЯ НА ЗАМЕР";
+  const btnLabel = sending(t) ? tr("ОТПРАВКА…") : tr("ЗАПИСАТЬСЯ НА ЗАМЕР");
   const pipeIn = P(t, 7.6, 8.15, eo);
   const sig = signal(t);
 
-  const url = t < 8.2 ? "Бриф · Окна Плюс" : live > 0.5 ? "okna-plus.md" : "preview.okna-plus.md";
+  const url = t < 8.2 ? tr("Бриф · Окна Плюс") : live > 0.5 ? "okna-plus.md" : "preview.okna-plus.md";
 
   return (
     <g id="pf-window" transform={`translate(${x}, ${y})`}>
@@ -295,7 +296,7 @@ export default function Window({ t, x, y }: { t: number; x: number; y: number })
         <g opacity={t >= 8.2 ? 1 - live : 0}>
           <rect x={76} y={10} width={34} height={10} fill={C.primarySoft} />
           <text x={93} y={17.4} textAnchor="middle" fontSize="6.4" fontFamily={F_SANS} fill={C.primary}>
-            превью
+            {tr("превью")}
           </text>
         </g>
         <text x={t >= 8.2 ? (live > 0.5 ? 92 : 116) : 80} y={18.2} fontSize="8" fontFamily={F_SANS} fill={C.fgSoft}>
@@ -306,13 +307,13 @@ export default function Window({ t, x, y }: { t: number; x: number; y: number })
         <g opacity={live}>
           <circle cx={404} cy={15} r={2.6} fill={C.lime} />
           <text x={410} y={18} fontSize="7" fontFamily={F_SANS} fill={C.fgSoft}>
-            в сети
+            {tr("в сети")}
           </text>
         </g>
         <g opacity={reviewMode}>
           <rect x={398} y={8} width={54} height={14} fill={C.limeSoft} stroke={C.limeLine} strokeWidth=".6" />
           <text x={425} y={17.6} textAnchor="middle" fontSize="6.6" fontFamily={F_SANS} fill={C.fg}>
-            комментарии
+            {tr("комментарии")}
           </text>
         </g>
       </g>
@@ -322,19 +323,19 @@ export default function Window({ t, x, y }: { t: number; x: number; y: number })
         <g id="pf-empty" opacity={win(t, 1.0, 3.7, 0.4)}>
           <rect x={W / 2 - 60} y={176} width={120} height={1} fill={C.border} />
           <text x={W / 2} y={168} textAnchor="middle" fontSize="9" fontFamily={F_DISPLAY} fontWeight="500" letterSpacing="1.6" fill={C.muted}>
-            НОВЫЙ ПРОЕКТ
+            {tr("НОВЫЙ ПРОЕКТ")}
           </text>
           <text x={W / 2} y={192} textAnchor="middle" fontSize="8.4" fontFamily={F_SANS} fill={C.fgFaint}>
-            {t < 1.6 ? "ждёт описания задачи" : "задача получена · читаю"}
+            {t < 1.6 ? tr("ждёт описания задачи") : tr("задача получена · читаю")}
           </text>
         </g>
         {/* ===== scene B: brief ===== */}
         <g id="pf-brief" opacity={briefHead}>
           <text x={BRIEF_X} y={56} fontSize="9" fontFamily={F_DISPLAY} fontWeight="500" letterSpacing="1.6" fill={C.muted}>
-            ЗАДАЧА
+            {tr("ЗАДАЧА")}
           </text>
           <text x={228} y={56} fontSize="9" fontFamily={F_DISPLAY} fontWeight="500" letterSpacing="1.6" fill={C.muted} opacity={flowIn(0) * (1 - morph)}>
-            КАК ДОЛЖНО РАБОТАТЬ
+            {tr("КАК ДОЛЖНО РАБОТАТЬ")}
           </text>
         </g>
         {REQS.map((r, i) => {
@@ -358,7 +359,7 @@ export default function Window({ t, x, y }: { t: number; x: number; y: number })
               <g opacity={labelOp}>
                 <rect x={rect.x} y={rect.y} width={2.5} height={rect.h} fill={linked > 0.5 ? C.primary : C.lime} />
                 <text x={rect.x + 10} y={rect.y + 15.5} fontSize="9" fontFamily={F_SANS} fill={C.fg}>
-                  {r.label}
+                  {tr(r.label)}
                 </text>
               </g>
             </g>
@@ -417,10 +418,10 @@ export default function Window({ t, x, y }: { t: number; x: number; y: number })
               <g opacity={labelOp}>
                 <Glyph kind={n.icon} x={r.x + 12} y={r.y + 11} color={C.primary} />
                 <text x={r.x + 36} y={r.y + 17} fontSize="9.2" fontWeight="500" fontFamily={F_SANS} fill={C.fg}>
-                  {n.label}
+                  {tr(n.label)}
                 </text>
                 <text x={r.x + 36} y={r.y + 29} fontSize="7.6" fontFamily={F_SANS} fill={C.muted}>
-                  {n.sub}
+                  {tr(n.sub)}
                 </text>
               </g>
             </g>
@@ -440,10 +441,10 @@ export default function Window({ t, x, y }: { t: number; x: number; y: number })
             <rect x={20} y={41} width={12} height={12} fill={C.primary} />
             <path d="M23 50 L26 44 L29 50" fill="none" stroke={C.primaryFg} strokeWidth="1.3" />
             <text x={37} y={50.5} fontSize="10.5" fontFamily={F_DISPLAY} fontWeight="600" letterSpacing="1.2" fill={C.fg}>
-              ОКНА ПЛЮС
+              {tr("ОКНА ПЛЮС")}
             </text>
-            {["Окна", "Балконы", "Контакты"].map((l, i) => (
-              <text key={l} x={[292, 326, 374][i]} y={50} fontSize="8" fontFamily={F_SANS} fill={C.muted}>
+            {[tr("Окна"), tr("Балконы"), tr("Контакты")].map((l, i, arr) => (
+              <text key={l} x={410 - arr.slice(i).reduce((w, s) => w + textW(s, 8), 0) - (arr.length - 1 - i) * 14} y={50} fontSize="8" fontFamily={F_SANS} fill={C.muted}>
                 {l}
               </text>
             ))}
@@ -456,14 +457,14 @@ export default function Window({ t, x, y }: { t: number; x: number; y: number })
             <rect x={20} y={78} width={92} height={6} fill={C.wire} />
           </g>
           <text x={20} y={84} fontSize="7.4" fontFamily={F_SANS} letterSpacing="1.4" fill={C.primary} opacity={eyeR}>
-            КИШИНЁВ · ОКНА И БАЛКОНЫ
+            {tr("КИШИНЁВ · ОКНА И БАЛКОНЫ")}
           </text>
           <g opacity={headR} transform={`translate(0, ${(1 - headR) * 4})`}>
             <text x={20} y={116} fontSize="25" fontFamily={F_DISPLAY} fontWeight="600" fill={C.fg}>
-              ЗАМЕР ОКОН
+              {tr("ЗАМЕР ОКОН")}
             </text>
             <text x={20} y={145} fontSize="25" fontFamily={F_DISPLAY} fontWeight="600" fill={C.fg}>
-              БЕСПЛАТНО
+              {tr("БЕСПЛАТНО")}
             </text>
           </g>
           <g opacity={wireCommon * (1 - subR)}>
@@ -471,10 +472,10 @@ export default function Window({ t, x, y }: { t: number; x: number; y: number })
           </g>
           <g opacity={subR}>
             <text x={20} y={164} fontSize="8.8" fontFamily={F_SANS} fill={C.fgSoft}>
-              Оставьте телефон — менеджер перезвонит
+              {tr("Оставьте телефон — менеджер перезвонит")}
             </text>
             <text x={20} y={177} fontSize="8.8" fontFamily={F_SANS} fill={C.fgSoft}>
-              и согласует удобное время замера.
+              {tr("и согласует удобное время замера.")}
             </text>
           </g>
           <g opacity={wireCommon * (1 - pillsR)}>
@@ -483,7 +484,7 @@ export default function Window({ t, x, y }: { t: number; x: number; y: number })
             ))}
           </g>
           <g opacity={pillsR}>
-            {["Пластиковые", "Балконы", "Двери"].map((l, i) => (
+            {[tr("Пластиковые"), tr("Балконы"), tr("Двери")].map((l, i) => (
               <g key={l} transform={`translate(${20 + [0, 68, 124][i]}, 196)`}>
                 <rect width={[62, 50, 40][i]} height={16} fill="none" stroke={C.border} strokeWidth=".8" />
                 <text x={[31, 25, 20][i]} y={10.8} textAnchor="middle" fontSize="7.4" fontFamily={F_SANS} fill={C.fgSoft}>
@@ -501,7 +502,7 @@ export default function Window({ t, x, y }: { t: number; x: number; y: number })
             <rect x={CARD_X + 12} y={76} width={90} height={8} fill={C.wire} />
           </g>
           <text x={CARD_X + 12} y={84} fontSize="10" fontFamily={F_DISPLAY} fontWeight="500" letterSpacing="1" fill={C.fg} opacity={cardR * (1 - success)}>
-            ЗАЯВКА НА ЗАМЕР
+            {tr("ЗАЯВКА НА ЗАМЕР")}
           </text>
           {FIELDS.map((_, i) => (
             <Field key={i} t={t} i={i} />
@@ -530,13 +531,13 @@ export default function Window({ t, x, y }: { t: number; x: number; y: number })
             <circle cx={CARD_X + 30} cy={100} r={12} fill={C.primary} />
             <path d={`M${CARD_X + 24} 100 l4 4 l8 -8`} fill="none" stroke={C.primaryFg} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             <text x={CARD_X + 12} y={136} fontSize="15" fontFamily={F_DISPLAY} fontWeight="600" fill={C.fg}>
-              СПАСИБО, ИРИНА!
+              {tr("СПАСИБО, ИРИНА!")}
             </text>
             <text x={CARD_X + 12} y={154} fontSize="8.4" fontFamily={F_SANS} fill={C.fgSoft}>
-              Заявка у менеджера. Он перезвонит,
+              {tr("Заявка у менеджера. Он перезвонит,")}
             </text>
             <text x={CARD_X + 12} y={166} fontSize="8.4" fontFamily={F_SANS} fill={C.fgSoft}>
-              чтобы согласовать время замера.
+              {tr("чтобы согласовать время замера.")}
             </text>
           </g>
         </g>
@@ -568,10 +569,10 @@ export default function Window({ t, x, y }: { t: number; x: number; y: number })
               <rect x={20} y={226} width={206} height={44} fill={C.raised} stroke={C.limeLine} strokeWidth=".8" />
               <rect x={28} y={234} width={16} height={16} rx={8} fill={C.lime} />
               <text x={36} y={245} textAnchor="middle" fontSize="8" fontFamily={F_DISPLAY} fontWeight="600" fill={C.bg}>
-                О
+                {tr("О")}
               </text>
               <text x={50} y={241} fontSize="7.4" fontWeight="500" fontFamily={F_SANS} fill={C.fg}>
-                Олег · Окна Плюс
+                {tr("Олег · Окна Плюс")}
               </text>
               <text x={50} y={256} fontSize="8.8" fontFamily={F_SANS} fill={C.fg}>
                 {noteText}
@@ -580,7 +581,7 @@ export default function Window({ t, x, y }: { t: number; x: number; y: number })
                 <rect x={150} y={232} width={70} height={13} fill={C.limeSoft} />
                 <path d="M156 238.5 l2.5 2.5 l5 -5" fill="none" stroke={C.lime} strokeWidth="1.3" strokeLinecap="round" />
                 <text x={168} y={241.5} fontSize="7" fontFamily={F_SANS} fill={C.fg}>
-                  исправлено
+                  {tr("исправлено")}
                 </text>
               </g>
             </g>
@@ -592,7 +593,7 @@ export default function Window({ t, x, y }: { t: number; x: number; y: number })
           <rect x={0} y={370} width={W} height={30} fill={C.bg} />
           <path d={`M0 370 H${W}`} stroke={C.border} strokeWidth=".6" />
           <text x={20} y={389} fontSize="7.4" fontFamily={F_DISPLAY} fontWeight="500" letterSpacing="1.2" fill={C.muted}>
-            ПУТЬ ЗАЯВКИ
+            {tr("ПУТЬ ЗАЯВКИ")}
           </text>
           <path d={`M${CHIP[0].x + CHIP[0].w} 386 H${CHIP[1].x} M${CHIP[1].x + CHIP[1].w} 386 H${CHIP[2].x}`} stroke={C.border} strokeWidth="1" />
           {CHIP.map((c, i) => {
@@ -603,7 +604,7 @@ export default function Window({ t, x, y }: { t: number; x: number; y: number })
                 <rect x={c.x} y={c.y} width={c.w} height={c.h} fill={st === "ok" ? C.primarySoft : C.raised} stroke={col} strokeWidth=".8" />
                 <Glyph kind={NODES[i].icon} x={c.x + 5} y={c.y + 3.2} s={0.6} color={st === "fail" ? C.danger : C.primary} />
                 <text x={c.x + 19} y={c.y + 11} fontSize="7.4" fontFamily={F_SANS} fill={C.fg}>
-                  {c.label}
+                  {tr(c.label)}
                 </text>
               </g>
             );
@@ -613,8 +614,8 @@ export default function Window({ t, x, y }: { t: number; x: number; y: number })
 
         {/* ===== cursors ===== */}
         <Cursor t={t} keys={DEV_KEYS} clicks={DEV_CLICKS} show={DEV_SHOW(t)} color={C.fg} />
-        <Cursor t={t} keys={CLIENT_KEYS} clicks={CLIENT_CLICKS} show={win(t, 13.1, 15.4, 0.3)} tag="Олег" color={C.lime} />
-        <Cursor t={t} keys={VISITOR_KEYS} clicks={VISITOR_CLICKS} show={win(t, 21.9, 24.6, 0.3)} tag="Посетитель" color={C.primary} />
+        <Cursor t={t} keys={CLIENT_KEYS} clicks={CLIENT_CLICKS} show={win(t, 13.1, 15.4, 0.3)} tag={tr("Олег")} color={C.lime} />
+        <Cursor t={t} keys={VISITOR_KEYS} clicks={VISITOR_CLICKS} show={win(t, 21.9, 24.6, 0.3)} tag={tr("Посетитель")} color={C.primary} />
       </g>
     </g>
   );

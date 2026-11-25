@@ -1,3 +1,4 @@
+import { tr } from "./i18n";
 import { C, F_SANS, P, L, eio, eo, clamp, LAYOUTS, MSG1, REQS, FLY, BRIEF_X, BRIEF_Y, BRIEF_W, PHONE_W } from "./core";
 import Window, { TG_CHIP } from "./Window";
 import Phone, { msg1LinePos } from "./Phone";
@@ -23,13 +24,8 @@ export default function ProcessFilm({ t, layout }: Props) {
       role="img"
       aria-labelledby="pf-title pf-desc"
     >
-      <title id="pf-title">Как задача клиента превращается в работающий сайт</title>
-      <desc id="pf-desc">
-        Владелец оконной компании пишет разработчику, что заявки теряются. Ключевые фразы превращаются в требования и
-        схему: форма, проверка, Telegram. Схема становится сайтом. Клиент просит сократить форму — лишние поля исчезают,
-        кнопка поднимается. Разработчик проверяет ошибки и тестовую отправку, публикует сайт. Посетитель оставляет заявку,
-        и она сразу приходит менеджеру в Telegram.
-      </desc>
+      <title id="pf-title">{tr("Как задача клиента превращается в работающий сайт")}</title>
+      <desc id="pf-desc">{tr("DESC") === "DESC" ? DESC_RU : tr("DESC")}</desc>
       <defs>
         <pattern id="pf-grid" width="26" height="26" patternUnits="userSpaceOnUse">
           <path d="M26 0H0V26" fill="none" stroke={C.border} strokeWidth="0.5" />
@@ -54,7 +50,7 @@ export default function ProcessFilm({ t, layout }: Props) {
           const y = L(from.y, to.y, p) + lift;
           const w = L(134, BRIEF_W, p);
           const h = L(12, 24, p);
-          const label = p < 0.45 ? MSG1[r.line] : r.label;
+          const label = p < 0.45 ? tr(MSG1[r.line]) : tr(r.label);
           return (
             <g key={i} transform={`translate(${x}, ${y})`}>
               <rect width={w} height={h} fill={C.limeSoft} stroke={C.limeLine} strokeWidth=".7" />
@@ -94,3 +90,5 @@ export default function ProcessFilm({ t, layout }: Props) {
     </svg>
   );
 }
+
+const DESC_RU = ("Владелец оконной компании пишет разработчику, что заявки теряются. Ключевые фразы превращаются в требования и схему: форма, проверка, Telegram. Схема становится сайтом. Клиент просит сократить форму — лишние поля исчезают, кнопка поднимается. Разработчик проверяет ошибки и тестовую отправку, публикует сайт. Посетитель оставляет заявку, и она сразу приходит менеджеру в Telegram.");

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { ArrowUpRight, Pause, Play, RotateCcw } from "lucide-react";
 import ProcessFilm from "./film/ProcessFilm";
 import { DUR } from "./film/core";
+import { setFilmLang, type FilmLang } from "./film/i18n";
 
 export interface ProcessFilmCopy {
   eyebrow: string; line1: string; line2: string; lead: string; primary: string; secondary: string;
@@ -98,12 +99,15 @@ export default function ProcessSection({
   onTelegramClick,
   onSecondaryClick,
   copy,
+  lang = "ru",
 }: {
   copy: ProcessFilmCopy;
+  lang?: FilmLang;
   telegramUrl?: string;
   onTelegramClick?: () => void;
   onSecondaryClick?: () => void;
 }) {
+  setFilmLang(lang);
   const reduce = usePrefersReducedMotion();
   const stageRef = useRef<HTMLDivElement>(null);
   const stacked = useStacked(stageRef);
