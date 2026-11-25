@@ -49,19 +49,27 @@ export const translations = {
       items: [
         {
           title: "Интернет-магазины",
-          desc: "Делаю интернет-магазины для B2B и розницы: каталоги, заявки, предзаказы, оплату и учёт заказов. Продумываю не только витрину, но и то, как заказ проходит дальше внутри бизнеса.",
+          desc: "Удобная навигация для быстрого пути к покупке.",
         },
         {
           title: "Сайты для бизнеса и НКО",
-          desc: "Создаю корпоративные сайты и лендинги, которые понятно объясняют, чем вы занимаетесь и почему к вам стоит обратиться. Сайт должен не просто выглядеть аккуратно, а помогать человеку принять решение и связаться с вами.",
+          desc: "Формируем доверие к вашему проекту через сайт.",
         },
         {
           title: "CRM и интеграции",
-          desc: "Связываю сайт, CRM, таблицы, почту и Telegram в одну рабочую систему. Чтобы заявки не терялись, данные не приходилось переносить вручную, а процессы было проще контролировать.",
+          desc: "Объединяем сервисы в единую систему бизнес-процессов.",
         },
         {
-          title: "Telegram-боты",
-          desc: "Разрабатываю ботов для заявок, уведомлений, поддержки и внутренних задач команды. Использую их там, где они действительно экономят время и убирают повторяющуюся ручную работу.",
+          title: "Боты и ассистенты",
+          desc: "Превращаем знания компании в быстрые ответы.",
+        },
+        {
+          title: "Маркетинговые решения",
+          desc: "Организовываю новые решения под ваш бренд и продукты.",
+        },
+        {
+          title: "Визуальный контент и анимация",
+          desc: "Помогаем увидеть преимущества и оценить товар до покупки.",
         },
       ],
     },
@@ -238,19 +246,27 @@ export const translations = {
       items: [
         {
           title: "Online stores",
-          desc: "I build stores for B2B and retail: catalogue, orders, pre-orders, payments and convenient order handling.",
+          desc: "Clear navigation for a fast path to purchase.",
         },
         {
-          title: "Company and NGO websites",
-          desc: "Websites that clearly explain what you do, build trust and bring in enquiries.",
+          title: "Websites for business and NGOs",
+          desc: "Building trust in your project through the website.",
         },
         {
           title: "CRM and integrations",
-          desc: "I connect website, CRM, spreadsheets, email and Telegram so requests are not lost and data is not duplicated.",
+          desc: "Bringing services together into one business-process system.",
         },
         {
-          title: "Telegram bots",
-          desc: "Bots for requests, notifications, support and internal team tasks.",
+          title: "Bots and assistants",
+          desc: "Turning company knowledge into fast answers.",
+        },
+        {
+          title: "Marketing solutions",
+          desc: "New solutions tailored to your brand and products.",
+        },
+        {
+          title: "Visual content and animation",
+          desc: "Helping customers see the benefits and evaluate a product before buying.",
         },
       ],
     },
@@ -425,19 +441,27 @@ export const translations = {
       items: [
         {
           title: "Magazine online",
-          desc: "Construiesc magazine pentru B2B și retail: catalog, comenzi, precomenzi, plăți și gestionare comodă a comenzilor.",
+          desc: "Navigare comodă pentru un drum rapid spre cumpărare.",
         },
         {
-          title: "Site-uri de companie și ONG",
-          desc: "Site-uri care explică clar ce faceți, inspiră încredere și aduc solicitări.",
+          title: "Site-uri pentru afaceri și ONG",
+          desc: "Construim încrederea în proiectul dumneavoastră prin site.",
         },
         {
           title: "CRM și integrări",
-          desc: "Conectez site-ul, CRM-ul, tabelele, e-mailul și Telegram astfel încât cererile să nu se piardă, iar datele să nu se dubleze.",
+          desc: "Unim serviciile într-un singur sistem de procese de afaceri.",
         },
         {
-          title: "Boți Telegram",
-          desc: "Boți pentru cereri, notificări, suport și sarcini interne ale echipei.",
+          title: "Boți și asistenți",
+          desc: "Transformăm cunoștințele companiei în răspunsuri rapide.",
+        },
+        {
+          title: "Soluții de marketing",
+          desc: "Soluții noi adaptate brandului și produselor dumneavoastră.",
+        },
+        {
+          title: "Conținut vizual și animație",
+          desc: "Ajutăm clienții să vadă avantajele și să evalueze produsul înainte de cumpărare.",
         },
       ],
     },
