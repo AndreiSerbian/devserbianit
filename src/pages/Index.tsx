@@ -10,7 +10,7 @@ import { Seo } from "@/components/Seo";
 import { BrandLockup } from "@/components/brand";
 import { Hero } from "@/components/Hero";
 import { Services } from "@/components/Services";
-import { Process } from "@/components/Process";
+import ProcessSection from "@/components/process/ProcessSection";
 import { ContactForm } from "@/components/ContactForm";
 import { CaseStudies } from "@/components/CaseStudies";
 import { ProgressIndicator } from "@/components/ProgressIndicator";
@@ -209,14 +209,11 @@ const Index = () => {
           <CaseStudies title={t.cases.title} items={t.cases.items} lang={lang} />
         </div>
 
-        <Process
-          title={t.process.title}
-          intro={t.process.intro}
-          cta={t.process.cta}
+        <ProcessSection
+          copy={t.process.film}
           telegramUrl={brand.telegram}
           onTelegramClick={() => trackEvent("telegram_click", { locale: lang })}
           onSecondaryClick={() => scrollToSection("cases")}
-          steps={t.process.steps}
         />
 
         <ContactForm t={t.form} lang={lang} />

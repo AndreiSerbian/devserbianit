@@ -74,6 +74,7 @@ export const translations = {
       ],
     },
     process: {
+      film: {"eyebrow": "Как я работаю", "line1": "От задачи", "line2": "к решению.", "lead": "Разбираюсь в том, как работает бизнес, проектирую нужные инструменты и довожу их до запуска.", "primary": "Обсудить проект в Telegram", "secondary": "Посмотреть проекты", "replay": "Смотреть снова", "pause": "Пауза", "resume": "Продолжить", "restart": "Сначала", "captions": ["Клиент описывает задачу своими словами.", "Выделяю требования и собираю схему: форма → проверка → Telegram.", "Из схемы собираю первую рабочую версию сайта.", "Клиент просит сократить форму — правлю прямо по комментарию.", "Проверяю отправку и ошибки, публикую сайт.", "Сайт работает: заявка сразу у менеджера в Telegram."]},
       title: "От задачи бизнеса до работающего продукта",
       intro:
         "Я беру на себя весь процесс: погружаюсь в задачу, собираю концепцию, проектирую решение, разрабатываю, проверяю и помогаю с запуском.",
@@ -271,6 +272,7 @@ export const translations = {
       ],
     },
     process: {
+      film: {"eyebrow": "How I work", "line1": "From task", "line2": "to solution.", "lead": "I figure out how the business works, design the tools it needs and take them all the way to launch.", "primary": "Discuss the project on Telegram", "secondary": "See projects", "replay": "Watch again", "pause": "Pause", "resume": "Resume", "restart": "Restart", "captions": ["The client describes the task in their own words.", "I pick out the requirements and sketch the flow: form → check → Telegram.", "From the flow I build the first working version of the site.", "The client asks for a shorter form — I fix it right from the comment.", "I test submissions and errors, then publish the site.", "The site works: every request lands with the manager in Telegram."]},
       title: "How I work",
       intro:
         "I take on the whole process: understanding the task, shaping the concept, designing the solution, building, testing and helping with launch.",
@@ -466,6 +468,7 @@ export const translations = {
       ],
     },
     process: {
+      film: {"eyebrow": "Cum lucrez", "line1": "De la sarcină", "line2": "la soluție.", "lead": "Înțeleg cum funcționează afacerea, proiectez instrumentele necesare și le duc până la lansare.", "primary": "Discutăm proiectul pe Telegram", "secondary": "Vedeți proiectele", "replay": "Vizionați din nou", "pause": "Pauză", "resume": "Continuă", "restart": "De la început", "captions": ["Clientul descrie sarcina în cuvintele sale.", "Extrag cerințele și schițez fluxul: formular → verificare → Telegram.", "Din schemă construiesc prima versiune funcțională a site-ului.", "Clientul cere un formular mai scurt — corectez direct după comentariu.", "Testez trimiterea și erorile, apoi public site-ul.", "Site-ul funcționează: cererea ajunge imediat la manager în Telegram."]},
       title: "Cum lucrez",
       intro:
         "Preiau tot procesul: înțeleg sarcina, construiesc conceptul, proiectez soluția, dezvolt, verific și ajut la lansare.",
