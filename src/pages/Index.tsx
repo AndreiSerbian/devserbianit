@@ -39,8 +39,8 @@ const Index = () => {
 
   const navItems = [
     { id: "services", label: t.nav.services },
-    { id: "cases", label: t.nav.cases },
     { id: "process", label: t.nav.process },
+    { id: "cases", label: t.nav.cases },
     { id: "contact", label: t.nav.contact },
   ];
 
@@ -205,10 +205,6 @@ const Index = () => {
           <Services title={t.services.title} intro={t.services.intro} items={t.services.items} />
         </div>
 
-        <div id="cases">
-          <CaseStudies title={t.cases.title} items={t.cases.items} lang={lang} />
-        </div>
-
         <ProcessSection
           copy={t.process.film}
           lang={lang}
@@ -216,6 +212,10 @@ const Index = () => {
           onTelegramClick={() => trackEvent("telegram_click", { locale: lang })}
           onSecondaryClick={() => scrollToSection("cases")}
         />
+
+        <div id="cases">
+          <CaseStudies title={t.cases.title} items={t.cases.items} lang={lang} />
+        </div>
 
         <ContactForm t={t.form} lang={lang} />
 
