@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { RevolverHeroDiagram } from "@/components/hero/RevolverHeroDiagram";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { SectionMarker } from "./SectionMarker";
 import type { RevolverLocale } from "@/components/hero/revolverData";
 
 interface HeroProps {
@@ -29,23 +30,16 @@ export const Hero = ({
   const isMobile = useIsMobile();
   return (
   <section className="relative border-b border-border bg-background overflow-hidden">
-    <div className="container px-4 sm:px-6 py-14 md:py-24">
-      <div className="grid lg:grid-cols-[0.95fr_1.05fr] gap-10 lg:gap-12 items-center">
+    <div className="container px-4 sm:px-6 section-standard">
+      <div className="grid md:grid-cols-[1.05fr_0.95fr] gap-8 lg:gap-12 items-center">
         <div className="min-w-0">
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.4 }}
-            className="font-sans text-[10px] sm:text-xs tracking-[0.24em] uppercase text-primary mb-5"
-          >
-            {specializations}
-          </motion.p>
+          <SectionMarker>{specializations}</SectionMarker>
 
           <motion.h1
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.05 }}
-            className="font-display font-semibold uppercase leading-[0.98] tracking-tight text-[clamp(2rem,7vw,4.25rem)] whitespace-pre-line text-balance"
+            className="font-display font-semibold uppercase heading-system text-[32px] sm:text-[40px] lg:text-[52px] xl:text-[64px] whitespace-pre-line text-balance"
           >
             {title}
           </motion.h1>
@@ -54,7 +48,7 @@ export const Hero = ({
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.15 }}
-            className="mt-6 max-w-xl text-sm sm:text-base md:text-lg text-muted-foreground leading-relaxed"
+            className="mt-6 max-w-xl text-base lg:text-lg text-muted-foreground leading-relaxed"
           >
             {subtitle}
           </motion.p>
@@ -63,9 +57,9 @@ export const Hero = ({
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.25 }}
-            className="mt-8 flex flex-col sm:flex-row gap-3"
+            className="mt-8 flex flex-col sm:flex-row md:flex-col xl:flex-row gap-3"
           >
-            <Button size="lg" onClick={onCtaClick} className="rounded-none font-display tracking-[0.08em] uppercase">
+            <Button size="lg" onClick={onCtaClick} className="rounded-none font-sans tracking-normal normal-case">
               {cta}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
@@ -73,7 +67,7 @@ export const Hero = ({
               size="lg"
               variant="outline"
               onClick={onSecondaryClick}
-              className="rounded-none font-display tracking-[0.08em] uppercase"
+              className="rounded-none font-sans tracking-normal normal-case"
             >
               {ctaSecondary}
             </Button>
@@ -86,7 +80,7 @@ export const Hero = ({
           transition={{ duration: 0.6, delay: 0.2 }}
           className="flex justify-center lg:justify-end min-w-0 w-full"
         >
-          <RevolverHeroDiagram locale={locale} compact={isMobile} className="w-full" />
+          <RevolverHeroDiagram locale={locale} compact={isMobile} className="w-full max-w-[400px] md:max-w-[340px] lg:max-w-[480px]" />
         </motion.div>
       </div>
     </div>

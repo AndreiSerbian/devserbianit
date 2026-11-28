@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ArrowUpRight, Pause, Play, RotateCcw } from "lucide-react";
 import ProcessFilm from "./film/ProcessFilm";
+import { Button } from "@/components/ui/button";
+import { SectionMarker } from "@/components/SectionMarker";
 import { DUR } from "./film/core";
 import { setFilmLang, type FilmLang } from "./film/i18n";
 
@@ -174,17 +176,17 @@ export default function ProcessSection({
   };
 
   return (
-    <section id="process" aria-labelledby="process-title" className="relative overflow-hidden border-b border-border bg-surface py-20 md:py-28">
+    <section id="process" aria-labelledby="process-title" className="relative overflow-hidden border-b border-border bg-surface section-feature">
       <div className="container px-4 sm:px-6">
         <div className="grid items-start gap-12 lg:grid-cols-12 lg:gap-10">
           {/* ---------- Copy ---------- */}
           <div className="lg:col-span-4 lg:pt-10">
-            <p className="mb-6 font-sans text-[10px] uppercase tracking-[0.24em] text-primary sm:text-xs">{copy.eyebrow}</p>
+            <SectionMarker>{copy.eyebrow}</SectionMarker>
             <h2
               id="process-title"
-              className="font-display text-[clamp(2.75rem,5vw,5rem)] font-semibold uppercase leading-[0.92] tracking-tight"
+              className="font-display text-[32px] sm:text-[40px] lg:text-[48px] font-semibold uppercase heading-system"
             >
-              <span className="whitespace-nowrap">
+              <span>
                 {copy.line1}&nbsp;<span className="text-primary">—</span>
               </span>
               <br />{copy.line2}
@@ -193,23 +195,24 @@ export default function ProcessSection({
               {copy.lead}
             </p>
             <div className="mt-10 flex flex-wrap items-center gap-x-7 gap-y-4">
+              <Button asChild size="lg" className="max-w-full whitespace-normal text-left">
               <a
                 href={telegramUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={onTelegramClick}
-                className="inline-flex h-12 items-center whitespace-nowrap bg-primary px-6 font-display text-sm uppercase tracking-[0.08em] text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
                 {copy.primary}
                 <ArrowUpRight className="ml-2 h-4 w-4" />
               </a>
-              <button
+              </Button>
+              <Button variant="link"
                 type="button"
                 onClick={handleSecondary}
-                className="whitespace-nowrap py-2 text-xs uppercase tracking-[0.14em] text-muted-foreground underline underline-offset-4 transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="h-auto p-0 text-sm text-muted-foreground underline underline-offset-4"
               >
                 {copy.secondary}
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -226,7 +229,7 @@ export default function ProcessSection({
             <figcaption className="mt-5 flex items-center gap-4">
               {!reduce && (
                 <div className="flex shrink-0 items-center gap-1">
-                  <button
+                  <Button variant="outline" size="icon"
                     type="button"
                     onClick={toggle}
                     aria-controls="pf-stage"
@@ -234,9 +237,9 @@ export default function ProcessSection({
                     className="inline-flex h-9 w-9 items-center justify-center border border-border text-foreground transition-colors hover:bg-surface-raised focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   >
                     {ended ? <RotateCcw className="h-4 w-4" /> : clock.playing ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
-                  </button>
+                  </Button>
                   {!ended && (
-                    <button
+                    <Button variant="ghost" size="icon"
                       type="button"
                       onClick={() => {
                         autoPaused.current = false;
@@ -247,7 +250,7 @@ export default function ProcessSection({
                       className="inline-flex h-9 w-9 items-center justify-center text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     >
                       <RotateCcw className="h-4 w-4" />
-                    </button>
+                    </Button>
                   )}
                 </div>
               )}

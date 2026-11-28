@@ -63,12 +63,12 @@ export const ConsentManager = () => {
             aria-label={copy.bannerTitle}
             className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-card"
           >
-            <div className="container px-4 sm:px-6 py-5 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div className="container px-4 sm:px-6 py-3 sm:py-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
               <div className="max-w-2xl">
-                <p className="font-display text-sm uppercase tracking-[0.14em]">
+                <p className="font-sans text-sm font-medium tracking-normal">
                   {copy.bannerTitle}
                 </p>
-                <p className="mt-2 text-sm text-muted-foreground">
+                <p className="mt-1 text-xs sm:text-sm leading-relaxed text-muted-foreground">
                   {copy.bannerBody}{" "}
                   <Link to={legalPath(lang as Locale, "cookies")} className="underline">
                     {copy.more}
@@ -77,12 +77,12 @@ export const ConsentManager = () => {
                 {failed && <p className="mt-2 text-sm text-destructive">{copy.error}</p>}
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-2 shrink-0">
+              <div className="grid grid-cols-2 sm:flex gap-2 shrink-0">
                 <Button
                   variant="outline"
                   disabled={busy}
                   onClick={() => void run(rejectAll)}
-                  className="sm:min-w-[150px]"
+                  className="min-h-11 h-auto whitespace-normal sm:min-w-[130px]"
                 >
                   {copy.rejectAll}
                 </Button>
@@ -90,11 +90,11 @@ export const ConsentManager = () => {
                   variant="outline"
                   disabled={busy}
                   onClick={() => void run(acceptAll)}
-                  className="sm:min-w-[150px]"
+                  className="min-h-11 h-auto whitespace-normal sm:min-w-[130px]"
                 >
                   {copy.acceptAll}
                 </Button>
-                <Button variant="ghost" disabled={busy} onClick={openSettings}>
+                <Button variant="ghost" disabled={busy} onClick={openSettings} className="col-span-2 sm:col-auto min-h-10">
                   {copy.settings}
                 </Button>
               </div>

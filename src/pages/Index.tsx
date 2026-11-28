@@ -19,10 +19,12 @@ import { trackEvent } from "@/lib/analytics";
 import { siteConfig } from "@/lib/siteConfig";
 import { useTheme } from "@/hooks/useTheme";
 import { LegalFooterLinks } from "@/components/consent/LegalFooterLinks";
+import { designCopy } from "@/data/designCopy";
 
 const Index = () => {
   const { lang, setLang, t } = useLanguage();
   const { theme, toggleTheme } = useTheme();
+  const copy = designCopy[lang];
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -85,12 +87,12 @@ const Index = () => {
         href="#main"
         className="sr-only focus:not-sr-only focus:absolute focus:z-[60] focus:top-2 focus:left-2 focus:bg-primary focus:text-primary-foreground focus:px-4 focus:py-2"
       >
-        Skip to content
+        {copy.skip}
       </a>
 
       <header
         className={`sticky top-0 z-50 w-full border-b transition-colors duration-300 ${
-          isScrolled ? "border-border bg-background/95 backdrop-blur" : "border-border/60 bg-background"
+          isScrolled ? "border-border bg-background" : "border-border/60 bg-background"
         }`}
       >
         <div className="container flex h-16 items-center justify-between gap-3 px-4 sm:px-6">
@@ -100,20 +102,20 @@ const Index = () => {
 
           <nav className="hidden lg:flex items-center gap-7" aria-label="Main">
             {navItems.map((item) => (
-              <button
+              <Button variant="ghost"
                 key={item.id}
                 onClick={() => scrollToSection(item.id)}
-                className="text-xs uppercase tracking-[0.14em] text-muted-foreground hover:text-foreground transition-colors"
+                className="h-auto p-0 text-sm tracking-normal text-muted-foreground hover:text-foreground hover:bg-transparent transition-colors"
               >
                 {item.label}
-              </button>
+              </Button>
             ))}
           </nav>
 
           <div className="flex items-center gap-2">
             <Button
               size="sm"
-              className="hidden sm:inline-flex rounded-none font-display uppercase tracking-[0.08em]"
+              className="hidden sm:inline-flex rounded-none font-sans normal-case tracking-normal"
               onClick={() => {
                 trackEvent("cta_nav_click", { locale: lang });
                 scrollToSection("contact-form");
@@ -123,7 +125,7 @@ const Index = () => {
             </Button>
 
             <Select value={lang} onValueChange={(v) => setLang(v as Lang)}>
-              <SelectTrigger className="w-[68px] h-9 text-xs rounded-none" aria-label="Language">
+              <SelectTrigger className="w-[68px] h-9 text-xs rounded-none" aria-label={copy.language}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -138,7 +140,7 @@ const Index = () => {
               size="icon"
               className="h-9 w-9"
               onClick={toggleTheme}
-              aria-label="Toggle theme"
+              aria-label={copy.theme}
             >
               {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </Button>
@@ -166,16 +168,16 @@ const Index = () => {
             >
               <nav className="container px-4 py-4 flex flex-col" aria-label="Mobile">
                 {navItems.map((item) => (
-                  <button
+                  <Button variant="ghost"
                     key={item.id}
                     onClick={() => scrollToSection(item.id)}
-                    className="text-left text-sm uppercase tracking-[0.14em] py-3 border-b border-border/60 text-muted-foreground hover:text-foreground"
+                    className="justify-start h-auto text-left text-sm tracking-normal py-3 border-b border-border text-muted-foreground hover:text-foreground"
                   >
                     {item.label}
-                  </button>
+                  </Button>
                 ))}
                 <Button
-                  className="mt-4 rounded-none font-display uppercase tracking-[0.08em]"
+                  className="mt-4 rounded-none font-sans normal-case tracking-normal"
                   onClick={() => scrollToSection("contact-form")}
                 >
                   {t.nav.cta}
@@ -202,7 +204,7 @@ const Index = () => {
         />
 
         <div id="services">
-          <Services title={t.services.title} intro={t.services.intro} items={t.services.items} />
+          <Services lang={lang} title={t.services.title} intro={t.services.intro} items={t.services.items} />
         </div>
 
         <ProcessSection
@@ -219,9 +221,9 @@ const Index = () => {
 
         <ContactForm t={t.form} lang={lang} />
 
-        <section id="contact" className="py-16 md:py-24">
+        <section id="contact" className="section-compact">
           <div className="container px-4 sm:px-6">
-            <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight">
+            <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-semibold heading-system">
               {t.contact.title}
             </h2>
             <p className="mt-4 text-sm md:text-base text-muted-foreground max-w-xl">{t.contact.subtitle}</p>

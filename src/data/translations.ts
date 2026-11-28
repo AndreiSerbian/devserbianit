@@ -32,7 +32,7 @@ export const translations = {
         "Разбираюсь, как в компании проходят заявки, продажи и работа с клиентами. Затем связываю сайт, CRM, Telegram и нужные сервисы в одну рабочую систему.",
       cta: "Обсудить проект",
       ctaSecondary: "Смотреть кейсы",
-      specializations: "E-COMMERCE / WEBSITES / CRM / INTEGRATIONS / TELEGRAM",
+      specializations: "Комплексные IT-решения для бизнеса",
       diagram: {
         marketing: "Маркетинг",
         sales: "Продажи",
@@ -230,7 +230,7 @@ export const translations = {
         "I look into how requests, sales and client work actually flow inside your company. Then I connect the website, CRM, Telegram and the services you need into one working system.",
       cta: "Discuss a project",
       ctaSecondary: "View cases",
-      specializations: "E-COMMERCE / WEBSITES / CRM / INTEGRATIONS / TELEGRAM",
+      specializations: "Connected IT solutions for business",
       diagram: {
         marketing: "Marketing",
         sales: "Sales",
@@ -426,7 +426,7 @@ export const translations = {
         "Analizez cum circulă cererile, vânzările și relația cu clienții în compania dumneavoastră. Apoi conectez site-ul, CRM-ul, Telegram și serviciile necesare într-un singur sistem funcțional.",
       cta: "Discutăm proiectul",
       ctaSecondary: "Vezi studiile de caz",
-      specializations: "E-COMMERCE / WEBSITES / CRM / INTEGRATIONS / TELEGRAM",
+      specializations: "Soluții IT integrate pentru afaceri",
       diagram: {
         marketing: "Marketing",
         sales: "Vânzări",

@@ -1,9 +1,13 @@
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { SVC_ART, SVC_STYLE } from "./servicesArt";
+import { SectionMarker } from "./SectionMarker";
+import { designCopy, serviceIds } from "@/data/designCopy";
+import type { Lang } from "@/data/translations";
 
 interface ServicesProps {
   title: string;
+  lang?: Lang;
   intro?: string;
   items: readonly { readonly title: string; readonly desc: string }[];
 }
@@ -44,11 +48,12 @@ const Art = ({ html }: { html: string }) => {
   );
 };
 
-export const Services = ({ title, intro, items }: ServicesProps) => (
-  <section className="py-16 md:py-24 border-b border-border">
+export const Services = ({ title, intro, items, lang = "ru" }: ServicesProps) => (
+  <section className="section-standard border-b border-border">
     <div className="container px-4 sm:px-6">
       <style>{SVC_STYLE + ANIM_CSS}</style>
-      <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight">
+      <SectionMarker>{designCopy[lang].services}</SectionMarker>
+      <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-semibold heading-system">
         {title}
       </h2>
       {intro && (
@@ -59,6 +64,7 @@ export const Services = ({ title, intro, items }: ServicesProps) => (
         {items.map((item, idx) => (
           <motion.article
             key={item.title}
+            id={`service-${serviceIds[idx]}`}
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-60px" }}
@@ -66,10 +72,10 @@ export const Services = ({ title, intro, items }: ServicesProps) => (
             className="bg-card flex flex-col px-3.5 pt-4 pb-5 md:px-[22px] md:pt-6 md:pb-7 hover:bg-surface-raised transition-colors duration-150"
           >
             <Art html={SVC_ART[idx % SVC_ART.length]} />
-            <h3 className="font-display font-medium uppercase tracking-wide text-sm md:text-[17px] leading-tight mb-2.5 text-foreground [text-wrap:balance]">
+            <h3 className="font-display font-medium text-base md:text-lg leading-snug min-h-[3.4em] mb-3 text-foreground [text-wrap:balance]">
               {item.title}
             </h3>
-            <p className="text-[13px] md:text-sm leading-[1.55] text-foreground/75 [text-wrap:pretty]">{item.desc}</p>
+            <p className="text-sm leading-relaxed text-muted-foreground [text-wrap:pretty]">{item.desc}</p>
           </motion.article>
         ))}
       </div>

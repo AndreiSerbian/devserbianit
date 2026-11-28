@@ -9,7 +9,10 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/analytics";
 import type { translations, Lang } from "@/data/translations";
-import { CheckCircle2, Send } from "lucide-react";
+import { CheckCircle2, Send, Mail, ArrowUpRight } from "lucide-react";
+import { brand } from "@/data/translations";
+import { designCopy } from "@/data/designCopy";
+import { SectionMarker } from "./SectionMarker";
 
 type Method = "telegram" | "email" | "whatsapp" | "other";
 
@@ -20,6 +23,7 @@ interface ContactFormProps {
 
 export const ContactForm = ({ t, lang }: ContactFormProps) => {
   const { toast } = useToast();
+  const copy = designCopy[lang];
   const [method, setMethod] = useState<Method>("telegram");
   const [name, setName] = useState("");
   const [contact, setContact] = useState("");
@@ -90,16 +94,35 @@ export const ContactForm = ({ t, lang }: ContactFormProps) => {
   };
 
   return (
-    <section id="contact-form" className="py-16 md:py-24 border-b border-border">
+    <section id="contact-form" className="section-feature border-b border-border">
       <div className="container px-4 sm:px-6">
         <div className="grid lg:grid-cols-[0.9fr_1.1fr] gap-10 lg:gap-16">
           <div>
-            <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight">
+            <SectionMarker>{copy.contact}</SectionMarker>
+            <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-semibold heading-system">
               {t.title}
             </h2>
             <p className="mt-4 text-sm md:text-base text-muted-foreground leading-relaxed max-w-md">
               {t.subtitle}
             </p>
+            <div className="mt-8 flex flex-col items-start gap-3">
+              <Button variant="link" asChild className="h-auto p-0 max-w-full">
+                <a href={brand.telegram} target="_blank" rel="noopener noreferrer" onClick={() => trackEvent("telegram_click", { locale: lang })}>
+                  <Send className="h-4 w-4" />{brand.telegramHandle}<ArrowUpRight className="h-3 w-3" />
+                </a>
+              </Button>
+              <Button variant="link" asChild className="h-auto p-0 max-w-full whitespace-normal text-left">
+                <a href={`mailto:${brand.email}`} onClick={() => trackEvent("email_click", { locale: lang })}>
+                  <Mail className="h-4 w-4" /><span className="break-all">{brand.email}</span>
+                </a>
+              </Button>
+            </div>
+            <div className="mt-10 border-t border-border pt-6 max-w-md">
+              <p className="text-sm font-medium">{copy.after}</p>
+              <ul className="mt-4 space-y-4">
+                {copy.steps.map((step) => <li key={step} className="flex items-start gap-3 text-sm leading-relaxed text-muted-foreground"><span aria-hidden="true" className="w-2 h-2 border border-primary mt-1.5 shrink-0" />{step}</li>)}
+              </ul>
+            </div>
           </div>
 
           {sent ? (
@@ -210,7 +233,7 @@ export const ContactForm = ({ t, lang }: ContactFormProps) => {
                 type="submit"
                 size="lg"
                 disabled={sending}
-                className="w-full sm:w-auto rounded-none font-display uppercase tracking-[0.08em]"
+                className="w-full sm:w-auto rounded-none font-sans normal-case tracking-normal"
               >
                 {sending ? t.sending : t.submit}
                 {!sending && <Send className="ml-2 h-4 w-4" />}

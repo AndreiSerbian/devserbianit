@@ -28,7 +28,7 @@ export const consentCopy: Record<Locale, ConsentCopy> = {
   ru: {
     bannerTitle: "Аналитика и сохранение настроек",
     bannerBody:
-      "Сайт работает без cookies. По вашему согласию мы можем собирать псевдонимную аналитику использования и постоянно хранить выбор темы и языка. Без согласия сайт работает полностью.",
+      "С вашего согласия сохраняем тему и язык и собираем аналитику сайта. Техническое хранение необходимо для работы сайта.",
     acceptAll: "Принять всё",
     rejectAll: "Отклонить всё",
     settings: "Настроить",
@@ -60,7 +60,7 @@ export const consentCopy: Record<Locale, ConsentCopy> = {
   en: {
     bannerTitle: "Analytics and stored preferences",
     bannerBody:
-      "This site sets no cookies. With your consent it can collect pseudonymous usage analytics and store your theme and language choice persistently. The site works fully without consent.",
+      "With your consent, we store your theme and language and collect site analytics. Essential technical storage supports site operation.",
     acceptAll: "Accept all",
     rejectAll: "Reject all",
     settings: "Customise",
@@ -87,7 +87,7 @@ export const consentCopy: Record<Locale, ConsentCopy> = {
   ro: {
     bannerTitle: "Analitică și preferințe salvate",
     bannerBody:
-      "Site-ul nu instalează cookie-uri. Cu consimțământul dvs. putem colecta analitică pseudonimă de utilizare și păstra persistent tema și limba alese. Fără consimțământ site-ul funcționează integral.",
+      "Cu acordul dvs., păstrăm tema și limba și colectăm analitică. Stocarea tehnică esențială asigură funcționarea site-ului.",
     acceptAll: "Accept toate",
     rejectAll: "Refuz toate",
     settings: "Personalizează",
